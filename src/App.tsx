@@ -3,11 +3,13 @@
 
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
+import Login from './components/LoginComp/Login';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/v1/user/login" element={<Login />} />
     </Routes>
   );
 }
