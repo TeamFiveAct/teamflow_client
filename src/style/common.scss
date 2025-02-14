@@ -1,0 +1,39 @@
+// login components
+.boxContainer {
+  width: 400px;
+  height: 500px;
+  border: 1px solid #757575;
+  border-radius: 30px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+
+  & > hr {
+    width: 80%; /* 부모 요소 기준으로 가득 차게 설정 */
+    border: 1px solid #757575; /* 검은색 선 추가 */
+    margin: 0 0 10px 0; /* 위아래 여백 추가 */
+  }
+
+  & > .textContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 60%;
+
+    div {
+      text-align: start;
+      align-self: flex-start;
+    }
+
+    button {
+      text-align: center;
+      align-items: center;
+      width: 50%;
+      align-self: center;
+    }
+  }
+}
