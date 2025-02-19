@@ -32,3 +32,119 @@ button {
 .avatar-option:hover {
   background-color: #f0f0f0;
 }
+
+/* ✅ Contact Us 텍스트 스타일 */
+.contact-text {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  margin-top: 4px;
+
+  &:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+}
+
+/* ✅ Licensed by FiveAct 텍스트 스타일 */
+.license-text {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 6px;
+}
+
+.navbar {
+  /* ✅ 기존의 `position: fixed;` 삭제 */
+  position: relative; /* 자연스럽게 상단에 위치하도록 변경 */
+  top: unset;
+  left: unset;
+
+  width: 100%;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+.navbar-toggler {
+  border: none;
+}
+
+/* ✅ 햄버거 메뉴가 열렸을 때 배경색 변경 */
+.collapse.show {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* ✅ 고정된 푸터 */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 1000;
+
+  height: 50px;
+  background-color: #f8f9fa;
+  text-align: center;
+  font-size: 12px;
+  color: #6c757d;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+
+  /* ✅ 고정 제거 (페이지 끝에 자연스럽게 위치) */
+  // position: relative;
+  // bottom: unset;
+  // left: unset;
+  margin-top: 50px; /* 본문 내용과 여백 추가 */
+}
+
+/* ✅ 푸터가 페이지 끝에 위치하도록 설정 */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 화면 높이만큼 최소 크기 유지 */
+}
+
+.content-wrap {
+  flex: 1; /* 본문이 푸터를 밀어내도록 설정 */
+}
+
+/* ✅ 전체 레이아웃 설정 */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // 🔹 화면 전체 높이를 차지하도록 설정
+}
+
+/* ✅ 고정된 헤더 */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 1000;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ 콘텐츠 영역 (헤더와 푸터 사이에서만 스크롤됨) */
+.content {
+  flex: 1;
+  padding-top: 70px; // 🔹 헤더 높이만큼 여백 추가
+  padding-bottom: 50px; // 🔹 푸터 높이만큼 여백 추가
+  overflow-y: auto; // 🔹 내용이 많을 경우 스크롤 가능
+}

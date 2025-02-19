@@ -1,0 +1,68 @@
+.container {
+  margin-top: 80px; /* 헤더 높이만큼 여백 추가 */
+  padding: 20px;
+  margin-bottom: 50px;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.avatar-selection {
+  text-align: center;
+}
+
+.avatar-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.avatar-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.selected {
+    border: 3px solid #007bff;
+  }
+}
+
+.readonly-style {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: auto;
+}
+
+/* ✅ 포커스 스타일 제거 */
+.readonly-style:focus {
+  border-color: #ced4da;
+  box-shadow: none;
+  outline: none;
+}
+
+.readonly-style {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.content {
+  margin-top: 80px; /* ✅ 헤더 아래에서 시작 */
+  min-height: calc(
+    100vh - 80px - 50px
+  ); /* ✅ 화면 높이에서 헤더와 푸터 크기 제외 */
+  padding-bottom: 60px; /* ✅ 스크롤 시 푸터가 가려지지 않도록 추가 */
+}
