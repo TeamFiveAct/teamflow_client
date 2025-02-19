@@ -1,84 +1,122 @@
 // SignUp.tsx
-import React, { useState, useRef, useEffect } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Form, Container, Col, Row } from 'react-bootstrap';
+import { Button, Form, Container, Col, Row, InputGroup } from 'react-bootstrap';
 import ProfileImg from './ProfileImg';
 import TransitionComp from './TransitionComp';
-import ErrorMessage from './ErrorMessage'; // ErrorMessage 컴포넌트 import
+import ServerMessage from './ServerMessage'; // 수정된 ServerMessage 컴포넌트 import
 
 export default function SignUp() {
-  const [selectedAvatar, setSelectedAvatar] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState('Mary Roebling');
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // 전체 에러 메시지
-  const [nicknameError, setNicknameError] = useState(''); // 닉네임 에러 메시지
-  const [emailError, setEmailError] = useState(''); // 이메일 에러 메시지
-  const [passwordError, setPasswordError] = useState(''); // 비밀번호 에러 메시지
+  const [nicknameMessage, setNicknameMessage] = useState(''); // 닉네임 메시지 상태
+  const [emailMessage, setEmailMessage] = useState(''); // 이메일 메시지 상태
+  const [allMessage, setAllMessage] = useState(''); // 전체 메시지 상태
+  const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
+    'SUCCESS',
+  );
   const [loginType, setLoginType] = useState<'LOGIN' | 'SIGN UP'>('SIGN UP');
 
   const navigate = useNavigate();
-  // 에러 발생 시 포커스를 줄 ref
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const nicknameRef = useRef<HTMLInputElement>(null);
 
-  // 닉네임 중복 검사
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+
   const checkNickname = async () => {
+    if (!nickname) return;
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_SERVER}/user/check-name?nickname=${nickname}`,
       );
-      if (response.data.status === 'ERROR') {
-        setNicknameError(response.data.message);
-        nicknameRef.current?.focus();
+      setCheckStatus(response.data.status);
+      setNicknameMessage(response.data.message);
+
+      if (response.data.status === 'SUCCESS') {
+        setIsNicknameChecked(true); // ✅ 중복 확인 완료
       } else {
-        setNicknameError('');
+        setIsNicknameChecked(false);
+        nicknameRef.current?.focus();
       }
     } catch (error) {
       console.error('닉네임 중복 검사 실패:', error);
-      setNicknameError('서버 오류가 발생했습니다.');
+      setNicknameMessage('서버 오류가 발생했습니다. 관리자에게 문의하세요.');
+      setIsNicknameChecked(false);
     }
   };
 
-  // 이메일 중복 검사
   const checkEmail = async () => {
+    if (!email) return;
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_SERVER}/user/check-email?email=${email}`,
       );
-      if (response.data.status === 'ERROR') {
-        setEmailError(response.data.message);
-        emailRef.current?.focus();
+      setCheckStatus(response.data.status);
+      setEmailMessage(response.data.message);
+
+      if (response.data.status === 'SUCCESS') {
+        setIsEmailChecked(true); // ✅ 중복 확인 완료
       } else {
-        setEmailError('');
+        setIsEmailChecked(false);
+        emailRef.current?.focus();
       }
     } catch (error) {
       console.error('이메일 중복 검사 실패:', error);
-      setEmailError('서버 오류가 발생했습니다.');
+      setEmailMessage('서버 오류가 발생했습니다. 관리자에게 문의하세요.');
+      setIsEmailChecked(false);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); // 기본 폼 제출 방지
-    setErrorMessage(''); // 전체 에러 초기화
+    event.preventDefault();
+    setNicknameMessage('');
+    setEmailMessage('');
+    setAllMessage('');
 
-    const userData = {
-      profile_image: selectedAvatar,
-      nickname,
-      email,
-      password_hash: password, // 서버의 필드명에 맞춤
-    };
+    // ✅ 중복 확인 여부 체크 후 alert 띄우기
+    if (!isNicknameChecked) {
+      alert('닉네임 중복 확인을 해주세요.');
+      nicknameRef.current?.focus();
+      return;
+    }
+    if (!isEmailChecked) {
+      alert('이메일 중복 확인을 해주세요.');
+      emailRef.current?.focus();
+      return;
+    }
 
-    // 빈 값 체크
+    // ✅ 필수 입력값 체크
     if (!email || !password || !nickname) {
-      setErrorMessage('이메일, 비밀번호, 닉네임을 모두 입력해주세요.');
+      setAllMessage('이메일, 비밀번호, 닉네임을 모두 입력해주세요.');
+      setCheckStatus('ERROR');
       if (!nickname) nicknameRef.current?.focus();
       else if (!email) emailRef.current?.focus();
       else passwordRef.current?.focus();
       return;
     }
+
+    // ✅ 비밀번호 유효성 검사
+    const passwordRegex = /^[A-Za-z\d\W_]{8,16}$/;
+    if (!passwordRegex.test(password)) {
+      alert(
+        '비밀번호는 8~16자이며, 영어, 숫자, 특수문자로 구성할 수 있습니다.',
+      );
+      passwordRef.current?.focus();
+      return;
+    }
+
+    const userData = {
+      profile_image: selectedAvatar,
+      nickname,
+      email,
+      password_hash: password,
+    };
 
     try {
       const response = await axios.post(
@@ -86,36 +124,29 @@ export default function SignUp() {
         userData,
         { headers: { 'Content-Type': 'application/json' } },
       );
-
-      console.log('서버 응답:', response.data);
+      console.log(response.data);
 
       if (response.data.status === 'ERROR') {
-        setErrorMessage(response.data.message);
-
-        // 포커스 이동: 에러 내용에 따라 적절한 input에 포커스
-        if (response.data.message.includes('이메일')) {
+        setAllMessage(response.data.message);
+        if (allMessage.includes('이메일')) {
           emailRef.current?.focus();
-        } else if (response.data.message.includes('비번')) {
+        } else if (allMessage.includes('비번')) {
           passwordRef.current?.focus();
-        } else if (response.data.message.includes('닉네임')) {
+        } else if (allMessage.includes('닉네임')) {
           nicknameRef.current?.focus();
+        } else if (allMessage.includes('가입된 사용자')) {
+          alert(setAllMessage);
         }
         return;
       }
 
-      // 회원가입 성공
       alert('회원가입이 성공되었습니다.');
       navigate('/'); // 메인 페이지로 이동
     } catch (error) {
       console.error('회원가입 실패:', error);
-      setErrorMessage('서버 오류가 발생했습니다. 다시 시도해주세요.');
+      setAllMessage('서버 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
-
-  useEffect(() => {
-    if (nickname) checkNickname();
-    if (email) checkEmail();
-  }, [nickname, email]);
 
   return (
     <section
@@ -124,7 +155,6 @@ export default function SignUp() {
     >
       <Container className="px-0">
         <Row className="d-flex flex-row w-100">
-          {/* SignUp 폼 */}
           <Col
             md={6}
             className="d-flex justify-content-center"
@@ -142,29 +172,56 @@ export default function SignUp() {
 
                   <Form.Group controlId="nickname" className="mt-3 mb-3">
                     <Form.Label>Nickname</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="닉네임을 작성해주세요"
-                      value={nickname}
-                      onChange={e => setNickname(e.target.value)}
-                      ref={nicknameRef} // 포커스 이동을 위한 ref
-                    />
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        value={nickname}
+                        onChange={e => {
+                          setNickname(e.target.value);
+                          setIsNicknameChecked(false); // 닉네임 변경되면 다시 중복 확인 필요
+                        }}
+                        ref={nicknameRef}
+                      />
+
+                      <Button
+                        type="button"
+                        variant="outline-primary"
+                        onClick={checkNickname}
+                      >
+                        중복 확인
+                      </Button>
+                    </InputGroup>
+                    {nicknameMessage && (
+                      <ServerMessage
+                        message={nicknameMessage}
+                        type={checkStatus}
+                      />
+                    )}
                   </Form.Group>
-                  {/* ErrorMessage 컴포넌트를 사용하여 닉네임 에러 메시지 표시 */}
-                  <ErrorMessage error={nicknameError} />
 
                   <Form.Group controlId="email" className="mb-3">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="example@example.com"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      ref={emailRef} // 포커스 이동을 위한 ref
-                    />
+                    <InputGroup>
+                      <Form.Control
+                        type="email"
+                        value={email}
+                        onChange={e => {
+                          setEmail(e.target.value);
+                          setIsEmailChecked(false); // 이메일 변경되면 다시 중복 확인 필요
+                        }}
+                        ref={emailRef}
+                      />
+                      <Button variant="outline-primary" onClick={checkEmail}>
+                        중복 확인
+                      </Button>
+                    </InputGroup>
+                    {emailMessage && (
+                      <ServerMessage
+                        message={emailMessage}
+                        type={checkStatus}
+                      />
+                    )}
                   </Form.Group>
-                  {/* ErrorMessage 컴포넌트를 사용하여 이메일 에러 메시지 표시 */}
-                  <ErrorMessage error={emailError} />
 
                   <Form.Group controlId="password" className="mb-3">
                     <Form.Label>Password</Form.Label>
@@ -173,11 +230,12 @@ export default function SignUp() {
                       placeholder="비밀번호를 입력하세요."
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      ref={passwordRef} // 포커스 이동을 위한 ref
+                      ref={passwordRef}
                     />
+                    {allMessage && (
+                      <ServerMessage message={allMessage} type={checkStatus} />
+                    )}
                   </Form.Group>
-                  {/* ErrorMessage 컴포넌트를 사용하여 전체 에러 메시지 표시 */}
-                  <ErrorMessage error={errorMessage} />
 
                   <Button
                     variant="primary"
@@ -190,8 +248,6 @@ export default function SignUp() {
               </div>
             </div>
           </Col>
-
-          {/* TransitionComp */}
           <Col
             md={6}
             className="d-flex justify-content-center align-items-center"

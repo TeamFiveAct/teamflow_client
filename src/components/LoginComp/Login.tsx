@@ -2,17 +2,19 @@ import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import ErrorMessage from './ErrorMessage'; // 에러 메시지 컴포넌트 import
 import TransitionComp from './TransitionComp';
-import { NULL } from 'sass';
+import ServerMessage from './ServerMessage';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState(''); // 이메일 에러 메시지 상태
-  const [passwordError, setPasswordError] = useState(''); // 비밀번호 에러 메시지 상태
-  const [error, setError] = useState(''); // 전체 에러 메시지
   const [loginType, setLoginType] = useState<'LOGIN' | 'SIGN UP'>('LOGIN');
+  const [emailMessage, setEmailMessage] = useState(''); // 이메일 메시지 상태
+  const [passwordMessage, setPasswordMessage] = useState(''); // 이메일 메시지 상태
+  const [allMessage, setAllMessage] = useState(''); // 전체 메시지 상태
+  const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
+    'SUCCESS',
+  );
 
   const navigate = useNavigate();
 
@@ -22,9 +24,9 @@ export default function Login() {
   // 로그인 처리 함수
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault(); // 기본 제출 방지
-    setError(''); // 전체 에러 초기화
-    setEmailError(''); // 이메일 에러 초기화
-    setPasswordError(''); // 비밀번호 에러 초기화
+    setEmailMessage('');
+    setPasswordMessage('');
+    setAllMessage('');
 
     try {
       const response = await axios.post(
@@ -35,24 +37,27 @@ export default function Login() {
         },
       );
 
-      if (response.data.status === 'ERROR') {
-        const { message } = response.data;
-        if (message.includes('이메일')) {
-          setEmailError(message);
+      // ✅ 서버 응답에서 status 값을 직접 확인
+      const { status, message } = response.data;
+      setCheckStatus(status);
+
+      if (status === 'ERROR') {
+        if (message.includes('가입된 사용자')) {
+          setEmailMessage(message);
           emailRef.current?.focus();
         } else if (message.includes('비밀번호')) {
-          setPasswordError(message);
+          setPasswordMessage(message);
           passwordRef.current?.focus();
         } else {
-          setError(message);
+          setAllMessage(message);
         }
-      } else if (response.data.status === 'SUCCESS') {
+      } else if (status === 'SUCCESS') {
         // 로그인 성공 시 페이지 이동
         console.log('로그인 성공:', response.data);
         navigate('/'); // 메인 페이지로 이동
       }
     } catch (error) {
-      setError('로그인 중 오류가 발생했습니다.');
+      setAllMessage('로그인 중 오류가 발생했습니다.');
       console.error('로그인 오류:', error);
     }
   };
@@ -91,7 +96,12 @@ export default function Login() {
                       onChange={e => setEmail(e.target.value)}
                     />
                     {/* 이메일 에러 메시지 */}
-                    <ErrorMessage error={emailError} />
+                    {emailMessage && (
+                      <ServerMessage
+                        message={emailMessage}
+                        type={checkStatus}
+                      />
+                    )}
                   </Form.Group>
 
                   <Form.Group controlId="password" className="mb-5">
@@ -104,11 +114,18 @@ export default function Login() {
                       onChange={e => setPassword(e.target.value)}
                     />
                     {/* 비밀번호 에러 메시지 */}
-                    <ErrorMessage error={passwordError} />
+                    {passwordMessage && (
+                      <ServerMessage
+                        message={passwordMessage}
+                        type={checkStatus}
+                      />
+                    )}
                   </Form.Group>
 
                   {/* 전체 에러 메시지 */}
-                  {error && <Alert variant="danger">{error}</Alert>}
+                  {allMessage && (
+                    <ServerMessage message={allMessage} type={checkStatus} />
+                  )}
 
                   <Button variant="primary" type="submit" className="w-100">
                     로그인
