@@ -1,7 +1,9 @@
-export default function DashBoard() {
+import ProjectInfo from '../components/dashboardComp/ProjectInfo';
+
+export default function Dashboard() {
   return (
     <>
-      <div>여기는 협업 대시보드</div>
+      <ProjectInfo />
     </>
   );
 }

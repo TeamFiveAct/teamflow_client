@@ -1,0 +1,26 @@
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+.not-found-title {
+  font-size: 120px;
+  font-weight: bold;
+  color: #dc3545;
+}
+
+.not-found-text {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #6c757d;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  font-size: 18px;
+}
