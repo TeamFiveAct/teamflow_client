@@ -3,10 +3,25 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Form, Container, Col, Row, InputGroup } from 'react-bootstrap';
-import ProfileImg from './ProfileImg';
+import {
+  Button,
+  Form,
+  Container,
+  Col,
+  Row,
+  InputGroup,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCircleQuestion,
+  faGlassCheers,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
+import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
-import ServerMessage from './ServerMessage'; // 수정된 ServerMessage 컴포넌트 import
+import ProfileImg from './ProfileImg';
 
 export default function SignUp() {
   const [selectedAvatar, setSelectedAvatar] = useState('Mary Roebling');
@@ -149,121 +164,109 @@ export default function SignUp() {
   };
 
   return (
-    <section
-      className="d-flex justify-content-center align-items-center px-0 mt-4"
-      style={{ height: '100vh' }}
+    <Container
+      fluid
+      className="d-flex justify-content-center align-items-center min-vh-100 py-4"
+      style={{ paddingTop: '80px' }} // 기본 paddingTop 설정
     >
-      <Container className="px-0">
-        <Row className="d-flex flex-row w-100">
-          <Col
-            md={6}
-            className="d-flex justify-content-center"
-            style={{ height: '650px' }}
-          >
-            <div
-              className="card p-4"
-              style={{ maxWidth: '600px', width: '100%' }}
-            >
-              <h3 className="text-center fw-bold">SIGN UP</h3>
-              <hr style={{ width: '100%', border: '1px solid black' }} />
-              <div>
-                <Form onSubmit={handleSubmit} className="mt-3">
-                  <ProfileImg onSelectAvatar={setSelectedAvatar} />
+      <Row className="w-100 justify-content-center g-3">
+        {/* 회원가입 카드 */}
+        <Col xs={12} md={5} className="d-flex justify-content-center px-3">
+          <div className="card p-4 w-100" style={{ maxWidth: '500px' }}>
+            <h3 className="text-center fw-bold">SIGN UP</h3>
+            <hr />
+            <Form onSubmit={handleSubmit}>
+              <ProfileImg onSelectAvatar={setSelectedAvatar} />
 
-                  <Form.Group controlId="nickname" className="mt-3 mb-3">
-                    <Form.Label>Nickname</Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type="text"
-                        value={nickname}
-                        onChange={e => {
-                          setNickname(e.target.value);
-                          setIsNicknameChecked(false); // 닉네임 변경되면 다시 중복 확인 필요
-                        }}
-                        ref={nicknameRef}
-                      />
-
-                      <Button
-                        type="button"
-                        variant="outline-primary"
-                        onClick={checkNickname}
-                      >
-                        중복 확인
-                      </Button>
-                    </InputGroup>
-                    {nicknameMessage && (
-                      <ServerMessage
-                        message={nicknameMessage}
-                        type={checkStatus}
-                      />
-                    )}
-                  </Form.Group>
-
-                  <Form.Group controlId="email" className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type="email"
-                        value={email}
-                        onChange={e => {
-                          setEmail(e.target.value);
-                          setIsEmailChecked(false); // 이메일 변경되면 다시 중복 확인 필요
-                        }}
-                        ref={emailRef}
-                      />
-                      <Button variant="outline-primary" onClick={checkEmail}>
-                        중복 확인
-                      </Button>
-                    </InputGroup>
-                    {emailMessage && (
-                      <ServerMessage
-                        message={emailMessage}
-                        type={checkStatus}
-                      />
-                    )}
-                  </Form.Group>
-
-                  <Form.Group controlId="password" className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="비밀번호를 입력하세요."
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      ref={passwordRef}
-                    />
-                    {allMessage && (
-                      <ServerMessage message={allMessage} type={checkStatus} />
-                    )}
-                  </Form.Group>
-
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="w-100 mt-3"
-                  >
-                    가입하기
+              <Form.Group controlId="nickname" className="mt-3 mb-3">
+                <Form.Label>Nickname</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type="text"
+                    value={nickname}
+                    onChange={e => {
+                      setNickname(e.target.value);
+                      setIsNicknameChecked(false);
+                    }}
+                    ref={nicknameRef}
+                  />
+                  <Button variant="outline-primary" onClick={checkNickname}>
+                    중복 확인
                   </Button>
-                </Form>
-              </div>
-            </div>
-          </Col>
-          <Col
-            md={6}
-            className="d-flex justify-content-center align-items-center"
-          >
-            <div
-              className="card p-4"
-              style={{ maxWidth: '600px', width: '100%' }}
-            >
-              <TransitionComp
-                loginType={loginType}
-                setLoginType={setLoginType}
-              />
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </section>
+                </InputGroup>
+                {nicknameMessage && (
+                  <ServerMessage message={nicknameMessage} type={checkStatus} />
+                )}
+              </Form.Group>
+
+              <Form.Group controlId="email" className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    onChange={e => {
+                      setEmail(e.target.value);
+                      setIsEmailChecked(false);
+                    }}
+                    ref={emailRef}
+                  />
+                  <Button variant="outline-primary" onClick={checkEmail}>
+                    중복 확인
+                  </Button>
+                </InputGroup>
+                {emailMessage && (
+                  <ServerMessage message={emailMessage} type={checkStatus} />
+                )}
+              </Form.Group>
+
+              <Form.Group controlId="password" className="mb-3">
+                <Form.Label>
+                  Password{' '}
+                  <OverlayTrigger
+                    placement="right"
+                    overlay={
+                      <Tooltip>
+                        비밀번호는 8~16자이며 영어, 숫자, 특수문자로 구성할 수
+                        있습니다.
+                      </Tooltip>
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={faCircleQuestion}
+                      style={{ cursor: 'pointer', marginLeft: '5px' }}
+                    />
+                  </OverlayTrigger>
+                </Form.Label>
+                <Form.Control
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  ref={passwordRef}
+                />
+                {allMessage && (
+                  <ServerMessage message={allMessage} type={checkStatus} />
+                )}
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="w-100 mt-3">
+                가입하기
+              </Button>
+            </Form>
+          </div>
+        </Col>
+
+        {/* 로그인 카드 */}
+        <Col
+          xs={12}
+          md={5}
+          className="d-flex justify-content-center align-items-center px-3 mt-4 mt-md-0"
+        >
+          <div className="card p-4 w-100" style={{ maxWidth: '500px' }}>
+            <TransitionComp loginType={loginType} setLoginType={setLoginType} />
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }

@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ProfileImg from '../loginComp/ProfileImg';
+import ProfileImg from '../LoginComp/ProfileImg';
 
 export default function MyPage() {
   const [userData, setUserData] = useState({
