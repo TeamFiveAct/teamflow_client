@@ -7,8 +7,9 @@ interface CreateRoomModalProps {
 }
 
 export default function CreateSpace({ show, onClose }: CreateRoomModalProps) {
-  const [spacePassword, setSpacePassword] = useState('');
   const [projectName, setProjectName] = useState('');
+  const [spaceDescription, setSpaceDescription] = useState('');
+  const [spacePassword, setSpacePassword] = useState('');
 
   const handleCreateProject = () => {
     // 서버로 프로젝트 생성 요청 (예시)
@@ -27,8 +28,11 @@ export default function CreateSpace({ show, onClose }: CreateRoomModalProps) {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group controlId="projectName">
-            <Form.Label>프로젝트 이름</Form.Label>
+          <Form.Group controlId="spaceName">
+            <Form.Label>
+              <p>생성할 프로젝트를 작성해주세요..</p>
+              <p>프로젝트 이름</p>
+            </Form.Label>
             <Form.Control
               type="text"
               placeholder="프로젝트 이름을 입력하세요."
@@ -36,11 +40,20 @@ export default function CreateSpace({ show, onClose }: CreateRoomModalProps) {
               onChange={e => setProjectName(e.target.value)}
             />
           </Form.Group>
-          <Form.Group controlId="spacePassword" className="mt-3">
-            <Form.Label>스페이스 패스워드</Form.Label>
+          <Form.Group controlId="spaceDescription" className="mt-3">
+            <Form.Label>프로젝트 설명</Form.Label>
             <Form.Control
-              type="password"
-              placeholder="스페이스 패스워드를 입력하세요."
+              type="text"
+              placeholder="프로젝트에 대한 설명을 입력하세요."
+              value={spaceDescription}
+              onChange={e => setSpaceDescription(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="spaceDescription" className="mt-3">
+            <Form.Label>참여코드 설정</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="프로젝트에 대한 설명을 입력하세요."
               value={spacePassword}
               onChange={e => setSpacePassword(e.target.value)}
             />

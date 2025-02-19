@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import TransitionComp from './TransitionComp';
 import ServerMessage from './ServerMessage';
+import TransitionComp from './TransitionComp';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -53,8 +53,10 @@ export default function Login() {
         }
       } else if (status === 'SUCCESS') {
         // 로그인 성공 시 페이지 이동
+        sessionStorage.setItem('session_valid', 'true');
+        sessionStorage.setItem('user_id', response.data.data.nickname);
         console.log('로그인 성공:', response.data);
-        navigate('/'); // 메인 페이지로 이동
+        navigate('/v1/workspace'); // 메인 페이지로 이동
       }
     } catch (error) {
       setAllMessage('로그인 중 오류가 발생했습니다.');
