@@ -1,0 +1,15 @@
+// 지원의 페이지들 헤더와 겹치치 않게 통일 설정
+.pagesSection {
+  position: relative;
+  top: 70px; /* 헤더 높이만큼 띄우기 */
+  left: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 1000; /* 헤더보다 낮게 */
+  // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+Modal {
+  justify-content: center;
+  align-items: center;
+}
