@@ -1,5 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useSelector } from 'react-redux';
+import { selectAuthProvider } from '../../store/authSlice';
 import ProfileImg from '../LoginComp/ProfileImg';
 import Avatar from 'boring-avatars';
 import useUserData from '../../hooks/useUserData';
@@ -7,11 +9,14 @@ import useUserActions from '../../hooks/useUserActions';
 
 export default function KakaoUserUpdate() {
   const { userData, editMode, setEditMode } = useUserData();
+  const authProvider = useSelector(selectAuthProvider); // ✅ Redux에서 가져오기
+  const isKakaoUser = authProvider === 'kakao';
+
   const {
     formData,
     setFormData,
     handleChange,
-    updateUser,
+    updateUser, // ✅ 비밀번호 검증을 안 하는 업데이트 함수
     selectedAvatar,
     setSelectedAvatar,
   } = useUserActions(userData, setEditMode);
@@ -30,7 +35,9 @@ export default function KakaoUserUpdate() {
         {userData.nickname ? `${userData.nickname}님의 정보` : '회원 정보'}
       </h2>
       <p className="text-center text-muted">
-        카카오 계정으로 로그인하였습니다.
+        {isKakaoUser
+          ? '카카오 계정으로 로그인하였습니다.'
+          : '일반 계정으로 로그인하였습니다.'}
       </p>
 
       <form onSubmit={updateUser} className="profile-form">
@@ -74,6 +81,8 @@ export default function KakaoUserUpdate() {
             disabled={!editMode}
           />
         </div>
+
+        {/* ✅ 비밀번호 입력 필드 없음 */}
 
         {/* ✅ 수정하기 버튼 / 저장 + 취소 버튼 */}
         {!editMode ? (
