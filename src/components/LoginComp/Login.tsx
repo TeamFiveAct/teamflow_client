@@ -31,6 +31,7 @@ export default function Login() {
     setAllMessage('');
 
     try {
+      console.log(password);
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/user/login`,
         {
@@ -56,8 +57,6 @@ export default function Login() {
         }
       } else if (status === 'SUCCESS') {
         // 로그인 성공 시 페이지 이동
-        sessionStorage.setItem('session_valid', 'true');
-        sessionStorage.setItem('user_id', response.data.data.nickname);
         console.log('로그인 성공:', response.data);
         dispatch(login(response.data.data.nickname)); // 추가한 것-아미나
         navigate('/v1/workspace'); // 메인 페이지로 이동

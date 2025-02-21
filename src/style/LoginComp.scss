@@ -1,3 +1,32 @@
+.pagesSection {
+  position: relative;
+  top: 70px; // 헤더 높이만큼 띄우기
+  left: auto;
+  width: 100%;
+  min-height: 400px; // 최소 높이 설정
+  background-color: white;
+  z-index: 1000; // 헤더보다 낮게
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+
+  // 반응형 스타일
+  @media (max-width: 1024px) {
+    padding: 15px;
+  }
+
+  @media (max-width: 768px) {
+    top: 60px; // 모바일 헤더 높이에 맞게 조정
+    padding: 10px;
+    min-height: 300px;
+  }
+
+  @media (max-width: 480px) {
+    top: 50px;
+    padding: 5px;
+    min-height: 250px;
+  }
+}
+
 .profile-container {
   width: auto;
   display: flex;
