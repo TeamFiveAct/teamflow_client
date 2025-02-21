@@ -15,10 +15,16 @@ const avatarNames: string[] = [
 
 interface ProfileImgProps {
   onSelectAvatar: (name: string) => void;
+  currentAvatar: string; // ✅ 기존 프로필 이미지를 받아와서 설정할 수 있도록 추가
 }
 
-export default function ProfileImg({ onSelectAvatar }: ProfileImgProps) {
-  const [selectedName, setSelectedName] = useState(avatarNames[0]);
+export default function ProfileImg({
+  onSelectAvatar,
+  currentAvatar,
+}: ProfileImgProps) {
+  const [selectedName, setSelectedName] = useState(
+    currentAvatar || avatarNames[0],
+  ); // ✅ 기존 프로필 이미지 사용);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSelect = (name: string) => {

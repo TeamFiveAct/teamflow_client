@@ -8,6 +8,7 @@ import DashBoard from './pages/DashBoard';
 import JoinSpace from './pages/JoinSpace';
 import '../src/style/app.scss';
 
+
 // bootstrap 불러오기
 import 'bootstrap/dist/css/bootstrap.css';
 import CreateSpace from './components/joinspaceComp/CreateSpace';
@@ -17,22 +18,24 @@ import SignUp from './components/LoginComp/SignUp';
 function App() {
   return (
     <>
-      <Header />
 
-      <Routes>
-        <Route path="/" element={<Layout />} />
-        <Route index element={<Home />} />
+        <Header />
 
-        <Route path="/v1/user" element={<MyProfile />} />
+        <Routes>
+          <Route path="/" element={<Layout />} />
+          <Route index element={<Home />} />
 
-        <Route path="/v1/user/login" element={<LoginPage />} />
-        <Route path="/v1/user/join" element={<SignUp />} />
-        <Route path="/v1/workspace" element={<JoinSpace />} />
-        <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="/v1/user" element={<MyProfile />} />
 
-      <Footer />
+          <Route path="/v1/user/login" element={<LoginPage />} />
+          <Route path="/v1/user/join" element={<SignUp />} />
+          <Route path="/v1/workspace" element={<JoinSpace />} />
+          <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
+        <Footer />
+ 
     </>
   );
 }

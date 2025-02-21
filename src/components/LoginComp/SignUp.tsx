@@ -176,7 +176,10 @@ export default function SignUp() {
             <h3 className="text-center fw-bold">SIGN UP</h3>
             <hr />
             <Form onSubmit={handleSubmit}>
-              <ProfileImg onSelectAvatar={setSelectedAvatar} />
+              <ProfileImg
+                onSelectAvatar={setSelectedAvatar}
+                currentAvatar={selectedAvatar}
+              />
 
               <Form.Group controlId="nickname" className="mt-3 mb-3">
                 <Form.Label>Nickname</Form.Label>
