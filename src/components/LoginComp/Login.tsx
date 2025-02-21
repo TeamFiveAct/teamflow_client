@@ -4,6 +4,8 @@ import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
+import { useDispatch } from 'react-redux'; //추가한 것것
+import { login } from '../../store/authSlice'; //추가한 것것
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -15,7 +17,7 @@ export default function Login() {
   const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
     'SUCCESS',
   );
-
+  const dispatch = useDispatch(); // 추가한것것
   const navigate = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -35,6 +37,7 @@ export default function Login() {
           email,
           password_hash: password,
         },
+        { withCredentials: true }, // ✅ 세션 유지 - 아미나 추가
       );
 
       // ✅ 서버 응답에서 status 값을 직접 확인
@@ -56,6 +59,7 @@ export default function Login() {
         sessionStorage.setItem('session_valid', 'true');
         sessionStorage.setItem('user_id', response.data.data.nickname);
         console.log('로그인 성공:', response.data);
+        dispatch(login(response.data.data.nickname)); // 추가한 것-아미나
         navigate('/v1/workspace'); // 메인 페이지로 이동
       }
     } catch (error) {

@@ -1,18 +1,21 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../../style/home.scss";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowRight } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedIn } from '../../store/authSlice';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import '../../style/home.scss';
 
 export default function HomeComponent() {
   const navigate = useNavigate();
+  const isLoggedIn = useSelector(selectIsLoggedIn); // ✅ 로그인 상태 확인
   const [isHovered, setIsHovered] = useState(false); // ✅ 화면 회색 오버레이를 위한 상태
 
   return (
     <div className="home-container">
-      {/* ✅ 버튼 hover 시 회색 오버레이 추가 */}
-      {isHovered && <div className="dark-overlay"></div>}
+      {/* ✅ 버튼 hover 시 회색 오버레이 추가 (로그인 안된 경우만) */}
+      {!isLoggedIn && isHovered && <div className="dark-overlay"></div>}
 
       <main className="container mt-5 content">
         {/* ✅ 첫 번째 섹션 */}
@@ -20,7 +23,7 @@ export default function HomeComponent() {
           <div className="row align-items-center">
             <div className="col-md-6 text-section">
               <h1 className="fw-bold">
-                개발자들의 협업 스페이스,{" "}
+                개발자들의 협업 스페이스,{' '}
                 <span className="text-primary">TeamFlow</span>
               </h1>
               <p className="text-muted">
@@ -81,15 +84,17 @@ export default function HomeComponent() {
         </div>
       </main>
 
-      {/* ✅ 화면 오른쪽 중간에 고정된 버튼 (화살표 + 시작하기) */}
-      <button
-        className="floating-start-button"
-        onClick={() => navigate("/v1/user/login")}
-        onMouseEnter={() => setIsHovered(true)} // ✅ 버튼 호버 시 화면 어두워짐
-        onMouseLeave={() => setIsHovered(false)} // ✅ 마우스 이동하면 원래 상태
-      >
-        🚀 시작하기 <FaArrowRight size={20} />
-      </button>
+      {/* ✅ 로그인 안한 경우에만 "시작하기" 버튼 표시 */}
+      {!isLoggedIn && (
+        <button
+          className="floating-start-button"
+          onClick={() => navigate('/v1/user/login')}
+          onMouseEnter={() => setIsHovered(true)} // ✅ 버튼 호버 시 화면 어두워짐
+          onMouseLeave={() => setIsHovered(false)} // ✅ 마우스 이동하면 원래 상태
+        >
+          🚀 시작하기 <FaArrowRight size={20} />
+        </button>
+      )}
     </div>
   );
 }
