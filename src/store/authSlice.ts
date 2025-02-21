@@ -6,11 +6,15 @@ interface AuthState {
   authProvider: string | null;
 }
 
+// ✅ 세션 스토리지에서 올바르게 값을 가져오도록 수정
+const getSessionItem = (key: string) =>
+  typeof window !== 'undefined' ? sessionStorage.getItem(key) : null;
+
 const initialState: AuthState = {
-  isLoggedIn: sessionStorage.getItem('session_valid') === 'true', // ✅ 세션 유지
-  nickname: sessionStorage.getItem('nickname') || null,
-  // authProvider: sessionStorage.getItem('auth_provider') || null,
-  authProvider: 'kakao', // ✅ 카카오 로그인 상태로 변경- 테스트용
+  isLoggedIn: getSessionItem('session_valid') === 'true',
+  nickname: getSessionItem('nickname'),
+  authProvider: getSessionItem('auth_provider') || null,
+  // authProvider: 'kakao', // kakaologin test
 };
 
 const authSlice = createSlice({

@@ -32,7 +32,7 @@ export default function UserUpdate() {
   }, [userData.nickname, setFormData]);
 
   return (
-    <div className="container mt-5">
+    <div className="container-user mt-5">
       <h2 className="text-center">
         {userData.nickname ? `${userData.nickname}님의 정보` : '회원 정보'}
       </h2>
