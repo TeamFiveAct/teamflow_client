@@ -1,53 +1,58 @@
-// import React, { useEffect, useState } from 'react';
-// import { Button } from 'react-bootstrap';
-// import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import CreateSpace from '../components/joinspaceComp/CreateSpace';
-// import '../style/joinspace.scss';
+import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import CreateSpace from '../components/joinspaceComp/CreateSpace';
+import '../style/joinspace.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import EnterSpacePassword from '../components/joinspaceComp/EnterSpacePassword';
+import SpaceList from '../components/joinspaceComp/SpaceList';
+// import useCheckSession from '../hooks/useCheckSession';
 
-// export default function JoinSpace() {
-//   const navigate = useNavigate();
-//   const [showModal, setShowModal] = useState(false);
+export default function JoinSpace() {
+  const navigate = useNavigate();
+  const sessionValid = useSelector(
+    (state: RootState) => state.checkSession.sessionValid,
+  );
+  // const sessionValid = useCheckSession();
+  const [showModal, setShowModal] = useState(false);
 
-//   const handleCreateRoom = async () => {
-//     setShowModal(true);
-//   };
+  const handleCreateRoom = async () => {
+    setShowModal(true);
+  };
 
-//   const handleCloseModal = () => {
-//     setShowModal(false);
-//   };
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
-//   useEffect(() => {
-//     const sessionValid = sessionStorage.getItem('session_valid');
-//     if (!sessionValid) {
-//       alert('로그인 기간이 만료되었습니다. 다시 로그인 해주세요.');
-//       navigate('/v1/user/login');
-//     }
-//   }, []);
-
-//   return (
-//     <section className="pagesSection">
-//       <Button className={'mt-300'} onClick={handleCreateRoom}>
-//         방 만들기
-//       </Button>
-//       <CreateSpace show={showModal} onClose={handleCloseModal} />
-//     </section>
-//   );
-// }
-
-import Workspace from '../components/joinspaceComp/Workspace';
-
-const JoinSpace = () => {
-  const dummyWorkspaces = [
-    { id: 1, name: 'TeamFlow', isActive: true },
-    // { id: 2, name: 'Project1', isActive: false },
-    { id: 3, name: 'Project2', isActive: false },
-  ];
+  useEffect(() => {
+    if (!sessionValid) {
+      alert('로그인 기간이 만료되었습니다. 다시 로그인 해주세요.');
+      navigate('/v1/user/login');
+    }
+  }, [sessionValid, navigate]);
 
   return (
-    <>
-      <Workspace workspaces={dummyWorkspaces} />
-    </>
+    <section className="joinspaceSection">
+      <div className="leftSideContainer">
+        <div className="createSpaceBtnDiv">
+          <h3>TeamFlow에 오신것을 환영합니다!</h3>
+          <h5>워크 스페이스 생성을 통해 협업 스페이스를 만들어보세요!</h5>
+          <Button className={'mt-300'} onClick={handleCreateRoom}>
+            워크 스페이스 생성
+          </Button>
+          <hr />
+        </div>
+        <CreateSpace show={showModal} onClose={handleCloseModal} />
+        <div className="enterSpaceBtnDiv">
+          <EnterSpacePassword />
+        </div>
+      </div>
+
+      <div className="mySpacelistDiv">
+        <SpaceList />
+      </div>
+    </section>
   );
-};
-export default JoinSpace;
+}

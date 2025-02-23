@@ -24,7 +24,7 @@ export default function TransitionComp({
   };
 
   return (
-    <Container style={{ height: '600px' }}>
+    <Container style={{ height: '450px' }}>
       <Row className="text-center h-100">
         <Col
           className="d-flex flex-column justify-content-center align-items-center"

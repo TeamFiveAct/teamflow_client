@@ -4,8 +4,8 @@ import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
-import { useDispatch } from 'react-redux';
-import { login } from '../../store/authSlice';
+import { useDispatch } from 'react-redux'; //추가한 것것
+import { login, setSessionStatus } from '../../store/modules/checkSessionSlice';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function Login() {
   const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
     'SUCCESS',
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // 추가한 것
   const navigate = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -40,7 +40,6 @@ export default function Login() {
         { withCredentials: true },
       );
 
-      // ✅ 서버 응답에서 status 값을 직접 확인
       const { status, message } = response.data;
       setCheckStatus(status);
 
@@ -55,10 +54,11 @@ export default function Login() {
           setAllMessage(message);
         }
       } else if (status === 'SUCCESS') {
-        // 로그인 성공 시 페이지 이동
         console.log('로그인 성공:', response.data);
-        dispatch(login(response.data.data.nickname));
-        navigate('/v1/workspace'); // 메인 페이지로 이동
+        dispatch(login(response.data.data.nickname)); // 세션 발급 및 Redux 저장
+        // 세션이 유효하다고 표시
+        dispatch(setSessionStatus(true));
+        navigate('/v1/workspace');
       }
     } catch (error) {
       setAllMessage('로그인 중 오류가 발생했습니다.');
@@ -77,11 +77,11 @@ export default function Login() {
           <Col
             md={6}
             className="d-flex justify-content-center align-items-center"
-            style={{ height: '650px' }}
+            style={{ height: '500px' }}
           >
             <div
               className="card p-4 d-flex flex-column justify-content-center"
-              style={{ maxWidth: '600px', width: '100%', height: '100%' }}
+              style={{ maxWidth: '500px', width: '100%', height: '100%' }}
             >
               <h3 className="text-center fw-bold">LOGIN</h3>
               <hr style={{ width: '100%', border: '1px solid black' }} />
