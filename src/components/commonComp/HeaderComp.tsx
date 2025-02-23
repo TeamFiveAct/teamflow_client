@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectIsLoggedIn } from '../../store/authSlice';
+// import { selectIsLoggedIn } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import {
   FaSignInAlt,
@@ -11,14 +11,18 @@ import {
 } from 'react-icons/fa';
 import '../../style/common.scss';
 import AboutUsModal from '../commonComp/AboutUsModal';
-import useSession from '../../hooks/useSession';
+// import useSession from '../../hooks/useSession';
 import useAuthActions from '../../hooks/useAuthActions';
+import { RootState } from '../../store/store';
 
 export default function Header() {
-  useSession(); // ✅ 세션 체크 훅 실행
+  // useSession(); // ✅ 세션 체크 훅 실행
   const { handleLogin, handleLogout, handleDeleteAccount } = useAuthActions();
 
-  const isLoggedIn = useSelector(selectIsLoggedIn);
+  // const isLoggedIn = useSelector(selectIsLoggedIn);
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.checkSession.sessionValid,
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAboutUs, setShowAboutUs] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

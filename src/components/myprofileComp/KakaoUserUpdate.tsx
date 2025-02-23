@@ -1,15 +1,19 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSelector } from 'react-redux';
-import { selectAuthProvider } from '../../store/authSlice';
+// import { selectAuthProvider } from '../../store/authSlice';
 import ProfileImg from '../LoginComp/ProfileImg';
 import Avatar from 'boring-avatars';
 import useUserData from '../../hooks/useUserData';
 import useUserActions from '../../hooks/useUserActions';
+import { RootState } from '../../store/store';
 
 export default function KakaoUserUpdate() {
   const { userData, editMode, setEditMode } = useUserData();
-  const authProvider = useSelector(selectAuthProvider); // ✅ Redux에서 가져오기
+  const authProvider = useSelector(
+    (state: RootState) => state.checkSession.authProvider,
+  ); // ✅ Redux에서 가져오기
+  // const authProvider = useSelector(selectAuthProvider); // ✅ Redux에서 가져오기
   const isKakaoUser = authProvider === 'kakao';
 
   const {

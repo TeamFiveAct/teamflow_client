@@ -1,22 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { BrowserRouter } from 'react-router-dom';
+import store, { persistor } from './store/store';
 import { Provider } from 'react-redux';
-import store from './store/store';
-
-// import axios from 'axios';
-
-// axios.defaults.withCredentials = true; // ✅ 모든 요청에 쿠키 포함
+import { PersistGate } from 'redux-persist/integration/react';
+import { Persistor } from 'redux-persist'; // 타입 추가
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <PersistGate persistor={persistor as any}>
       <App />
-    </BrowserRouter>
-    //{' '}
+    </PersistGate>
   </Provider>,
 );

@@ -1,13 +1,18 @@
 //teamflow_client\src\hooks\useAuthActions.ts
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, deleteAccount, selectAuthProvider } from '../store/authSlice';
+// import { logout, deleteAccount, selectAuthProvider } from '../store/authSlice';
 import axios from 'axios';
+import { RootState } from '../store/store';
+import { deleteAccount, logout } from '../store/modules/checkSessionSlice';
 
 export default function useAuthActions() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authProvider = useSelector(selectAuthProvider);
+  // const authProvider = useSelector(selectAuthProvider); // ✅ Redux에서 가져오기
+  const authProvider = useSelector(
+    (state: RootState) => state.checkSession.authProvider,
+  );
 
   const handleLogin = () => navigate('/v1/user/login');
 
@@ -19,8 +24,8 @@ export default function useAuthActions() {
       await axios.post(logoutUrl, {}, { withCredentials: true });
 
       dispatch(logout());
-      sessionStorage.removeItem('session_valid');
-      sessionStorage.removeItem('user_id');
+      // sessionStorage.removeItem('session_valid');
+      // sessionStorage.removeItem('user_id');
 
       navigate('/');
     } catch (error) {
@@ -35,8 +40,8 @@ export default function useAuthActions() {
       await axios.delete('/v1/user', { withCredentials: true });
 
       dispatch(deleteAccount());
-      sessionStorage.removeItem('session_valid');
-      sessionStorage.removeItem('user_id');
+      // sessionStorage.removeItem('session_valid');
+      // sessionStorage.removeItem('user_id');
 
       alert('회원 탈퇴가 완료되었습니다.');
       navigate('/');

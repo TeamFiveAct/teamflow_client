@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { selectIsLoggedIn, selectNickname } from '../store/authSlice';
+import { RootState } from '../store/store';
+// import { selectIsLoggedIn, selectNickname } from '../store/authSlice';
 
 interface UserData {
   profile_image: string;
@@ -11,8 +12,14 @@ interface UserData {
 }
 
 export default function useUserData() {
-  const isLoggedIn = useSelector(selectIsLoggedIn);
-  const nickname = useSelector(selectNickname);
+  // const isLoggedIn = useSelector(selectIsLoggedIn);
+  // const nickname = useSelector(selectNickname);
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.checkSession.sessionValid,
+  );
+  const nickname = useSelector(
+    (state: RootState) => state.checkSession.nickname,
+  );
   const [userData, setUserData] = useState<UserData>({
     profile_image: '',
     nickname: '',

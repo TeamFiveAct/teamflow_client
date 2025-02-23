@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowRight } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import { selectIsLoggedIn } from '../../store/authSlice';
+// import { selectIsLoggedIn } from '../../store/authSlice';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../../style/home.scss';
+import { RootState } from '../../store/store';
 
 export default function HomeComponent() {
   const navigate = useNavigate();
-  const isLoggedIn = useSelector(selectIsLoggedIn); // ✅ 로그인 상태 확인
+  // const isLoggedIn = useSelector(selectIsLoggedIn);
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.checkSession.sessionValid,
+  ); // ✅ 로그인 상태 확인
   const [isHovered, setIsHovered] = useState(false); // ✅ 화면 회색 오버레이를 위한 상태
 
   return (
