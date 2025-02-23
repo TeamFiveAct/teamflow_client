@@ -1,1 +1,56 @@
+/* workspace.scss */
+.workspace-container {
+  height: 100vh;
+}
 
+.workspace-left {
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.workspace-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.workspace-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-align: center;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.workspace-circle.large {
+  width: 100px;
+  height: 100px;
+  background-color: #4caf50;
+  color: white;
+}
+
+.workspace-circle.small {
+  width: 70px;
+  height: 70px;
+  background-color: #aaa;
+}
+
+.workspace-circle.add {
+  background-color: #ddd;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+}

@@ -1,0 +1,88 @@
+// ✅ 모달 배경을 어둡게 설정 (뒷 화면이 흐릿하게 보이도록)
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); // ✅ 배경을 어둡게 설정
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1040; // ✅ 배경이 모달보다 한 단계 아래에 위치하도록 설정
+}
+
+// ✅ 모달 본체 (배경 위에 뜨도록 설정)
+.task-detail-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1050; // ✅ 다른 요소보다 위에 표시
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .task-priority {
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  .task-dates {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .task-description {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+  }
+
+  // ✅ 닫기 버튼과 수정 버튼 정렬
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+
+  // ✅ 닫기 버튼 스타일
+  .close-btn {
+    background: none;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  // ✅ 수정 버튼 스타일
+  .edit-btn {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); // 배경을 반투명하게 설정
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1040; // 다른 요소보다 앞에 배치
+}
