@@ -109,6 +109,14 @@ export default function Header() {
                   <li className="nav-item">
                     <button
                       className="nav-link btn"
+                      onClick={() => navigate('/v1/workspace/:space_id')}
+                    >
+                      Dashboard
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link btn"
                       onClick={() => {
                         navigate('/v1/user'); // ✅ 먼저 이동
                         window.location.reload(); // ✅ 페이지 새로고침 실행

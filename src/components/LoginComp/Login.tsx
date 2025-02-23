@@ -4,8 +4,8 @@ import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
-import { useDispatch } from 'react-redux'; //추가한 것것
-import { login } from '../../store/authSlice'; //추가한 것것
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/authSlice';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function Login() {
   const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
     'SUCCESS',
   );
-  const dispatch = useDispatch(); // 추가한것것
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -31,14 +31,13 @@ export default function Login() {
     setAllMessage('');
 
     try {
-      console.log(password);
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/user/login`,
         {
           email,
           password_hash: password,
         },
-        { withCredentials: true }, // ✅ 세션 유지 - 아미나 추가
+        { withCredentials: true },
       );
 
       // ✅ 서버 응답에서 status 값을 직접 확인
@@ -58,7 +57,7 @@ export default function Login() {
       } else if (status === 'SUCCESS') {
         // 로그인 성공 시 페이지 이동
         console.log('로그인 성공:', response.data);
-        dispatch(login(response.data.data.nickname)); // 추가한 것-아미나
+        dispatch(login(response.data.data.nickname));
         navigate('/v1/workspace'); // 메인 페이지로 이동
       }
     } catch (error) {

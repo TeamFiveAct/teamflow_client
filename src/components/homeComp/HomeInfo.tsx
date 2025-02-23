@@ -17,7 +17,7 @@ export default function HomeComponent() {
       {/* ✅ 버튼 hover 시 회색 오버레이 추가 (로그인 안된 경우만) */}
       {!isLoggedIn && isHovered && <div className="dark-overlay"></div>}
 
-      <main className="container mt-5 content">
+      <main className="container-home mt-5 content">
         {/* ✅ 첫 번째 섹션 */}
         <div id="section1" className="scroll-section">
           <div className="row align-items-center">
