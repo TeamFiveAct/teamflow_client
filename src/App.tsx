@@ -10,13 +10,35 @@ import '../src/style/app.scss';
 
 // bootstrap 불러오기
 import 'bootstrap/dist/css/bootstrap.css';
-// import CreateSpace from './components/joinspaceComp/CreateSpace';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import SignUp from './components/LoginComp/SignUp';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import useCheckSession from './hooks/useCheckSession';
+
+// Chat 페이지와 ChatButton 컴포넌트 추가
+import Chat from './components/dashboardComp/Chat';
+import ChatButton from './components/chattingComp/ChatButton';
+import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: #e9ecef;
+    color: #212529;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+`;
 
 function App() {
   const sessionValid = useSelector(
@@ -25,25 +47,41 @@ function App() {
 
   console.log('현재 세션 상태 app.tsx:', sessionValid); // 세션 상태 로그
 
+  // 테스트용 사용자 / 워크스페이스 정보
+  const user_id = 1;
+  const workspace_id = 1;
+
   return (
-    <Router>
-      {/* 조건부로 SessionChecker 호출 */}
-      {sessionValid && <SessionChecker />}{' '}
-      {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
-      <Header />
-      <Routes>
-        <Route path="/" element={<Layout />} />
-        <Route index element={<Home />} />
-        <Route path="/v1/user" element={<MyProfile />} />
-        <Route path="/v1/user/login" element={<LoginPage />} />
-        <Route path="/v1/user/join" element={<SignUp />} />
-        <Route path="/v1/mySpace" element={<JoinSpace />} />{' '}
-        {/* /workspace 변경 */}
-        <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Footer />
-    </Router>
+    <>
+      <GlobalStyle />
+      <Router>
+        {/* 조건부로 SessionChecker 호출 */}
+        {sessionValid && <SessionChecker />}
+        {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
+        <Header />
+        <Routes>
+          <Route path="/" element={<Layout />} />
+          <Route index element={<Home />} />
+          <Route path="/v1/user" element={<MyProfile />} />
+          <Route path="/v1/user/login" element={<LoginPage />} />
+          <Route path="/v1/user/join" element={<SignUp />} />
+          <Route path="/v1/mySpace" element={<JoinSpace />} />
+          {/* /workspace 변경 */}
+          <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
+          {/* Chat 페이지 라우트 추가 */}
+          <Route
+            path="/chat"
+            element={<Chat user_id={user_id} workspace_id={workspace_id} />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        {/* 테스트용 Chat 컴포넌트를 항상 렌더링 */}
+        <Chat user_id={user_id} workspace_id={workspace_id} />
+        {/* ChatButton 컴포넌트는 고정 위치에 표시됩니다 */}
+        <ChatButton />
+        <Footer />
+      </Router>
+    </>
   );
 }
 
