@@ -8,9 +8,14 @@ import PasswordModal from './PasswordModal';
 interface CreateRoomModalProps {
   show: boolean;
   onClose: () => void;
+  refreshSpaces: () => void; // 부모 콜백
 }
 
-const CreateSpace = ({ show, onClose }: CreateRoomModalProps) => {
+const CreateSpace = ({
+  show,
+  onClose,
+  refreshSpaces,
+}: CreateRoomModalProps) => {
   const [projectName, setProjectName] = useState('');
   const [spaceDescription, setSpaceDescription] = useState('');
   const navigate = useNavigate();
@@ -33,10 +38,12 @@ const CreateSpace = ({ show, onClose }: CreateRoomModalProps) => {
         const password = response.data.data.space_password;
         setUniquePassword(password);
         setPasswordModalShow(true); // 모달을 표시
+
+        refreshSpaces();
       } else {
         if (response.data.message.includes('생성에 실패')) {
           alert(response.data.message);
-          navigate('/v1/workspace');
+          navigate('/v1/mySpace');
         } else if (response.data.message.includes('로그인')) {
           alert(response.data.message);
           navigate('/v1/user/login');
@@ -95,8 +102,6 @@ const CreateSpace = ({ show, onClose }: CreateRoomModalProps) => {
         onClose={() => setPasswordModalShow(false)}
         password={uniquePassword}
       />
-      {/* M7HTWS6C-362190 */}
-      {/* M7HU4XCT-629485 */}
     </>
   );
 };

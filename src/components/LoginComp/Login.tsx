@@ -131,7 +131,7 @@ export default function Login() {
 
                 <Button
                   variant="link"
-                  href="http://localhost:8000/v1/user/kakao-login"
+                  href={`${process.env.REACT_APP_API_SERVER}/user/kakao-login`}
                   target="_blank"
                 >
                   <img

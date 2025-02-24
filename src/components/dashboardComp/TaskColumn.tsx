@@ -4,14 +4,16 @@ import TaskDetailModal from './TaskDetailModal';
 import TaskModal from './TaskModal'; // ✅ TaskModal 추가
 import '../../style/taskColumn.scss';
 import { Task } from '../../types/types';
+import { useDispatch } from 'react-redux';
+import { updateTask, deleteTask } from '../../store/modules/taskSlice';
 
 interface TaskColumnProps {
   title: string;
   state: 'open' | 'in_progress' | 'done';
   tasks: Task[];
+  onCreate: (state: 'open' | 'in_progress' | 'done') => void;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
-  onCreate: (state: 'open' | 'in_progress' | 'done') => void;
   onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
 }
 
@@ -19,18 +21,19 @@ export default function TaskColumn({
   title,
   state,
   tasks,
+  onCreate,
   onEdit,
   onDelete,
-  onCreate,
   onFilter,
 }: TaskColumnProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false); // ✅ 생성 모달 상태 추가
   const [visibleTasks, setVisibleTasks] = useState<Task[]>([]);
   const [page, setPage] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   const TASKS_PER_LOAD = 5; // ✅ 한 번에 로드할 할 일 개수
 
@@ -52,6 +55,14 @@ export default function TaskColumn({
         loadMoreTasks();
       }
     }
+  };
+
+  const handleEdit = (task: Task) => {
+    dispatch(updateTask(task));
+  };
+
+  const handleDelete = (task: Task) => {
+    dispatch(deleteTask(task.todo_id));
   };
 
   const handleOpenDetail = (task: Task) => {
@@ -100,15 +111,22 @@ export default function TaskColumn({
             <p className="task-due-date">마감 기한: {task.due_date}</p>
 
             <div className="task-actions">
-              <button
+              {/* <button
                 className="task-action-btn"
                 onClick={() => handleOpenDetail(task)}
+              > */}
+              <button
+                className="task-action-btn"
+                onClick={() => {
+                  setSelectedTask(task);
+                  setShowDetailModal(true);
+                }}
               >
                 <FaEllipsisH />
               </button>
               <button
                 className="task-action-btn delete"
-                onClick={() => onDelete(task)}
+                onClick={() => handleDelete(task)}
               >
                 <FaTrash />
               </button>
