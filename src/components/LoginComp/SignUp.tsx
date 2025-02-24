@@ -50,7 +50,7 @@ export default function SignUp() {
       const response = await axios.get(
         `${process.env.REACT_APP_API_SERVER}/user/check-name?nickname=${nickname}`,
       );
-      setCheckStatus(response.data.status);
+      // setCheckStatus(response.data.status);
       setNicknameMessage(response.data.message);
 
       if (response.data.status === 'SUCCESS') {
@@ -72,7 +72,7 @@ export default function SignUp() {
       const response = await axios.get(
         `${process.env.REACT_APP_API_SERVER}/user/check-email?email=${email}`,
       );
-      setCheckStatus(response.data.status);
+      // setCheckStatus(response.data.status);
       setEmailMessage(response.data.message);
 
       if (response.data.status === 'SUCCESS') {
@@ -109,7 +109,7 @@ export default function SignUp() {
     // ✅ 필수 입력값 체크
     if (!email || !password || !nickname) {
       setAllMessage('이메일, 비밀번호, 닉네임을 모두 입력해주세요.');
-      setCheckStatus('ERROR');
+      // setCheckStatus('ERROR');
       if (!nickname) nicknameRef.current?.focus();
       else if (!email) emailRef.current?.focus();
       else passwordRef.current?.focus();
@@ -199,7 +199,7 @@ export default function SignUp() {
                   </Button>
                 </InputGroup>
                 {nicknameMessage && (
-                  <ServerMessage message={nicknameMessage} type={checkStatus} />
+                  <ServerMessage errorMessage={nicknameMessage} />
                 )}
               </Form.Group>
 
@@ -220,9 +220,7 @@ export default function SignUp() {
                     중복 확인
                   </Button>
                 </InputGroup>
-                {emailMessage && (
-                  <ServerMessage message={emailMessage} type={checkStatus} />
-                )}
+                {emailMessage && <ServerMessage errorMessage={emailMessage} />}
               </Form.Group>
 
               <Form.Group controlId="password" className="mb-3">
@@ -249,9 +247,7 @@ export default function SignUp() {
                   onChange={e => setPassword(e.target.value)}
                   ref={passwordRef}
                 />
-                {allMessage && (
-                  <ServerMessage message={allMessage} type={checkStatus} />
-                )}
+                {allMessage && <ServerMessage errorMessage={allMessage} />}
               </Form.Group>
 
               <Button variant="primary" type="submit" className="w-100 mt-3">

@@ -37,7 +37,8 @@ function App() {
         <Route path="/v1/user" element={<MyProfile />} />
         <Route path="/v1/user/login" element={<LoginPage />} />
         <Route path="/v1/user/join" element={<SignUp />} />
-        <Route path="/v1/workspace" element={<JoinSpace />} />
+        <Route path="/v1/mySpace" element={<JoinSpace />} />{' '}
+        {/* /workspace 변경 */}
         <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
