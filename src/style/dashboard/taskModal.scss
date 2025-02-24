@@ -1,0 +1,63 @@
+// ✅ 모달 배경을 어둡게 설정 (뒷 화면이 보이도록)
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); // ✅ 배경을 살짝 어둡게
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+// ✅ 모달 본체 (Bootstrap modal 제거)
+.custom-modal {
+  background: white;
+  width: 400px;
+  max-width: 90%;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+}
+
+// ✅ 모달 헤더
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+// ✅ 모달 바디
+.modal-body {
+  margin: 15px 0;
+  font-size: 1rem;
+}
+
+// ✅ 모달 푸터 (버튼 정렬)
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+// ✅ 닫기 버튼 스타일
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: gray;
+}
+
+.btn-close:hover {
+  color: black;
+}

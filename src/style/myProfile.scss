@@ -14,6 +14,7 @@ body {
 
 .avatar-selection {
   text-align: center;
+  margin-top: 20px; /* ✅ 프로필 사진 아래에 배치되도록 여백 추가 */
 }
 
 .avatar-list {
@@ -65,4 +66,30 @@ body {
     100vh - 80px - 50px
   ); /* ✅ 화면 높이에서 헤더와 푸터 크기 제외 */
   padding-bottom: 60px; /* ✅ 스크롤 시 푸터가 가려지지 않도록 추가 */
+}
+
+/* ✅ 아바타 선택 시 폼 아래로 밀리도록 설정 */
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.delete-account {
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.delete-account:hover {
+  text-decoration: underline;
+  opacity: 0.8;
 }

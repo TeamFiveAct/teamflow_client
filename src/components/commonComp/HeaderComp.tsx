@@ -129,14 +129,14 @@ export default function Header() {
                       MyPage
                     </button>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <button
                       className="nav-link btn text-danger"
                       onClick={handleDeleteAccount}
                     >
                       회원 탈퇴
                     </button>
-                  </li>
+                  </li> */}
                 </>
               )}
 
