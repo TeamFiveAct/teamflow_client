@@ -3,6 +3,7 @@ import ProjectInfo from '../components/dashboardComp/ProjectInfo';
 import ToDoBoard from '../components/dashboardComp/ToDoBoard';
 import { Task } from '../types/types';
 import '../style/dashboard.scss';
+import ChatButton from '../components/chattingComp/ChatButton';
 
 // ✅ 예제 데이터 추가
 const dummyTasks: Task[] = [
@@ -78,6 +79,33 @@ const dummyTasks: Task[] = [
     start_date: '2024-02-12',
     due_date: '2024-02-22',
   },
+  {
+    todo_id: 9,
+    title: '리팩토링',
+    description: '코드 정리',
+    priority: 'small',
+    state: 'in_progress',
+    start_date: '2024-02-12',
+    due_date: '2024-02-22',
+  },
+  {
+    todo_id: 10,
+    title: '리팩토링',
+    description: '코드 정리',
+    priority: 'small',
+    state: 'in_progress',
+    start_date: '2024-02-12',
+    due_date: '2024-02-22',
+  },
+  {
+    todo_id: 11,
+    title: '리팩토링',
+    description: '코드 정리',
+    priority: 'small',
+    state: 'in_progress',
+    start_date: '2024-02-12',
+    due_date: '2024-02-22',
+  },
 ];
 
 // ✅ 예제 워크스페이스 정보
@@ -127,6 +155,7 @@ export default function DashBoard() {
         onCreate={handleCreateTask}
         onFilter={handleFilterTasks}
       />
+      <ChatButton /> {/* ✅ Chat 버튼 추가 */}
     </div>
   );
 }

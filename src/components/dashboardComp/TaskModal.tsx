@@ -1,3 +1,4 @@
+// src/components/TaskModal.tsx
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../style/taskModal.scss';
@@ -9,21 +10,50 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ show, onHide, taskState }: TaskModalProps) {
-  if (!show) return null; // ✅ 모달이 닫힌 상태에서는 렌더링하지 않음
+  if (!show) return null;
 
   return (
     <div className="modal-overlay">
-      {' '}
-      {/* ✅ 모달 배경 (오버레이) */}
       <div className="custom-modal">
-        {' '}
-        {/* ✅ 기존 Bootstrap modal 제거 후 커스텀 모달 사용 */}
         <div className="modal-header">
           <h5 className="modal-title">할 일 생성 ({taskState})</h5>
           <button type="button" className="btn-close" onClick={onHide}></button>
         </div>
         <div className="modal-body">
-          <p>할 일 생성 모달입니다. ({taskState})</p>
+          <form>
+            <div className="mb-3">
+              <label className="form-label">제목</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="제목 입력"
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">설명</label>
+              <textarea
+                className="form-control"
+                placeholder="설명 입력"
+              ></textarea>
+            </div>
+            <div className="mb-3">
+              <label className="form-label">우선순위</label>
+              <select className="form-control">
+                <option value="">선택</option>
+                <option value="low">낮음</option>
+                <option value="medium">보통</option>
+                <option value="high">높음</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label className="form-label">시작 날짜</label>
+              <input type="date" className="form-control" />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">마감 날짜</label>
+              <input type="date" className="form-control" />
+            </div>
+          </form>
         </div>
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onHide}>
