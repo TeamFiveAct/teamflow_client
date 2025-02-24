@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../style/chat.scss';
+import '../../style/chat/chat.scss';
 
 export default function ChatButton() {
   const navigate = useNavigate();

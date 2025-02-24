@@ -64,3 +64,64 @@ const EnterSpacePassword = ({ refreshSpaces }: EnterSpacePasswordProps) => {
 };
 
 export default EnterSpacePassword;
+
+// import React, { useState } from 'react';
+// import { Button, Form } from 'react-bootstrap';
+// import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
+
+// interface EnterSpacePasswordProps {
+//   refreshSpaces: () => void;
+// }
+
+// const EnterSpacePassword = ({ refreshSpaces }: EnterSpacePasswordProps) => {
+//   const [spacePwInput, setSpacePwInput] = useState('');
+//   const navigate = useNavigate();
+
+//   const handleSubmitSpacePw = async () => {
+//     if (!spacePwInput) {
+//       alert('비밀번호를 입력해주세요.');
+//       return;
+//     }
+//     try {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_API_SERVER}/workspace/join`,
+//         { space_password: spacePwInput },
+//         { withCredentials: true },
+//       );
+//       if (response.data.status === 'SUCCESS') {
+//         alert(
+//           response.data.message || '워크스페이스에 성공적으로 참여하였습니다.',
+//         );
+//         refreshSpaces();
+//         navigate(0);
+//       } else {
+//         alert(response.data.message || '참여에 실패했습니다.');
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       alert('참여 요청 중 오류가 발생했습니다.');
+//     }
+//   };
+
+//   return (
+//     <div className="enter-space-container">
+//       <Form>
+//         <Form.Group controlId="spacePasswordInput">
+//           {/* <Form.Label>🔑 프로젝트 참여</Form.Label> */}
+//           <Form.Control
+//             type="text"
+//             placeholder="스페이스 비밀번호를 입력하세요."
+//             value={spacePwInput}
+//             onChange={e => setSpacePwInput(e.target.value)}
+//           />
+//         </Form.Group>
+//       </Form>
+//       <Button className="primary-btn mt-3" onClick={handleSubmitSpacePw}>
+//         참여하기
+//       </Button>
+//     </div>
+//   );
+// };
+
+// export default EnterSpacePassword;

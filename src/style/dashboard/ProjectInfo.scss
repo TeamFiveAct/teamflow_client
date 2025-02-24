@@ -5,7 +5,6 @@
   margin-bottom: 30px;
 }
 
-/* ✅ 프로젝트 정보 & 유저 리스트를 하나의 통일된 박스로 보이게 */
 .project-info-wrapper {
   display: flex;
   align-items: center;
@@ -18,7 +17,6 @@
   width: 100%;
 }
 
-/* ✅ 프로젝트 소개 */
 .project-info {
   flex: 3;
   padding-right: 20px;
@@ -26,20 +24,17 @@
   border: none;
 }
 
-/* ✅ 프로젝트 설명 */
 .project-description {
   font-size: 14px;
   color: #555;
   margin-bottom: 5px;
 }
 
-/* ✅ 프로젝트 진행 기간 */
 .project-date {
   font-size: 14px;
   color: #777;
 }
 
-/* ✅ 유저 리스트 */
 .user-list-container {
   flex: 2;
   display: flex;
@@ -48,7 +43,6 @@
   gap: 15px;
 }
 
-/* ✅ 유저 리스트 슬라이드 */
 .user-list {
   display: flex;
   gap: 15px;
@@ -71,7 +65,6 @@
   border: 2px solid #ccc;
 }
 
-/* ✅ 접속 상태 표시 */
 .user-status {
   position: absolute;
   bottom: 0;
@@ -90,19 +83,16 @@
   background-color: #6c757d;
 }
 
-/* ✅ 닉네임 스타일 */
 .user-nickname {
   margin-top: 5px;
   font-size: 12px;
   text-align: center;
 }
 
-/* ✅ 닉네임 숨기기 (프로젝트 정보 접었을 때) */
 .is-collapsed .user-nickname {
   display: none;
 }
 
-/* ✅ 좌우 이동 화살표 버튼 */
 .arrow-btn {
   background: none;
   border: none;
@@ -116,10 +106,35 @@
   cursor: default;
 }
 
-/* ✅ 접기 버튼 */
 .toggle-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 18px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #0056b3;
+  }
+}
+
+.delete-btn {
+  color: red;
+}
+
+.leave-btn {
+  color: #fd7e14;
 }

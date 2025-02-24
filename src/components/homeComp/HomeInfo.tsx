@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 // import { selectIsLoggedIn } from '../../store/authSlice';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../../style/home.scss';
 import { RootState } from '../../store/store';
 
 export default function HomeComponent() {

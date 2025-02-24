@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaEllipsisH, FaTrash } from 'react-icons/fa';
 import TaskDetailModal from './TaskDetailModal';
 import TaskModal from './TaskModal'; // ✅ TaskModal 추가
-import '../../style/taskColumn.scss';
+import '../../style/dashboard/taskColumn.scss';
 import { Task } from '../../types/types';
 import { useDispatch } from 'react-redux';
 import { updateTask, deleteTask } from '../../store/modules/taskSlice';

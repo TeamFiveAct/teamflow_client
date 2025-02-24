@@ -24,7 +24,7 @@ import {
   ActionButton,
   EmojiPickerContainer,
   CodeEditorContainer,
-} from '../../style/ChatStyles';
+} from '../../style/chat/ChatStyles';
 
 // Icons as SVG components
 const PaperClipIcon = () => (
