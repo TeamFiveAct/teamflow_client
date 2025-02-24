@@ -80,25 +80,28 @@
   }
 }
 
-// SpaceList.scss의 스타일일
+// SpaceList.scss의 스타일
 .space-list-container {
   text-align: center;
   padding: 20px;
+  height: 500px;
+  // border: 1px solid black;
 
-  .space-slider {
-    width: 100%;
-    padding: 20px 0;
+  .space-grid {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    border: 1px solid black;
+    margin-top: 10px;
   }
 
-  // .swiper-wrapper {
-  //   display: flex;
-  //   justify-content: center; // ✅ 슬라이드 내부 정렬
-  // }
-
   .space-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+  }
+
+  .space-circle {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -117,9 +120,18 @@
     }
   }
 
-  // 반응형 (모바일 크기 조절)
+  .pagination-buttons {
+    // border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0px;
+    // margin-top: 15px;
+  }
+
   @media (max-width: 768px) {
-    .space-item {
+    .space-circle {
       width: 50px;
       height: 50px;
       font-size: 12px;

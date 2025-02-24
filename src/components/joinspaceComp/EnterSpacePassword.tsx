@@ -4,7 +4,11 @@ import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const EnterSpacePassword = () => {
+interface EnterSpacePasswordProps {
+  refreshSpaces: () => void;
+}
+
+const EnterSpacePassword = ({ refreshSpaces }: EnterSpacePasswordProps) => {
   const [spacePwInput, setSpacePwInput] = useState('');
   const navigate = useNavigate();
 
@@ -28,6 +32,7 @@ const EnterSpacePassword = () => {
           response.data.message || '워크스페이스에 성공적으로 참여하였습니다.',
         );
         // 참여가 성공하면 페이지를 새로고침하거나 SpaceList를 재호출
+        refreshSpaces();
         navigate(0);
       } else {
         alert(response.data.message || '참여에 실패했습니다.');

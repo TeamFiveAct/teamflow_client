@@ -17,6 +17,45 @@ export default function JoinSpace() {
   );
   // const sessionValid = useCheckSession();
   const [showModal, setShowModal] = useState(false);
+  const [mySpaces, setMySpaces] = useState<any[]>([]); // 스페이스 목록 상태
+  const [loading, setLoading] = useState(true);
+
+  const fetchMySpaces = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_SERVER}/workspace/user`,
+        { withCredentials: true },
+      );
+      if (response.data.status === 'SUCCESS') {
+        // 서버가 빈 배열일 경우 배열로 반환하도록 보장
+        const data = Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
+        setMySpaces(data);
+      } else {
+        alert(
+          response.data.message || '워크스페이스 목록을 불러오지 못했습니다.',
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      alert('워크스페이스 목록 요청 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!sessionValid) {
+      alert('로그인 기간이 만료되었습니다. 다시 로그인 해주세요.');
+      navigate('/v1/user/login');
+    }
+    fetchMySpaces();
+  }, [sessionValid, navigate]);
+
+  const handleRefreshSpaces = () => {
+    fetchMySpaces();
+  };
 
   const handleCreateRoom = async () => {
     setShowModal(true);
@@ -24,6 +63,7 @@ export default function JoinSpace() {
 
   const handleCloseModal = () => {
     setShowModal(false);
+    fetchMySpaces();
   };
 
   useEffect(() => {
@@ -44,14 +84,18 @@ export default function JoinSpace() {
           </Button>
           <hr />
         </div>
-        <CreateSpace show={showModal} onClose={handleCloseModal} />
+        <CreateSpace
+          show={showModal}
+          onClose={handleCloseModal}
+          refreshSpaces={handleRefreshSpaces}
+        />
         <div className="enterSpaceBtnDiv">
-          <EnterSpacePassword />
+          <EnterSpacePassword refreshSpaces={handleRefreshSpaces} />
         </div>
       </div>
 
       <div className="mySpacelistDiv">
-        <SpaceList />
+        <SpaceList spaces={mySpaces} />
       </div>
     </section>
   );
