@@ -58,7 +58,7 @@ export default function Login() {
         dispatch(login(response.data.data.nickname)); // 세션 발급 및 Redux 저장
         // 세션이 유효하다고 표시
         dispatch(setSessionStatus(true));
-        navigate('/v1/workspace');
+        navigate('/v1/mySpace');
       }
     } catch (error) {
       setAllMessage('로그인 중 오류가 발생했습니다.');
@@ -101,10 +101,7 @@ export default function Login() {
                     />
                     {/* 이메일 에러 메시지 */}
                     {emailMessage && (
-                      <ServerMessage
-                        message={emailMessage}
-                        type={checkStatus}
-                      />
+                      <ServerMessage errorMessage={emailMessage} />
                     )}
                   </Form.Group>
 
@@ -118,18 +115,14 @@ export default function Login() {
                       onChange={e => setPassword(e.target.value)}
                     />
                     {/* 비밀번호 에러 메시지 */}
+
                     {passwordMessage && (
-                      <ServerMessage
-                        message={passwordMessage}
-                        type={checkStatus}
-                      />
+                      <ServerMessage errorMessage={passwordMessage} />
                     )}
                   </Form.Group>
 
                   {/* 전체 에러 메시지 */}
-                  {allMessage && (
-                    <ServerMessage message={allMessage} type={checkStatus} />
-                  )}
+                  {allMessage && <ServerMessage errorMessage={allMessage} />}
 
                   <Button variant="primary" type="submit" className="w-100">
                     로그인
