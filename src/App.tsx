@@ -18,7 +18,7 @@ import { RootState } from './store/store';
 import useCheckSession from './hooks/useCheckSession';
 
 // Chat 페이지와 ChatButton 컴포넌트 추가
-import Chat from './components/dashboardComp/Chat';
+import Chat from './components/chatcomp/Chat';
 import ChatButton from './components/chattingComp/ChatButton';
 import { createGlobalStyle } from 'styled-components';
 
@@ -75,9 +75,7 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* 테스트용 Chat 컴포넌트를 항상 렌더링 */}
-        <Chat user_id={user_id} workspace_id={workspace_id} />
-        {/* ChatButton 컴포넌트는 고정 위치에 표시됩니다 */}
+        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
         <ChatButton />
         <Footer />
       </Router>
