@@ -1,0 +1,79 @@
+/* joinspaceContainer 스타일 */
+.joinspaceContainer {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* 중앙 상단 환영 메시지 */
+.welcomeMessage {
+  text-align: center;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+  }
+}
+
+/* 메인 컨텐츠 (왼쪽 & 오른쪽 패널) */
+.joinspaceSection {
+  display: flex; /* 왼쪽과 오른쪽을 가로로 배치 */
+  width: 100%;
+  max-width: 1200px; /* 전체 컨텐츠 최대 너비 설정 */
+  margin: 0 auto; /* 중앙 정렬 */
+  height: 80vh; /* 높이 조정 */
+}
+
+/* 왼쪽 패널 (워크스페이스 생성 & 참여) */
+.leftSideContainer {
+  width: 50%;
+  background: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 2px solid #e0e0e0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 모달 위치 설정 */
+.create-space-modal .modal-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  width: 90%;
+  z-index: 1050;
+}
+
+.create-space-modal .modal-content {
+  border-radius: 12px;
+  border: none;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.create-space-modal .modal-header {
+  background-color: #007bff;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  text-align: center;
+}
+
+.create-space-modal .modal-footer {
+  border-top: none;
+  display: flex;
+  justify-content: space-between;
+}

@@ -179,3 +179,14 @@
     position: relative;
   }
 }
+
+/* .task-actions 내부 버튼 크기 조정 */
+.task-actions button {
+  font-size: 0.9rem; /* 버튼 폰트 크기 동일하게 */
+  padding: 6px 12px; /* 버튼 패딩 조정 */
+  border-radius: 4px; /* 버튼 모서리 둥글게 */
+}
+
+.filter-btn {
+  font-size: 0.9rem; /* 조회 버튼과 크기 통일 */
+}

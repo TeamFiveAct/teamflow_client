@@ -1,43 +1,38 @@
-/* ✅ About Us 모달 */
-/* ✅ 버튼이 자동 포커스되지 않도록 설정 */
-.aboutus-modal-footer button:focus {
-  outline: none;
-  box-shadow: none;
-}
+/* ✅ 모달 오버레이 (배경 흐리게 처리) */
 
-/* ✅ 모달 오버레이 (반투명 배경) */
-.modal-overlay {
+.header-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* ✅ 회색 반투명 배경 */
+  background: rgba(0, 0, 0, 0.3); /* ✅ 배경을 어둡게 */
+  backdrop-filter: blur(5px); /* ✅ 배경만 흐리게 처리 */
   z-index: 1040;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* ✅ 모달 컨테이너 (화면 중앙 배치) */
-.custom-modal-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ✅ 모달 창 */
-.aboutus-modal-content {
+/* ✅ 모달 창 (모달은 선명하게 보이게 설정) */
+
+.custom-modal-content {
   width: 400px;
+  position: fixed; /* 🚀 모달이 부모의 blur 영향을 받지 않도록 함 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease-in-out;
+  z-index: 1050; /* 🚀 모달이 오버레이보다 위에 위치 */
+}
+
+.aboutus-modal-footer button:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* ✅ 모달 헤더 */
@@ -64,16 +59,6 @@
   padding-top: 10px;
 }
 
-/* ✅ 모달 창  - contact us*/
-.custom-modal-content {
-  width: 400px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
 /* 모달 헤더 */
 .custom-modal-header {
   display: flex;
@@ -94,19 +79,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-/* ✅ 모달 스타일 조정 */
-/* ✅ 모달 배경 (화면 전체 회색 오버레이) */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* ✅ 회색 반투명 배경 */
-  z-index: 1040;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease-in-out;
 }
 
 /* 모달 바디 */

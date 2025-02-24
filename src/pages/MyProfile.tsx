@@ -1,10 +1,9 @@
-import '../style/myProfile.scss';
+import '../style/myprofile/myProfile.scss';
 import React from 'react';
 import { useSelector } from 'react-redux';
 // import { selectAuthProvider } from '../store/authSlice';
 import KakaoUserUpdate from '../components/myprofileComp/KakaoUserUpdate';
 import UserUpdate from '../components/myprofileComp/UserUpdate';
-import { setAuthProvider } from '../store/modules/checkSessionSlice';
 import { RootState } from '../store/store';
 
 export default function MyProfile() {

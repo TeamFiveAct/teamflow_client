@@ -6,6 +6,7 @@ import axios from 'axios';
 import useUserData from '../../hooks/useUserData';
 import useUserActions from '../../hooks/useUserActions';
 import useAuthActions from '../../hooks/useAuthActions';
+import '../../style/myprofile/myProfile.scss';
 
 export default function UserUpdate() {
   const { handleDeleteAccount } = useAuthActions();
@@ -274,6 +275,20 @@ export default function UserUpdate() {
           </>
         )}
       </form>
+      <div className="d-flex justify-content-end mt-3">
+        <a
+          href="#"
+          className="delete-account text-danger"
+          onClick={e => {
+            e.preventDefault();
+            if (window.confirm('정말 회원탈퇴를 진행하시겠습니까?')) {
+              handleDeleteAccount();
+            }
+          }}
+        >
+          회원탈퇴
+        </a>
+      </div>
     </div>
   );
 }

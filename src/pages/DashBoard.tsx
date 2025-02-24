@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import ProjectInfo from '../components/dashboardComp/ProjectInfo';
 import ToDoBoard from '../components/dashboardComp/ToDoBoard';
 import { Task } from '../types/types';
-import '../style/dashboard.scss';
-import ChatButton from '../components/chattingComp/ChatButton';
+import '../style/dashboard/dashboard.scss';
+import ChatButton from '../components/chatcomp/ChatButton';
 
 // ✅ 예제 데이터 추가
 const dummyTasks: Task[] = [
@@ -84,7 +84,7 @@ const dummyTasks: Task[] = [
     title: '리팩토링',
     description: '코드 정리',
     priority: 'small',
-    state: 'in_progress',
+    state: 'done',
     start_date: '2024-02-12',
     due_date: '2024-02-22',
   },
@@ -93,7 +93,7 @@ const dummyTasks: Task[] = [
     title: '리팩토링',
     description: '코드 정리',
     priority: 'small',
-    state: 'in_progress',
+    state: 'done',
     start_date: '2024-02-12',
     due_date: '2024-02-22',
   },
@@ -117,6 +117,18 @@ const dummyWorkspace = {
   end_date: '2024-06-01',
 };
 
+// 방장 여부 (임시로 true로 설정)
+const isOwner = true;
+
+// 워크스페이스 나가기
+const handleLeaveWorkspace = () => {
+  alert('워크스페이스를 나갔습니다.');
+};
+
+// 워크스페이스 삭제
+const handleDeleteWorkspace = () => {
+  alert('워크스페이스를 삭제했습니다.');
+};
 export default function DashBoard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -147,6 +159,9 @@ export default function DashBoard() {
         workspace={dummyWorkspace}
         isCollapsed={isCollapsed}
         toggleCollapse={() => setIsCollapsed(prev => !prev)}
+        isOwner={isOwner}
+        onLeaveWorkspace={handleLeaveWorkspace}
+        onDeleteWorkspace={handleDeleteWorkspace}
       />
       <ToDoBoard
         tasks={dummyTasks}

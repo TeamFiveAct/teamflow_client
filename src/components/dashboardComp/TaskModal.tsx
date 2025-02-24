@@ -1,7 +1,7 @@
 // src/components/TaskModal.tsx
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../style/taskModal.scss';
+import '../../style/dashboard/taskModal.scss';
 
 interface TaskModalProps {
   show: boolean;

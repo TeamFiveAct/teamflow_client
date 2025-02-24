@@ -14,11 +14,7 @@ import {
   Tooltip,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleQuestion,
-  faGlassCheers,
-  faSearch,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
 import ProfileImg from './ProfileImg';
