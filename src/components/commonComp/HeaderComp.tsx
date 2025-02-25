@@ -37,7 +37,7 @@ export default function Header() {
           <button
             className="navbar-brand fw-bold btn"
             onClick={() =>
-              isLoggedIn ? navigate('/v1/workspace') : navigate('/')
+              isLoggedIn ? navigate('/v1/mySpace') : navigate('/')
             }
           >
             TeamFlow

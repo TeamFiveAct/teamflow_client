@@ -29,12 +29,17 @@ $border-radius-container: 12px;
 // Chat Container
 // 데스크탑 버전 (.desktop)
 .chat-container.desktop {
-  width: 600px; // 첫번째 코드 기준
+  width: 600px; // 기준 너비
   height: 700px;
   position: fixed;
   top: 50%;
   left: 50%;
+  // 기본 중앙 배치 (드래그 중이 아니면)
   transform: translate(-50%, -50%);
+  // 드래그 상태이면 transform 제거 (인라인 스타일이나 JS로 .dragging 클래스 추가)
+  &.dragging {
+    transform: none;
+  }
   border-radius: $border-radius-container;
   background: $text-light;
   box-shadow: $shadow-default;
@@ -49,7 +54,8 @@ $border-radius-container: 12px;
   max-height: 2030vh;
   transition: transform 0.2s ease;
 
-  &:hover {
+  // hover 효과는 드래그 중이 아닐 때만 적용
+  &:hover:not(.dragging) {
     transform: translate(-50%, -50%) scale(1.01);
   }
 }
@@ -278,12 +284,31 @@ $border-radius-container: 12px;
   }
 }
 
-// User Name 표시
-.user-name {
-  font-size: 0.75rem;
-  color: #868e96;
-  margin-bottom: 2px;
-  padding: 0 4px;
+// User Info 표시
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  
+  .user-avatar {
+    margin-right: 8px;
+  }
+  
+  .user-name {
+    font-size: 0.75rem;
+    color: #868e96;
+    font-weight: 500;
+  }
+}
+
+// 현재 사용자 메시지의 user-info 정렬 조정
+.message-wrapper.current-user .user-info {
+  flex-direction: row-reverse;
+  
+  .user-avatar {
+    margin-right: 0;
+    margin-left: 8px;
+  }
 }
 
 // Chat Input

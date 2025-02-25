@@ -1,12 +1,35 @@
-// src/components/chattingComp/ChatButton.tsx
-
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import '../../style/chatButton.scss';
+import { useLocation, useParams } from 'react-router-dom';
+import axios from 'axios';
 import ChatModal from '../chatcomp/ChatModal';
+import '../../style/chatButton.scss';
 
 export default function ChatButton() {
   const location = useLocation();
+  const { space_id } = useParams<{ space_id: string }>();
+
+  // API를 통해 현재 사용자 정보를 가져옴
+  const [user, setUser] = useState<{ user_id: number } | null>(null);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVER}/user/info`,
+          { withCredentials: true }
+        );
+        if (response.data.status === 'SUCCESS') {
+          setUser(response.data.data);
+        } else {
+          console.error('사용자 정보를 불러오지 못했습니다:', response.data.message);
+        }
+      } catch (error) {
+        console.error('사용자 정보 요청 중 오류가 발생했습니다:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [positionY, setPositionY] = useState(window.innerHeight - 80);
   const [dragging, setDragging] = useState(false);
@@ -57,7 +80,7 @@ export default function ChatButton() {
     }
   }, [dragging, positionY]);
 
-  // Only render on workspace pages
+  // 워크스페이스 페이지가 아니면 렌더링하지 않음
   if (!location.pathname.includes('/v1/workspace')) {
     return null;
   }
@@ -80,12 +103,15 @@ export default function ChatButton() {
         {/* SVG 아이콘은 background-image로 표시됩니다 */}
       </button>
 
-      <ChatModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        user_id={1}
-        workspace_id={1}
-      />
+      {/* 사용자 정보와 workspace_id가 있을 때만 ChatModal 렌더링 */}
+      {user && space_id && (
+        <ChatModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          user_id={user.user_id}
+          workspace_id={Number(space_id)}
+        />
+      )}
     </>
   );
 }

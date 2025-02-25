@@ -89,9 +89,12 @@ class WebSocketService {
     };
     
     // 자신을 사용자 목록에 추가하고 알림
-    this.connectedUsers = [selfUser];
-    this.notifyUsersChanged();
-    console.log('[WebSocket] 자신을 사용자 목록에 추가:', selfUser);
+    // 이미 목록에 있는지 확인 후 추가
+    if (!this.connectedUsers.some(user => user.userId === userId)) {
+      this.connectedUsers = [selfUser];
+      this.notifyUsersChanged();
+      console.log('[WebSocket] 자신을 사용자 목록에 추가:', selfUser);
+    }
   }
 
   // 워크스페이스 퇴장
@@ -165,8 +168,11 @@ class WebSocketService {
     // 사용자 입장 이벤트
     this.socket.on(WebSocketEvent.USER_JOINED, (data) => {
       console.log('User joined:', data);
-      this.connectedUsers.push(data.user);
-      this.notifyUsersChanged();
+      // 이미 목록에 있는지 확인 후 추가
+      if (!this.connectedUsers.some(user => user.userId === data.user.userId)) {
+        this.connectedUsers.push(data.user);
+        this.notifyUsersChanged();
+      }
     });
 
     // 사용자 퇴장 이벤트
@@ -194,7 +200,12 @@ class WebSocketService {
   // 사용자 목록 변경 알림
   private notifyUsersChanged(): void {
     if (this.onUsersChanged) {
-      this.onUsersChanged([...this.connectedUsers]);
+      // 중복 제거: userId를 기준으로 중복 사용자 제거
+      const uniqueUsers = Array.from(
+        new Map(this.connectedUsers.map(user => [user.userId, user])).values()
+      );
+      
+      this.onUsersChanged([...uniqueUsers]);
     }
   }
 

@@ -87,13 +87,18 @@ export default function DashBoard() {
             websocketService.setOnUsersChanged((users: WorkspaceUser[]) => {
               console.log('[DashBoard] 사용자 목록 변경:', users);
               
+              // 중복 제거: userId를 기준으로 중복 사용자 제거
+              const uniqueUsers = Array.from(
+                new Map(users.map(user => [user.userId, user])).values()
+              );
+              
               // 현재 사용자 정보
               const currentUserId = userId;
               const currentUserNickname = response.data.data.nickname || `User${userId}`;
               const currentUserProfileImg = response.data.data.profile_image || `User${userId}`;
               
               // 현재 사용자가 목록에 없으면 추가
-              if (!users.some(user => user.userId === currentUserId)) {
+              if (!uniqueUsers.some(user => user.userId === currentUserId)) {
                 const selfUser: WorkspaceUser = {
                   userId: currentUserId,
                   nickname: currentUserNickname,
@@ -101,9 +106,9 @@ export default function DashBoard() {
                 };
                 
                 console.log('[DashBoard] 자신을 사용자 목록에 추가:', selfUser);
-                dispatch(setOnlineUsers([...users, selfUser]));
+                dispatch(setOnlineUsers([...uniqueUsers, selfUser]));
               } else {
-                dispatch(setOnlineUsers(users));
+                dispatch(setOnlineUsers(uniqueUsers));
               }
             });
             

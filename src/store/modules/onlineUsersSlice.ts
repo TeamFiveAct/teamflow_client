@@ -15,8 +15,14 @@ const onlineUsersSlice = createSlice({
   reducers: {
     setOnlineUsers: (state, action: PayloadAction<WorkspaceUser[]>) => {
       console.log('[onlineUsersSlice] setOnlineUsers 액션:', action.payload);
-      state.users = action.payload;
-      console.log('[onlineUsersSlice] 업데이트된 상태:', state.users);
+      
+      // 중복 제거: userId를 기준으로 중복 사용자 제거
+      const uniqueUsers = Array.from(
+        new Map(action.payload.map(user => [user.userId, user])).values()
+      );
+      
+      state.users = uniqueUsers;
+      console.log('[onlineUsersSlice] 업데이트된 상태 (중복 제거 후):', state.users);
     }
   }
 });
