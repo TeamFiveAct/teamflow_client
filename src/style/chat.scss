@@ -1,3 +1,15 @@
+// 변수 선언
+$primary-color: #2c3e50;
+$secondary-color: #e9ecef;
+$text-light: #fff;
+$text-dark: #2c3e50;
+$code-bg-current: #1a252f;
+$code-bg-other: #dee2e6;
+$bg-light: #f8f9fa;
+$shadow-default: 0 8px 24px rgba(0, 0, 0, 0.15);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$border-radius-container: 12px;
+
 // Mixins
 @mixin user-message($isCurrentUser) {
   align-items: if($isCurrentUser, flex-end, flex-start);
@@ -5,55 +17,65 @@
 }
 
 @mixin message-content($isCurrentUser) {
-  background-color: if($isCurrentUser, #2c3e50, #e9ecef);
-  color: if($isCurrentUser, #fff, #2c3e50);
+  background-color: if($isCurrentUser, $primary-color, $secondary-color);
+  color: if($isCurrentUser, $text-light, $text-dark);
   border-radius: if($isCurrentUser, 18px 18px 4px 18px, 18px 18px 18px 4px);
 }
 
 @mixin code-background($isCurrentUser) {
-  background: if($isCurrentUser, #1a252f, #dee2e6);
+  background: if($isCurrentUser, $code-bg-current, $code-bg-other);
 }
 
 // Chat Container
-.chat-container {
-  // 기존 width, height를 늘려 기본 크기를 키웁니다.
-  width: 500px;   // 예시로 500px
-  height: 700px;  // 예시로 700px
-
-  // 화면 중앙에 오도록 위치를 설정합니다.
+// 데스크탑 버전 (.desktop)
+.chat-container.desktop {
+  width: 600px; // 첫번째 코드 기준
+  height: 700px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-radius: $border-radius-container;
+  background: $text-light;
+  box-shadow: $shadow-default;
   display: flex;
   flex-direction: column;
   z-index: 1000;
-
-  // 크기 조절을 가능하게 하고, 최소/최대 크기도 재조정합니다.
   resize: both;
   overflow: hidden;
   min-width: 600px;
   min-height: 600px;
   max-width: 2000px;
   max-height: 2030vh;
-
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: translate(-50%, -50%) scale(1.01); // hover 시 약간 확대
+    transform: translate(-50%, -50%) scale(1.01);
   }
 }
 
+// 모바일 버전 (.mobile)
+.chat-container.mobile {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  background: $text-light;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+// 채팅 최소화 버튼
 .chat-minimized {
   position: fixed;
   bottom: 20px;
   padding: 10px 20px;
-  background: #2c3e50;
-  color: white;
+  background: $primary-color;
+  color: $text-light;
   border-radius: 8px;
   cursor: pointer;
   z-index: 1000;
@@ -65,11 +87,12 @@
   }
 }
 
+// Chat Header
 .chat-header {
-  background-color: #2c3e50;
-  color: white;
+  background-color: $primary-color;
+  color: $text-light;
   padding: 12px 16px;
-  border-radius: 12px 12px 0 0;
+  border-radius: $border-radius-container $border-radius-container 0 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
@@ -91,7 +114,7 @@
     button {
       background: none;
       border: none;
-      color: white;
+      color: $text-light;
       width: 24px;
       height: 24px;
       padding: 0;
@@ -123,7 +146,7 @@
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: #f8f9fa;
+  background: $bg-light;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -255,7 +278,7 @@
   }
 }
 
-// User Name
+// User Name 표시
 .user-name {
   font-size: 0.75rem;
   color: #868e96;
@@ -266,8 +289,8 @@
 // Chat Input
 .chat-input-container {
   padding: 16px;
-  background: #fff;
-  border-top: 1px solid #e9ecef;
+  background: $text-light;
+  border-top: 1px solid $secondary-color;
   position: relative;
 }
 
@@ -275,14 +298,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f8f9fa;
+  background: $bg-light;
   border-radius: 24px;
   padding: 6px 12px;
-  border: 1px solid #e9ecef;
+  border: 1px solid $secondary-color;
   transition: border-color 0.2s;
 
   &:focus-within {
-    border-color: #2c3e50;
+    border-color: $primary-color;
   }
 }
 
@@ -292,13 +315,13 @@
   gap: 4px;
 }
 
-// Buttons
+// 버튼 스타일
 .action-button {
   background: none;
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #2c3e50;
+  color: $primary-color;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -306,7 +329,7 @@
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background-color: #e9ecef;
+    background-color: $secondary-color;
     transform: scale(1.05);
   }
 
@@ -348,7 +371,7 @@
 
 .send-button {
   @extend .action-button;
-  color: #2c3e50;
+  color: $primary-color;
 }
 
 // Emoji Picker
@@ -377,7 +400,7 @@
   bottom: 100%;
   left: 16px;
   right: 16px;
-  background: #fff;
+  background: $text-light;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   flex-direction: column;
@@ -397,7 +420,7 @@
     width: 100%;
     min-height: 150px;
     padding: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid $secondary-color;
     border-radius: 4px;
     font-family: 'Fira Code', monospace;
     font-size: 0.9rem;
@@ -406,9 +429,9 @@
 
   select {
     padding: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid $secondary-color;
     border-radius: 4px;
-    background: #fff;
+    background: $text-light;
   }
 
   .button-group {
@@ -424,17 +447,99 @@
       font-size: 0.9rem;
 
       &.cancel {
-        background: #e9ecef;
-        color: #495057;
+        background: $secondary-color;
+        color: $text-dark;
       }
 
       &.send {
-        background: #2c3e50;
-        color: #fff;
+        background: $primary-color;
+        color: $text-light;
       }
 
       &:hover {
         opacity: 0.9;
+      }
+    }
+  }
+}
+
+// 미디어 쿼리 (반응형 디자인)
+// 768px 이하
+@media (max-width: 768px) {
+  .chat-container.mobile {
+    padding: 0.5rem;
+  }
+  .chat-header {
+    padding: 0.75rem 1rem;
+    h2 {
+      font-size: 1.1rem;
+    }
+    .window-controls {
+      button {
+        padding: 0.4rem;
+        svg {
+          width: 0.9rem;
+          height: 0.9rem;
+        }
+      }
+    }
+  }
+  .chat-history {
+    padding: 0.75rem;
+  }
+  .chat-input-container {
+    padding: 0.75rem;
+  }
+  .chat-input-wrapper {
+    padding: 0.5rem 0.75rem;
+    input.text-input {
+      font-size: 0.9rem;
+      padding: 0.4rem;
+    }
+    .send-button {
+      padding: 0.4rem;
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}
+
+// 480px 이하
+@media (max-width: 480px) {
+  .chat-header {
+    padding: 0.5rem 0.75rem;
+    h2 {
+      font-size: 1rem;
+    }
+    .window-controls {
+      button {
+        padding: 0.3rem;
+        svg {
+          width: 0.8rem;
+          height: 0.8rem;
+        }
+      }
+    }
+  }
+  .chat-history {
+    padding: 0.5rem;
+  }
+  .chat-input-container {
+    padding: 0.5rem;
+  }
+  .chat-input-wrapper {
+    padding: 0.4rem 0.5rem;
+    input.text-input {
+      font-size: 0.85rem;
+      padding: 0.3rem;
+    }
+    .send-button {
+      padding: 0.3rem;
+      svg {
+        width: 0.9rem;
+        height: 0.9rem;
       }
     }
   }

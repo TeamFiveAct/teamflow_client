@@ -10,8 +10,7 @@ interface ChatModalProps {
 
 const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, user_id, workspace_id }) => {
   if (!isOpen) return null;
-  
   return <Chat user_id={user_id} workspace_id={workspace_id} onClose={onClose} />;
-}
+};
 
-export default ChatModal;
+export default React.memo(ChatModal);
