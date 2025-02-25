@@ -1,6 +1,8 @@
+// src/components/chattingComp/ChatButton.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import '../../style/chat.scss';
+import '../../style/chatButton.scss';
 import ChatModal from '../chatcomp/ChatModal';
 
 export default function ChatButton() {
@@ -53,7 +55,7 @@ export default function ChatButton() {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [dragging, handleMouseMove, handleMouseUp]);
+  }, [dragging, positionY]);
 
   // Only render on workspace pages
   if (!location.pathname.includes('/v1/workspace')) {
@@ -66,7 +68,7 @@ export default function ChatButton() {
         className={`chat-button ${dragging ? 'dragging' : ''}`}
         style={{
           position: 'fixed',
-          right: '20px', // ✅ 오른쪽 하단 고정
+          right: '20px',
           top: `${positionY}px`,
           transition: dragging ? 'none' : 'top 0.3s ease-in-out',
         }}
@@ -75,7 +77,7 @@ export default function ChatButton() {
           if (isClick) setIsModalOpen(true);
         }}
       >
-        💬 Chat
+        {/* SVG 아이콘은 background-image로 표시됩니다 */}
       </button>
 
       <ChatModal
