@@ -1,27 +1,22 @@
 import React from 'react';
 
 interface ServerMessageProps {
-  successMessage?: string; // 성공 메시지
-  errorMessage?: string; // 에러 메시지
+  message: { text: string; type: 'error' | 'success' | null };
 }
 
-const ServerMessage = ({
-  successMessage,
-  errorMessage,
-}: ServerMessageProps) => {
+const ServerMessage = ({ message }: ServerMessageProps) => {
+  if (!message.text) return null;
+
   return (
-    <>
-      {successMessage && (
-        <div style={{ color: 'green', fontSize: '0.9rem', marginTop: '5px' }}>
-          {successMessage}
-        </div>
-      )}
-      {errorMessage && (
-        <div style={{ color: 'red', fontSize: '0.9rem', marginTop: '5px' }}>
-          {errorMessage}
-        </div>
-      )}
-    </>
+    <div
+      style={{
+        color: message.type === 'error' ? 'red' : 'green',
+        fontSize: '0.9rem',
+        marginTop: '5px',
+      }}
+    >
+      {message.text}
+    </div>
   );
 };
 

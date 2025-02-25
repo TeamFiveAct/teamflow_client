@@ -19,6 +19,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import sessionStorage from 'redux-persist/lib/storage/session'; // sessionStorage 사용
 import checkSessionReducer from './modules/checkSessionSlice';
+import taskReducer from './modules/taskSlice';
 
 const checkSessionPersistConfig = {
   key: 'checkSession',
@@ -32,6 +33,7 @@ const persistedCheckSessionReducer = persistReducer(
 
 const rootReducer = combineReducers({
   checkSession: persistedCheckSessionReducer,
+  tasks: taskReducer,
 });
 
 const persistConfig = {

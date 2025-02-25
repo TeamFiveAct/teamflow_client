@@ -49,6 +49,17 @@ const dummyUsers = [
   },
 ];
 
+// 날짜를 "yyyy-MM-dd" 형식으로 변환
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
+
 export default function ProjectInfo({
   workspace,
   isCollapsed,
@@ -79,7 +90,8 @@ export default function ProjectInfo({
                 {workspace.space_description}
               </p>
               <p className="project-date">
-                진행 기간: {workspace.created_at} ~ {workspace.end_date}
+                진행 기간: {formatDate(workspace.created_at)} ~
+                {/* {formatDate(workspace.end_date)} */}
               </p>
             </>
           )}

@@ -9,31 +9,31 @@ import { updateTask, deleteTask } from '../../store/modules/taskSlice';
 
 interface TaskColumnProps {
   title: string;
-  state: 'open' | 'in_progress' | 'done';
+  state: 'plan' | 'progress' | 'done';
   tasks: Task[];
-  onCreate: (state: 'open' | 'in_progress' | 'done') => void;
+  // onCreate: (state: 'plan' | 'progress' | 'done') => void;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
-  onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
+  // onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
 }
 
 export default function TaskColumn({
   title,
   state,
   tasks,
-  onCreate,
+  // onCreate,
   onEdit,
   onDelete,
-  onFilter,
-}: TaskColumnProps) {
+}: // onFilter,
+TaskColumnProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false); // ✅ 생성 모달 상태 추가
+  // const [showCreateModal, setShowCreateModal] = useState(false); // ✅ 생성 모달 상태 추가
   const [visibleTasks, setVisibleTasks] = useState<Task[]>([]);
   const [page, setPage] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
-  const [showFilterOptions, setShowFilterOptions] = useState(false);
+  // const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   const TASKS_PER_LOAD = 5; // ✅ 한 번에 로드할 할 일 개수
 
@@ -74,7 +74,7 @@ export default function TaskColumn({
     <div className="task-column">
       <div className="task-column-header">
         <h3>{title}</h3>
-        <div className="task-actions">
+        {/* <div className="task-actions">
           <button
             className="btn btn-sm btn-primary"
             onClick={() => setShowCreateModal(true)} // ✅ 생성 버튼 클릭 시 모달 열기
@@ -96,7 +96,7 @@ export default function TaskColumn({
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="task-list" ref={containerRef} onScroll={handleScroll}>
@@ -143,11 +143,11 @@ export default function TaskColumn({
       />
 
       {/* ✅ TaskModal (할 일 생성 모달) */}
-      <TaskModal
+      {/* <TaskModal
         show={showCreateModal}
         onHide={() => setShowCreateModal(false)}
         taskState={state}
-      />
+      /> */}
     </div>
   );
 }

@@ -28,12 +28,18 @@ export default function SignUp() {
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [nicknameMessage, setNicknameMessage] = useState(''); // 닉네임 메시지 상태
-  const [emailMessage, setEmailMessage] = useState(''); // 이메일 메시지 상태
-  const [allMessage, setAllMessage] = useState(''); // 전체 메시지 상태
-  const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>(
-    'SUCCESS',
-  );
+  const [emailMessage, setEmailMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+  const [nicknameMessage, setNicknameMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+  const [allMessage, setAllMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
   const [loginType, setLoginType] = useState<'LOGIN' | 'SIGN UP'>('SIGN UP');
 
   const navigate = useNavigate();
@@ -51,17 +57,22 @@ export default function SignUp() {
         `${process.env.REACT_APP_API_SERVER}/user/check-name?nickname=${nickname}`,
       );
       // setCheckStatus(response.data.status);
-      setNicknameMessage(response.data.message);
+      // setNicknameMessage(response.data.message);
 
       if (response.data.status === 'SUCCESS') {
+        setNicknameMessage({ text: response.data.message, type: 'success' });
         setIsNicknameChecked(true); // ✅ 중복 확인 완료
       } else {
         setIsNicknameChecked(false);
+        setNicknameMessage({ text: response.data.message, type: 'error' });
         nicknameRef.current?.focus();
       }
     } catch (error) {
       console.error('닉네임 중복 검사 실패:', error);
-      setNicknameMessage('서버 오류가 발생했습니다. 관리자에게 문의하세요.');
+      setNicknameMessage({
+        text: '서버 오류가 발생했습니다. 관리자에게 문의하세요.',
+        type: 'error',
+      });
       setIsNicknameChecked(false);
     }
   };
@@ -73,26 +84,31 @@ export default function SignUp() {
         `${process.env.REACT_APP_API_SERVER}/user/check-email?email=${email}`,
       );
       // setCheckStatus(response.data.status);
-      setEmailMessage(response.data.message);
+      // setEmailMessage(response.data.message);
 
       if (response.data.status === 'SUCCESS') {
+        setEmailMessage({ text: response.data.message, type: 'success' });
         setIsEmailChecked(true); // ✅ 중복 확인 완료
       } else {
+        setEmailMessage({ text: response.data.message, type: 'error' });
         setIsEmailChecked(false);
         emailRef.current?.focus();
       }
     } catch (error) {
       console.error('이메일 중복 검사 실패:', error);
-      setEmailMessage('서버 오류가 발생했습니다. 관리자에게 문의하세요.');
+      setEmailMessage({
+        text: '서버 오류가 발생했습니다. 관리자에게 문의하세요.',
+        type: 'error',
+      });
       setIsEmailChecked(false);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setNicknameMessage('');
-    setEmailMessage('');
-    setAllMessage('');
+    setEmailMessage({ text: '', type: null });
+    setNicknameMessage({ text: '', type: null });
+    setAllMessage({ text: '', type: null });
 
     // ✅ 중복 확인 여부 체크 후 alert 띄우기
     if (!isNicknameChecked) {
@@ -108,7 +124,10 @@ export default function SignUp() {
 
     // ✅ 필수 입력값 체크
     if (!email || !password || !nickname) {
-      setAllMessage('이메일, 비밀번호, 닉네임을 모두 입력해주세요.');
+      setAllMessage({
+        text: '이메일, 비밀번호, 닉네임을 모두 입력해주세요.',
+        type: 'error',
+      });
       // setCheckStatus('ERROR');
       if (!nickname) nicknameRef.current?.focus();
       else if (!email) emailRef.current?.focus();
@@ -142,14 +161,17 @@ export default function SignUp() {
       console.log(response.data);
 
       if (response.data.status === 'ERROR') {
-        setAllMessage(response.data.message);
-        if (allMessage.includes('이메일')) {
+        setAllMessage({
+          text: response.data.message,
+          type: 'error',
+        });
+        if (allMessage.text.includes('이메일')) {
           emailRef.current?.focus();
-        } else if (allMessage.includes('비번')) {
+        } else if (allMessage.text.includes('비번')) {
           passwordRef.current?.focus();
-        } else if (allMessage.includes('닉네임')) {
+        } else if (allMessage.text.includes('닉네임')) {
           nicknameRef.current?.focus();
-        } else if (allMessage.includes('가입된 사용자')) {
+        } else if (allMessage.text.includes('가입된 사용자')) {
           alert(setAllMessage);
         }
         return;
@@ -159,7 +181,10 @@ export default function SignUp() {
       navigate('/v1/user/login'); // 메인 페이지로 이동
     } catch (error) {
       console.error('회원가입 실패:', error);
-      setAllMessage('서버 오류가 발생했습니다. 다시 시도해주세요.');
+      setAllMessage({
+        text: '서버 오류가 발생했습니다. 다시 시도해주세요.',
+        type: 'error',
+      });
     }
   };
 
@@ -189,7 +214,7 @@ export default function SignUp() {
                     value={nickname}
                     onChange={e => {
                       setNickname(e.target.value);
-                      setNicknameMessage('');
+                      setNicknameMessage({ text: '', type: null });
                       setIsNicknameChecked(false);
                     }}
                     ref={nicknameRef}
@@ -198,9 +223,7 @@ export default function SignUp() {
                     중복 확인
                   </Button>
                 </InputGroup>
-                {nicknameMessage && (
-                  <ServerMessage errorMessage={nicknameMessage} />
-                )}
+                {nicknameMessage && <ServerMessage message={nicknameMessage} />}
               </Form.Group>
 
               <Form.Group controlId="email" className="mb-3">
@@ -211,7 +234,7 @@ export default function SignUp() {
                     value={email}
                     onChange={e => {
                       setEmail(e.target.value);
-                      setEmailMessage('');
+                      setEmailMessage({ text: '', type: null });
                       setIsEmailChecked(false);
                     }}
                     ref={emailRef}
@@ -220,7 +243,7 @@ export default function SignUp() {
                     중복 확인
                   </Button>
                 </InputGroup>
-                {emailMessage && <ServerMessage errorMessage={emailMessage} />}
+                {emailMessage && <ServerMessage message={emailMessage} />}
               </Form.Group>
 
               <Form.Group controlId="password" className="mb-3">
@@ -247,7 +270,7 @@ export default function SignUp() {
                   onChange={e => setPassword(e.target.value)}
                   ref={passwordRef}
                 />
-                {allMessage && <ServerMessage errorMessage={allMessage} />}
+                {allMessage.text && <ServerMessage message={allMessage} />}
               </Form.Group>
 
               <Button variant="primary" type="submit" className="w-100 mt-3">

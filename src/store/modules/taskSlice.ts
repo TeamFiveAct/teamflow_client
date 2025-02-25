@@ -1,4 +1,3 @@
-// src/redux/taskSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Task } from '../../types/types';
 
@@ -37,8 +36,8 @@ const taskSlice = createSlice({
         todo_id: number;
         title?: string;
         description?: string;
-        priority?: 'small' | 'medium' | 'high' | 'very_high';
-        state?: 'open' | 'in_progress' | 'done';
+        priority?: 'low' | 'medium' | 'high';
+        state?: 'plan' | 'progress' | 'done';
         start_date?: string;
         due_date?: string;
       }>,

@@ -8,15 +8,8 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { SpaceListProps } from '../../types/types';
 
-interface Workspace {
-  space_id: number;
-  space_title: string;
-}
-
-interface SpaceListProps {
-  spaces: Workspace[];
-}
 const ITEMS_PER_PAGE = 6; // ✅ 한 번에 보여줄 개수 (2줄 × 3개)
 
 const SpaceList = ({ spaces }: SpaceListProps) => {

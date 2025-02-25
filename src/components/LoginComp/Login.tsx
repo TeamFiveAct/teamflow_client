@@ -1,41 +1,86 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Button, Form, Container, Col, Row } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Container, Alert, Col, Row } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
 import { useDispatch } from 'react-redux';
 import { login, setSessionStatus } from '../../store/modules/checkSessionSlice';
+import KakaoLoginButton from './KakaoLoginButton';
+// import GetTempPassword from './GetTempPassword';
 
 export default function Login() {
   // 로그인 관련 상태들
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginType, setLoginType] = useState<'LOGIN' | 'SIGN UP'>('LOGIN');
-  const [emailMessage, setEmailMessage] = useState('');
-  const [passwordMessage, setPasswordMessage] = useState('');
-  const [allMessage, setAllMessage] = useState('');
-  const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
+  // const [emailMessage, setEmailMessage] = useState('');
+  // const [passwordMessage, setPasswordMessage] = useState('');
+  // const [allMessage, setAllMessage] = useState('');
+  // const [checkStatus, setCheckStatus] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
 
   // 비밀번호 재설정 모드 상태 및 관련 변수
   const [isResetMode, setIsResetMode] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
-  const [resetMessage, setResetMessage] = useState('');
-  const [resetError, setResetError] = useState('');
+  const [resetMessage, setResetMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+  // const [resetError, setResetError] = useState('');
 
-  const dispatch = useDispatch();
+  const [emailMessage, setEmailMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+  const [passwordMessage, setPasswordMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+  const [allMessage, setAllMessage] = useState<{
+    text: string;
+    type: 'error' | 'success' | null;
+  }>({ text: '', type: null });
+
+  const dispatch = useDispatch(); // 추가한 것
   const navigate = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const resetEmailRef = useRef<HTMLInputElement>(null);
 
-  // 로그인 처리 함수 (기존 로직 그대로)
+  // // 로그인 처리 함수 (기존 로직 그대로)
+  // const handleSubmit = async (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   setEmailMessage('');
+  //   setPasswordMessage('');
+  //   setAllMessage('');
+  // 카카오 콜백을 부모창에서 메세지 수신하는 방법:
+  useEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
+      // 1. 보낸 곳의 origin이 맞는지 확인
+      // if (event.origin !== 'http://localhost:8000') return;
+      if (event.origin !== `${process.env.REACT_APP_API_SERVER}`) return;
+
+      const { status, data, message } = event.data;
+
+      if (status === 'SUCCESS') {
+        dispatch(login({ nickname: data.nickname, authProvider: '카카오' }));
+        dispatch(setSessionStatus(true));
+        navigate('/v1/mySpace');
+      } else {
+        setAllMessage(message || '카카오 로그인에 실패했습니다.');
+      }
+    };
+    window.addEventListener('message', messageHandler);
+    return () => window.removeEventListener('message', messageHandler);
+  }, [dispatch, navigate]);
+
+  // 로그인 처리 함수
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setEmailMessage('');
-    setPasswordMessage('');
-    setAllMessage('');
+    event.preventDefault(); // 기본 제출 방지
+    setEmailMessage({ text: '', type: null });
+    setPasswordMessage({ text: '', type: null });
+    setAllMessage({ text: '', type: null });
 
     try {
       const response = await axios.post(
@@ -48,17 +93,18 @@ export default function Login() {
       );
 
       const { status, message } = response.data;
-      setCheckStatus(status);
+      // setSendSuccessStatus
+      // setSendErrorStatus
 
       if (status === 'ERROR') {
         if (message.includes('가입된 사용자')) {
-          setEmailMessage(message);
+          setEmailMessage({ text: message, type: 'error' });
           emailRef.current?.focus();
         } else if (message.includes('비밀번호')) {
-          setPasswordMessage(message);
+          setPasswordMessage({ text: message, type: 'error' });
           passwordRef.current?.focus();
         } else {
-          setAllMessage(message);
+          setAllMessage({ text: message, type: 'error' });
         }
       } else if (status === 'SUCCESS') {
         console.log('로그인 성공:', response.data);
@@ -67,7 +113,7 @@ export default function Login() {
         navigate('/v1/mySpace');
       }
     } catch (error) {
-      setAllMessage('로그인 중 오류가 발생했습니다.');
+      setAllMessage({ text: '로그인 중 오류가 발생했습니다.', type: 'error' });
       console.error('로그인 오류:', error);
     }
   };
@@ -75,22 +121,33 @@ export default function Login() {
   // 비밀번호 재설정 요청 함수
   const handlePasswordReset = async (event: React.FormEvent) => {
     event.preventDefault();
-    setResetMessage('');
-    setResetError('');
+    setResetMessage({ text: '', type: null });
+    // setResetError({ text: '', type: null });
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/user/request-reset`,
-        { email: resetEmail }
+        { email: resetEmail },
       );
       const { status, message } = response.data;
       if (status === 'SUCCESS') {
-        setResetMessage('재설정 링크가 이메일로 발송되었습니다.');
+        setResetMessage({
+          text: '재설정 링크가 이메일로 발송되었습니다.',
+          type: 'success',
+        });
       } else {
-        setResetError(message || '비밀번호 재설정 요청에 실패했습니다.');
+        // setResetError(message || '비밀번호 재설정 요청에 실패했습니다.');
+        setResetMessage({
+          text: '비밀번호 재설정 요청에 실패했습니다.',
+          type: 'error',
+        });
       }
     } catch (error) {
-      setResetError('비밀번호 재설정 요청 중 오류가 발생했습니다.');
+      setResetMessage({
+        text: '비밀번호 재설정 요청 중 오류가 발생했습니다.',
+        type: 'error',
+      });
+      // setResetError('비밀번호 재설정 요청 중 오류가 발생했습니다.');
       console.error('비밀번호 재설정 오류:', error);
     }
   };
@@ -121,7 +178,10 @@ export default function Login() {
                     className="d-flex flex-column justify-content-center align-items-center"
                     style={{ height: '100%' }}
                   >
-                    <Form onSubmit={handlePasswordReset} style={{ width: '100%' }}>
+                    <Form
+                      onSubmit={handlePasswordReset}
+                      style={{ width: '100%' }}
+                    >
                       <Form.Group controlId="resetEmail" className="mb-5">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
@@ -129,14 +189,18 @@ export default function Login() {
                           placeholder="example@example.com"
                           value={resetEmail}
                           ref={resetEmailRef}
-                          onChange={(e) => setResetEmail(e.target.value)}
+                          onChange={e => setResetEmail(e.target.value)}
                         />
                       </Form.Group>
 
-                      {resetMessage && <ServerMessage errorMessage={resetMessage} />}
-                      {resetError && <ServerMessage errorMessage={resetError} />}
+                      {resetMessage && <ServerMessage message={resetMessage} />}
+                      {/* {resetError && <ServerMessage errorMessage={resetError} />} */}
 
-                      <Button variant="primary" type="submit" className="w-100 mb-2">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="w-100 mb-2"
+                      >
                         재설정 링크 발송
                       </Button>
                     </Form>
@@ -154,7 +218,7 @@ export default function Login() {
               ) : (
                 // 기존 로그인 폼
                 <>
-                  <h3 className="text-center fw-bold">LOGIN</h3>
+                  {/* <h3 className="text-center fw-bold">LOGIN</h3>
                   <hr style={{ width: '100%', border: '1px solid black' }} />
                   <div
                     className="d-flex flex-column justify-content-center align-items-center"
@@ -191,11 +255,63 @@ export default function Login() {
                         {passwordMessage && (
                           <ServerMessage errorMessage={passwordMessage} />
                         )}
+                      </Form.Group> */}
+                  <h3 className="text-center fw-bold">LOGIN</h3>
+                  <hr style={{ width: '100%', border: '1px solid black' }} />
+                  <div
+                    className=" d-flex flex-column justify-content-center align-items-center"
+                    style={{ height: '100%' }}
+                  >
+                    <Form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                      <Form.Group controlId="email" className="mb-5">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          placeholder="example@example.com"
+                          value={email}
+                          ref={emailRef}
+                          onChange={e => {
+                            setEmail(e.target.value);
+                            setEmailMessage({ text: '', type: null });
+                          }}
+                        />
+                        {/* 이메일 에러 메시지 */}
+                        {emailMessage && (
+                          <ServerMessage message={emailMessage} />
+                        )}
                       </Form.Group>
 
-                      {allMessage && <ServerMessage errorMessage={allMessage} />}
+                      <Form.Group controlId="password" className="mb-5">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="비밀번호를 입력하세요."
+                          value={password}
+                          ref={passwordRef}
+                          onChange={e => {
+                            setPassword(e.target.value);
+                            setPasswordMessage({ text: '', type: null });
+                          }}
+                        />
+                        {/* 비밀번호 에러 메시지 */}
 
-                      <Button variant="primary" type="submit" className="w-100 mb-2">
+                        {passwordMessage && (
+                          <ServerMessage message={passwordMessage} />
+                        )}
+                      </Form.Group>
+
+                      {/* 전체 에러 메시지 */}
+                      {allMessage.text && (
+                        <ServerMessage message={allMessage} />
+                      )}
+
+                      {/* {allMessage && <ServerMessage errorMessage={allMessage} />} */}
+
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="w-100 mb-2"
+                      >
                         로그인
                       </Button>
 
@@ -211,7 +327,7 @@ export default function Login() {
                       </div>
                     </Form>
 
-                    <Button
+                    {/* <Button
                       variant="link"
                       href={`${process.env.REACT_APP_API_SERVER}/user/kakao-login`}
                       target="_blank"
@@ -222,11 +338,28 @@ export default function Login() {
                         className="img-fluid"
                         style={{ width: '30px', height: '30px' }}
                       />
-                    </Button>
+                    </Button> */}
                   </div>
                 </>
               )}
+              <KakaoLoginButton />
+              {/* <Link to={'/v1/user/request-reset'}>비밀번호 찾기</Link> */}
+              {/* <GetTempPassword /> */}
+              {/* <Button
+                  variant="link"
+                  // href={`${process.env.REACT_APP_API_SERVER}/user/kakao-login`}
+                  target="_blank"
+                  onClick={handleKakaoSubmit}
+                >
+                  <img
+                    src="/assets/KakaoTalk_logo.svg"
+                    alt="카카오톡 로그인"
+                    className="img-fluid"
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                </Button> */}
             </div>
+            {/* </div> */}
           </Col>
 
           {/* 오른쪽 영역: TransitionComp (기존 로직 그대로) */}

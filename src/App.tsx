@@ -16,7 +16,7 @@ import SignUp from './components/LoginComp/SignUp';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import useCheckSession from './hooks/useCheckSession';
-
+import SettingPassword from './pages/SettingPassword';
 
 function App() {
   const sessionValid = useSelector(
@@ -30,26 +30,25 @@ function App() {
   const workspace_id = 1;
 
   return (
-    <>
-      <Router>
-        {/* 조건부로 SessionChecker 호출 */}
-        {sessionValid && <SessionChecker />}
-        {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
-        <Header />
-        <Routes>
-          <Route path="/" element={<Layout />} />
-          <Route index element={<Home />} />
-          <Route path="/v1/user" element={<MyProfile />} />
-          <Route path="/v1/user/login" element={<LoginPage />} />
-          <Route path="/v1/user/join" element={<SignUp />} />
-          <Route path="/v1/mySpace" element={<JoinSpace />} />
-          {/* /workspace 변경 */}
-          <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Footer />
-      </Router>
-    </>
+    <Router>
+      {/* 조건부로 SessionChecker 호출 */}
+      {sessionValid && <SessionChecker />}{' '}
+      {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
+      <Header />
+      <Routes>
+        <Route path="/" element={<Layout />} />
+        <Route index element={<Home />} />
+        <Route path="/v1/user" element={<MyProfile />} />
+        <Route path="/v1/user/login" element={<LoginPage />} />
+        <Route path="/v1/user/join" element={<SignUp />} />
+        <Route path="/v1/mySpace" element={<JoinSpace />} />{' '}
+        {/* /workspace 변경 */}
+        <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
+        {/* <Route path="/v1/user/request-reset" element={<SettingPassword />} /> */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
