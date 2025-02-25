@@ -5,9 +5,12 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../style/ProjectInfo.scss';
 import { WorkspaceInfo } from '../../types/types';
+import { RootState } from '../../store/store';
+import UserAvatar from '../commonComp/UserAvatar';
 
 interface ProjectInfoProps {
   workspace: WorkspaceInfo;
@@ -15,39 +18,6 @@ interface ProjectInfoProps {
   toggleCollapse: () => void;
 }
 
-// ✅ 더미 사용자 데이터
-const dummyUsers = [
-  {
-    id: 1,
-    nickname: 'User1',
-    profileImg: 'https://via.placeholder.com/40',
-    isOnline: true,
-  },
-  {
-    id: 2,
-    nickname: 'User2',
-    profileImg: 'https://via.placeholder.com/40',
-    isOnline: false,
-  },
-  {
-    id: 3,
-    nickname: 'User3',
-    profileImg: 'https://via.placeholder.com/40',
-    isOnline: true,
-  },
-  {
-    id: 4,
-    nickname: 'User4',
-    profileImg: 'https://via.placeholder.com/40',
-    isOnline: false,
-  },
-  {
-    id: 5,
-    nickname: 'User5',
-    profileImg: 'https://via.placeholder.com/40',
-    isOnline: true,
-  },
-];
 
 export default function ProjectInfo({
   workspace,
@@ -56,6 +26,13 @@ export default function ProjectInfo({
 }: ProjectInfoProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const usersPerPage = 3;
+  
+  // Redux 스토어에서 온라인 사용자 목록 가져오기
+  const onlineUsers = useSelector((state: RootState) => {
+    console.log('[ProjectInfo] Redux 상태:', state);
+    console.log('[ProjectInfo] 온라인 사용자 목록:', state.onlineUsers.users);
+    return state.onlineUsers.users;
+  });
 
   const handlePrev = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
@@ -63,9 +40,12 @@ export default function ProjectInfo({
 
   const handleNext = () => {
     setCurrentIndex(prev =>
-      Math.min(dummyUsers.length - usersPerPage, prev + 1),
+      Math.min(onlineUsers.length - usersPerPage, prev + 1),
     );
   };
+
+  // 디버깅: 컴포넌트 렌더링 시 사용자 목록 로깅
+  console.log('[ProjectInfo] 렌더링 - 온라인 사용자 수:', onlineUsers.length);
 
   return (
     <div className="project-info-container">
@@ -95,30 +75,31 @@ export default function ProjectInfo({
             <FaChevronLeft />
           </button>
           <div className="user-list">
-            {dummyUsers
-              .slice(currentIndex, currentIndex + usersPerPage)
-              .map(user => (
-                <div key={user.id} className="user-item">
-                  <img
-                    src={user.profileImg}
-                    alt={user.nickname}
-                    className="user-avatar"
-                  />
-                  <span
-                    className={`user-status ${
-                      user.isOnline ? 'online' : 'offline'
-                    }`}
-                  ></span>
-                  {!isCollapsed && (
-                    <p className="user-nickname">{user.nickname}</p>
-                  )}
-                </div>
-              ))}
+            {onlineUsers.length > 0 ? (
+              onlineUsers
+                .slice(currentIndex, currentIndex + usersPerPage)
+                .map(user => (
+                  <div key={user.userId} className="user-item">
+                    <div className="user-avatar">
+                      <UserAvatar 
+                        name={user.profileImg || `User${user.userId}`} 
+                        size={40} 
+                      />
+                    </div>
+                    <span className="user-status online"></span>
+                    {!isCollapsed && (
+                      <p className="user-nickname">{user.nickname}</p>
+                    )}
+                  </div>
+                ))
+            ) : (
+              <div className="no-users">접속 중인 사용자가 없습니다.</div>
+            )}
           </div>
           <button
             className="arrow-btn right"
             onClick={handleNext}
-            disabled={currentIndex >= dummyUsers.length - usersPerPage}
+            disabled={currentIndex >= onlineUsers.length - usersPerPage}
           >
             <FaChevronRight />
           </button>

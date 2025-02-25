@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaEllipsisH, FaTrash } from 'react-icons/fa';
+import { FaEllipsisH, FaTrash, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import TaskDetailModal from './TaskDetailModal';
-import TaskModal from './TaskModal'; // ✅ TaskModal 추가
+import TaskModal from './TaskModal';
 import '../../style/taskColumn.scss';
 import { Task } from '../../types/types';
 import { useDispatch } from 'react-redux';
@@ -15,6 +16,8 @@ interface TaskColumnProps {
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
+  sortBy?: 'priority' | 'due_date' | 'start_date' | null;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export default function TaskColumn({
@@ -25,6 +28,8 @@ export default function TaskColumn({
   onEdit,
   onDelete,
   onFilter,
+  sortBy = null,
+  sortOrder = 'asc',
 }: TaskColumnProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -58,11 +63,11 @@ export default function TaskColumn({
   };
 
   const handleEdit = (task: Task) => {
-    dispatch(updateTask(task));
+    onEdit(task);
   };
 
   const handleDelete = (task: Task) => {
-    dispatch(deleteTask(task.todo_id));
+    onDelete(task);
   };
 
   const handleOpenDetail = (task: Task) => {
@@ -77,7 +82,7 @@ export default function TaskColumn({
         <div className="task-actions">
           <button
             className="btn btn-sm btn-primary"
-            onClick={() => setShowCreateModal(true)} // ✅ 생성 버튼 클릭 시 모달 열기
+            onClick={() => setShowCreateModal(true)}
           >
             + 생성
           </button>
@@ -90,50 +95,97 @@ export default function TaskColumn({
             </button>
             {showFilterOptions && (
               <div className="filter-options">
-                <button onClick={() => onFilter('priority')}>우선순위</button>
-                <button onClick={() => onFilter('due_date')}>마감일</button>
-                <button onClick={() => onFilter('start_date')}>시작일</button>
+                <button 
+                  onClick={() => onFilter('priority')}
+                  className={sortBy === 'priority' ? 'active' : ''}
+                >
+                  우선순위
+                  {sortBy === 'priority' && (
+                    sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />
+                  )}
+                </button>
+                <button 
+                  onClick={() => onFilter('due_date')}
+                  className={sortBy === 'due_date' ? 'active' : ''}
+                >
+                  마감일
+                  {sortBy === 'due_date' && (
+                    sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />
+                  )}
+                </button>
+                <button 
+                  onClick={() => onFilter('start_date')}
+                  className={sortBy === 'start_date' ? 'active' : ''}
+                >
+                  시작일
+                  {sortBy === 'start_date' && (
+                    sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />
+                  )}
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="task-list" ref={containerRef} onScroll={handleScroll}>
-        {visibleTasks.map(task => (
-          <div key={task.todo_id} className="task-card">
-            <div className="task-header">
-              <h5>{task.title}</h5>
-              <span className={`priority-badge ${task.priority}`}>
-                {task.priority}
-              </span>
-            </div>
-            <p className="task-due-date">마감 기한: {task.due_date}</p>
+      <Droppable droppableId={state}>
+        {(provided) => (
+          <div 
+            className="task-list" 
+            ref={(el) => {
+              // 두 ref를 모두 설정
+              containerRef.current = el;
+              provided.innerRef(el);
+            }}
+            onScroll={handleScroll}
+            {...provided.droppableProps}
+          >
+            {visibleTasks.map((task, index) => (
+              <Draggable 
+                key={task.todo_id.toString()} 
+                draggableId={task.todo_id.toString()} 
+                index={index}
+              >
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className={`task-card ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                  >
+                    <div className="task-header">
+                      <h5>{task.title}</h5>
+                      <span className={`priority-badge ${task.priority}`}>
+                        {task.priority}
+                      </span>
+                    </div>
+                    <p className="task-due-date">마감 기한: {task.due_date}</p>
 
-            <div className="task-actions">
-              {/* <button
-                className="task-action-btn"
-                onClick={() => handleOpenDetail(task)}
-              > */}
-              <button
-                className="task-action-btn"
-                onClick={() => {
-                  setSelectedTask(task);
-                  setShowDetailModal(true);
-                }}
-              >
-                <FaEllipsisH />
-              </button>
-              <button
-                className="task-action-btn delete"
-                onClick={() => handleDelete(task)}
-              >
-                <FaTrash />
-              </button>
-            </div>
+                    <div className="task-actions">
+                      <button
+                        className="task-action-btn"
+                        onClick={() => {
+                          setSelectedTask(task);
+                          setShowDetailModal(true);
+                        }}
+                      >
+                        <FaEllipsisH />
+                      </button>
+                      <button
+                        className="task-action-btn delete"
+                        onClick={() => handleDelete(task)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
           </div>
-        ))}
-      </div>
+        )}
+      </Droppable>
 
       {/* ✅ TaskDetailModal (할 일 상세보기 모달) */}
       <TaskDetailModal
@@ -145,7 +197,10 @@ export default function TaskColumn({
       {/* ✅ TaskModal (할 일 생성 모달) */}
       <TaskModal
         show={showCreateModal}
-        onHide={() => setShowCreateModal(false)}
+        onHide={() => {
+          console.log('TaskColumn state 값:', state);
+          setShowCreateModal(false);
+        }}
         taskState={state}
       />
     </div>

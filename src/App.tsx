@@ -16,6 +16,7 @@ import SignUp from './components/LoginComp/SignUp';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import useCheckSession from './hooks/useCheckSession';
+import PrivateRoute from './components/commonComp/PrivateRoute';
 
 
 function App() {
@@ -25,26 +26,36 @@ function App() {
 
   console.log('현재 세션 상태 app.tsx:', sessionValid); // 세션 상태 로그
 
-  // 테스트용 사용자 / 워크스페이스 정보
-  const user_id = 1;
-  const workspace_id = 1;
-
   return (
     <>
       <Router>
-        {/* 조건부로 SessionChecker 호출 */}
-        {sessionValid && <SessionChecker />}
-        {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
+        {/* SessionChecker를 항상 호출하도록 수정 */}
+        <SessionChecker />
         <Header />
         <Routes>
           <Route path="/" element={<Layout />} />
           <Route index element={<Home />} />
-          <Route path="/v1/user" element={<MyProfile />} />
+          {/* 공개 라우트 - 로그인 없이 접근 가능 */}
           <Route path="/v1/user/login" element={<LoginPage />} />
           <Route path="/v1/user/join" element={<SignUp />} />
-          <Route path="/v1/mySpace" element={<JoinSpace />} />
-          {/* /workspace 변경 */}
-          <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
+          
+          {/* 보호된 라우트 - 로그인 필요 */}
+          <Route path="/v1/user" element={
+            <PrivateRoute>
+              <MyProfile />
+            </PrivateRoute>
+          } />
+          <Route path="/v1/mySpace" element={
+            <PrivateRoute>
+              <JoinSpace />
+            </PrivateRoute>
+          } />
+          <Route path="/v1/workspace/:space_id" element={
+            <PrivateRoute>
+              <DashBoard />
+            </PrivateRoute>
+          } />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
@@ -53,7 +64,7 @@ function App() {
   );
 }
 
-// ✅ useCheckSession을 Router 내부에서 실행하기 위한 컴포넌트
+// useCheckSession을 Router 내부에서 실행하기 위한 컴포넌트
 function SessionChecker() {
   useCheckSession(); // useLocation()이 정상적으로 동작할 수 있도록 Router 내부에서 실행
   return null;

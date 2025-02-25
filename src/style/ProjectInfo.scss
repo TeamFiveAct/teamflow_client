@@ -54,6 +54,15 @@
   gap: 15px;
   overflow: hidden;
   white-space: nowrap;
+  min-width: 150px;
+}
+
+/* ✅ 접속 중인 사용자가 없을 때 메시지 */
+.no-users {
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  width: 100%;
 }
 
 .user-item {

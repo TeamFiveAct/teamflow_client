@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import { Button, Form, Container, Col, Row } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
 import { useDispatch } from 'react-redux';
@@ -25,6 +25,7 @@ export default function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -64,7 +65,10 @@ export default function Login() {
         console.log('로그인 성공:', response.data);
         dispatch(login(response.data.data.nickname));
         dispatch(setSessionStatus(true));
-        navigate('/v1/mySpace');
+        
+        // 리디렉션 처리: 이전에 접근하려던 페이지가 있으면 해당 페이지로, 없으면 기본 페이지로
+        const from = location.state?.from?.pathname || '/v1/mySpace';
+        navigate(from, { replace: true });
       }
     } catch (error) {
       setAllMessage('로그인 중 오류가 발생했습니다.');

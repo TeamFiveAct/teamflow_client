@@ -46,12 +46,8 @@ export default function JoinSpace() {
   };
 
   useEffect(() => {
-    if (!sessionValid) {
-      alert('로그인 기간이 만료되었습니다. 다시 로그인 해주세요.');
-      navigate('/v1/user/login');
-    }
     fetchMySpaces();
-  }, [sessionValid, navigate]);
+  }, []);
 
   const handleRefreshSpaces = () => {
     fetchMySpaces();
@@ -66,12 +62,6 @@ export default function JoinSpace() {
     fetchMySpaces();
   };
 
-  useEffect(() => {
-    if (!sessionValid) {
-      alert('로그인 기간이 만료되었습니다. 다시 로그인 해주세요.');
-      navigate('/v1/user/login');
-    }
-  }, [sessionValid, navigate]);
 
   return (
     <section className="joinspaceSection">
