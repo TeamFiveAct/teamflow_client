@@ -19,9 +19,7 @@ export default function AboutUsModal({ onClose }: AboutUsModalProps) {
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}></div>
-
-      <div className="custom-modal-container">
+      <div className="custom-modal-container" onClick={e => e.stopPropagation()}>
         <div className="aboutus-modal-content">
           <div className="aboutus-modal-header">
             <h5 className="modal-title">About Us</h5>

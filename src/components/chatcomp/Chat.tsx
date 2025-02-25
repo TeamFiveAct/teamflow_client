@@ -1,30 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, MouseEvent } from 'react';
 import { io, Socket } from 'socket.io-client';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import Prism from 'prismjs';
-import {
-  Message as MessageType,
-  ChatProps,
-  FileMessage,
-} from '../../types/chat';
-
-import {
-  ChatContainer,
-  ChatHeader,
-  ChatHistory,
-  ChatInputContainer,
-  ChatInputWrapper,
-  MessageWrapper,
-  MessageContent,
-  UserName,
-  InputButtonGroup,
-  FileInputLabel,
-  TextInput,
-  SendButton,
-  ActionButton,
-  EmojiPickerContainer,
-  CodeEditorContainer,
-} from '../../style/ChatStyles';
+import { Message as MessageType, ChatProps, FileMessage } from '../../types/chat';
+import '../../style/chat.scss';
 
 // Icons as SVG components
 const PaperClipIcon = () => (
@@ -120,7 +99,17 @@ const SUPPORTED_CODE_LANGUAGES = [
   'go',
 ];
 
-const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
+interface Position {
+  x: number;
+  y: number;
+}
+
+const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [position, setPosition] = useState<Position>({ x: 100, y: 120 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
+  const chatRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [messageInput, setMessageInput] = useState('');
@@ -280,9 +269,9 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
     const isCurrentUser = message.user_id === user_id;
 
     return (
-      <MessageWrapper key={message.id} $isCurrentUser={isCurrentUser}>
-        <UserName>User {message.user_id}</UserName>
-        <MessageContent $isCurrentUser={isCurrentUser}>
+      <div key={message.id} className={`message-wrapper ${isCurrentUser ? 'current-user' : ''}`}>
+        <span className="user-name">User {message.user_id}</span>
+        <div className={`message-content ${isCurrentUser ? 'current-user' : ''}`}>
           {message.content_type === 'text' && message.content}
           {message.content_type === 'emoji' && (
             <span className="emoji">{message.content}</span>
@@ -304,7 +293,7 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
               href={message.content}
               target="_blank"
               rel="noopener noreferrer"
-              className="file-attachment"
+              className={`file-attachment ${isCurrentUser ? 'current-user' : ''}`}
             >
               <FileIcon />
               <div className="file-info">
@@ -313,33 +302,109 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
             </a>
           )}
           {message.content_type === 'code' && (
-            <pre>
+            <pre className={isCurrentUser ? 'current-user' : ''}>
               <code className={`language-${message.code_language}`}>
                 {message.content}
               </code>
             </pre>
           )}
-        </MessageContent>
-      </MessageWrapper>
+        </div>
+      </div>
     );
   };
 
+  const handleMouseDown = (e: MouseEvent) => {
+    if (chatRef.current && e.target instanceof HTMLElement && e.target.closest('.window-controls') === null) {
+      setIsDragging(true);
+      const rect = chatRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+  };
+
+  const handleMouseMove = useCallback((e: globalThis.MouseEvent) => {
+    if (isDragging && chatRef.current) {
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
+      
+      // Keep window within viewport bounds
+      const maxX = window.innerWidth - chatRef.current.offsetWidth;
+      const maxY = window.innerHeight - chatRef.current.offsetHeight;
+      
+      setPosition({
+        x: Math.max(0, Math.min(newX, maxX)),
+        y: Math.max(0, Math.min(newY, maxY))
+      });
+    }
+  }, [isDragging, dragOffset]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  if (isMinimized) {
+    return (
+      <div 
+        className="chat-minimized"
+        style={{ left: `${position.x}px` }}
+        onClick={() => setIsMinimized(false)}
+      >
+        <span>Chat</span>
+      </div>
+    );
+  }
+
   return (
-    <ChatContainer>
-      <ChatHeader>
+    <div 
+      ref={chatRef}
+      className="chat-container"
+      style={{
+        position: 'fixed',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        transform: 'none',
+        margin: 0
+      }}
+    >
+      <div className="chat-header" onMouseDown={handleMouseDown}>
         <h2>Workspace Chat</h2>
-      </ChatHeader>
+        <div className="window-controls">
+          <button onClick={() => setIsMinimized(true)} className="minimize-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14">
+              <path fill="currentColor" d="M20 12H4" strokeWidth="2" stroke="currentColor"/>
+            </svg>
+          </button>
+          <button onClick={onClose} className="close-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14">
+              <path fill="currentColor" d="M18 6L6 18M6 6l12 12" strokeWidth="2" stroke="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-      <ChatHistory ref={chatHistoryRef}>
+      <div className="chat-history" ref={chatHistoryRef}>
         {messages.map(renderMessage)}
-      </ChatHistory>
+      </div>
 
-      <ChatInputContainer>
-        <EmojiPickerContainer $isVisible={showEmojiPicker}>
+      <div className="chat-input-container">
+        <div className={`emoji-picker-container ${showEmojiPicker ? 'visible' : ''}`}>
           <EmojiPicker onEmojiClick={handleEmojiClick} />
-        </EmojiPickerContainer>
+        </div>
 
-        <CodeEditorContainer $isVisible={showCodeEditor}>
+        <div className={`code-editor-container ${showCodeEditor ? 'visible' : ''}`}>
           <select
             value={selectedLanguage}
             onChange={e => setSelectedLanguage(e.target.value)}
@@ -367,29 +432,32 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
               전송
             </button>
           </div>
-        </CodeEditorContainer>
+        </div>
 
-        <ChatInputWrapper>
-          <InputButtonGroup>
-            <FileInputLabel>
+        <div className="chat-input-wrapper">
+          <div className="input-button-group">
+            <label className="file-input-label">
               <input type="file" onChange={handleFileUpload} />
               <PaperClipIcon />
-            </FileInputLabel>
-            <ActionButton
+            </label>
+            <button
               type="button"
+              className="action-button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
               <EmojiIcon />
-            </ActionButton>
-            <ActionButton
+            </button>
+            <button
               type="button"
+              className="action-button"
               onClick={() => setShowCodeEditor(!showCodeEditor)}
             >
               <CodeIcon />
-            </ActionButton>
-          </InputButtonGroup>
+            </button>
+          </div>
 
-          <TextInput
+          <input
+            className="text-input"
             type="text"
             value={messageInput}
             onChange={e => setMessageInput(e.target.value)}
@@ -397,15 +465,16 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id }) => {
             placeholder="메시지를 입력하세요..."
           />
 
-          <SendButton
+          <button
+            className="send-button"
             onClick={() => sendMessage(messageInput)}
             disabled={!messageInput.trim()}
           >
             <SendIcon />
-          </SendButton>
-        </ChatInputWrapper>
-      </ChatInputContainer>
-    </ChatContainer>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

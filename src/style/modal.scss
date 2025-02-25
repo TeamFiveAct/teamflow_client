@@ -1,21 +1,7 @@
-/* ✅ About Us 모달 */
 /* ✅ 버튼이 자동 포커스되지 않도록 설정 */
 .aboutus-modal-footer button:focus {
   outline: none;
   box-shadow: none;
-}
-
-/* ✅ 모달 오버레이 (반투명 배경) */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* ✅ 회색 반투명 배경 */
-  z-index: 1040;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease-in-out;
 }
 
 /* ✅ 모달 컨테이너 (화면 중앙 배치) */
@@ -28,19 +14,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
-/* ✅ 모달 창 */
+/* ✅ 모달 공통 스타일 */
+.custom-modal-content,
 .aboutus-modal-content {
   width: 400px;
   background: white;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
   animation: fadeIn 0.3s ease-in-out;
+  pointer-events: auto;
 }
 
 /* ✅ 모달 헤더 */
+.custom-modal-header,
 .aboutus-modal-header {
   display: flex;
   justify-content: space-between;
@@ -51,65 +41,7 @@
 }
 
 /* ✅ 모달 바디 */
-.aboutus-modal-body {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.6;
-}
-
-/* ✅ 모달 푸터 */
-.aboutus-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 10px;
-}
-
-/* ✅ 모달 창  - contact us*/
-.custom-modal-content {
-  width: 400px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* 모달 헤더 */
-.custom-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-}
-
-/* ✅ 모달 컨테이너 (화면 중앙 배치) */
-.custom-modal-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1050;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-/* ✅ 모달 스타일 조정 */
-/* ✅ 모달 배경 (화면 전체 회색 오버레이) */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* ✅ 회색 반투명 배경 */
-  z-index: 1040;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* 모달 바디 */
+.aboutus-modal-body,
 .custom-modal-body {
   font-size: 14px;
   color: #333;
@@ -117,8 +49,51 @@
 }
 
 /* ✅ 모달 푸터 */
+.aboutus-modal-footer,
 .custom-modal-footer {
   display: flex;
   justify-content: flex-end;
   padding-top: 10px;
+}
+
+/* ✅ 채팅 모달 */
+.chat-modal-content {
+  width: 800px;
+  height: 80vh;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.chat-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+
+  h5 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+/* ✅ 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

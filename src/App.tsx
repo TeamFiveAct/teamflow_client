@@ -17,28 +17,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import useCheckSession from './hooks/useCheckSession';
 
-// Chat 페이지와 ChatButton 컴포넌트 추가
-import Chat from './components/chatcomp/Chat';
-import ChatButton from './components/chattingComp/ChatButton';
-import { createGlobalStyle } from 'styled-components';
-
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background: #e9ecef;
-    color: #212529;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-`;
 
 function App() {
   const sessionValid = useSelector(
@@ -53,7 +31,6 @@ function App() {
 
   return (
     <>
-      <GlobalStyle />
       <Router>
         {/* 조건부로 SessionChecker 호출 */}
         {sessionValid && <SessionChecker />}
@@ -68,15 +45,8 @@ function App() {
           <Route path="/v1/mySpace" element={<JoinSpace />} />
           {/* /workspace 변경 */}
           <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
-          {/* Chat 페이지 라우트 추가 */}
-          <Route
-            path="/chat"
-            element={<Chat user_id={user_id} workspace_id={workspace_id} />}
-          />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
-        <ChatButton />
         <Footer />
       </Router>
     </>

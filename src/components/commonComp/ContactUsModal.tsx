@@ -8,11 +8,8 @@ interface FooterModalProps {
 export default function FooterModal({ onClose }: FooterModalProps) {
   return (
     <>
-      {/* ✅ 모달 오버레이 */}
-      <div className="modal-overlay" onClick={onClose}></div>
-
       {/* ✅ 모달 컨텐츠 */}
-      <div className="custom-modal-container">
+      <div className="custom-modal-container" onClick={e => e.stopPropagation()}>
         <div className="custom-modal-content">
           <div className="custom-modal-header">
             <h5 className="modal-title">About FiveAct</h5>
