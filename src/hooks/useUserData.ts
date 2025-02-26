@@ -9,6 +9,7 @@ interface UserData {
   profile_image: string;
   nickname: string;
   email: string;
+  authProvider?: string; // ✅ authProvider 속성 추가 (선택적 속성)
 }
 
 export default function useUserData() {
@@ -17,6 +18,9 @@ export default function useUserData() {
   const isLoggedIn = useSelector(
     (state: RootState) => state.checkSession.sessionValid,
   );
+  const authProvider = useSelector(
+    (state: RootState) => state.checkSession.authProvider,
+  ); // ✅ Redux에서 authProvider 가져오기
   const nickname = useSelector(
     (state: RootState) => state.checkSession.nickname,
   );
@@ -24,7 +28,9 @@ export default function useUserData() {
     profile_image: '',
     nickname: '',
     email: '',
+    authProvider: authProvider || '', // 🔹 authProvider 추가
   });
+
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
@@ -37,7 +43,11 @@ export default function useUserData() {
         });
 
         if (response.data.status === 'SUCCESS') {
-          setUserData(response.data.data);
+          setUserData(prev => ({
+            ...prev,
+            ...response.data.data,
+            authProvider: authProvider, // ✅ authProvider 유지
+          }));
         } else {
           console.error('사용자 정보 조회 실패:', response.data.message);
         }
