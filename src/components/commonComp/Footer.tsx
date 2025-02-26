@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../style/common.scss';
+import '../../style/common/common.scss';
 import FooterModal from './ContactUsModal'; //컴포넌트 가져오기
 
 export default function Footer() {

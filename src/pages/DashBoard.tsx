@@ -2,13 +2,120 @@ import React, { useEffect, useState } from 'react';
 import ProjectInfo from '../components/dashboardComp/ProjectInfo';
 import ToDoBoard from '../components/dashboardComp/ToDoBoard';
 import { Task, WorkspaceInfo } from '../types/types';
-import '../style/dashboard.scss';
-import ChatButton from '../components/chattingComp/ChatButton';
+// import '../style/dashboard.scss';
+// import ChatButton from '../components/chattingComp/ChatButton';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import ChatButton from '../components/chattingComp/ChatButton';
 
 const getWorkspaceInfo = async (space_id: string | undefined) => {
   if (!space_id) return null;
+  // import { Task } from '../types/types';
+  // import '../style/dashboard/dashboard.scss';
+  // import ChatButton from '../components/chatcomp/ChatButton';
+
+  // // ✅ 예제 데이터 추가
+  // const dummyTasks: Task[] = [
+  //   {
+  //     todo_id: 1,
+  //     title: 'UI 디자인 개선',
+  //     description: '메인 페이지 UI 변경',
+  //     priority: 'high',
+  //     state: 'open',
+  //     start_date: '2024-02-10',
+  //     due_date: '2024-02-20',
+  //   },
+  //   {
+  //     todo_id: 2,
+  //     title: 'API 연결',
+  //     description: '백엔드 API 연동',
+  //     priority: 'medium',
+  //     state: 'in_progress',
+  //     start_date: '2024-02-11',
+  //     due_date: '2024-02-21',
+  //   },
+  //   {
+  //     todo_id: 3,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'done',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 4,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'done',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 5,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'done',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 6,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'in_progress',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 7,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'in_progress',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 8,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'in_progress',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 9,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'done',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 10,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'done',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  //   {
+  //     todo_id: 11,
+  //     title: '리팩토링',
+  //     description: '코드 정리',
+  //     priority: 'small',
+  //     state: 'in_progress',
+  //     start_date: '2024-02-12',
+  //     due_date: '2024-02-22',
+  //   },
+  // ];
 
   try {
     const response = await axios.get(
@@ -30,7 +137,7 @@ const getWorkspaceInfo = async (space_id: string | undefined) => {
 };
 
 const getWorkSpaceDataList = async (space_id: string | undefined) => {
-  if (!space_id) return [];
+  if (!space_id) return { plan: [], progress: [], done: [] };
 
   try {
     const response = await axios.post(
@@ -43,15 +150,28 @@ const getWorkSpaceDataList = async (space_id: string | undefined) => {
       return response.data.data;
     } else {
       console.error('업무 조회 실패:', response.data.message);
-      return [];
+      return { plan: [], progress: [], done: [] };
     }
   } catch (error) {
     console.error('전체 업무 조회에 실패하였습니다.', error);
-    return [];
+    return { plan: [], progress: [], done: [] };
   }
 };
 
+// 방장 여부 (임시로 true로 설정)
+const isOwner = true;
+
+// 워크스페이스 나가기
+const handleLeaveWorkspace = () => {
+  alert('워크스페이스를 나갔습니다.');
+};
+
+// 워크스페이스 삭제
+const handleDeleteWorkspace = () => {
+  alert('워크스페이스를 삭제했습니다.');
+};
 export default function DashBoard() {
+  const { space_id } = useParams<{ space_id: string }>();
   const [workspace, setWorkspace] = useState<WorkspaceInfo | null>(null);
   const [todoList, setTodoList] = useState<{
     plan: Task[];
@@ -59,7 +179,6 @@ export default function DashBoard() {
     done: Task[];
   }>({ plan: [], progress: [], done: [] });
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { space_id } = useParams<{ space_id: string }>();
   // console.log('REACT_APP_API_SERVER::', process.env.REACT_APP_API_SERVER);
   // console.log(space_id);
 
@@ -109,6 +228,9 @@ export default function DashBoard() {
         workspace={workspace}
         isCollapsed={isCollapsed}
         toggleCollapse={() => setIsCollapsed(prev => !prev)}
+        isOwner={isOwner}
+        onLeaveWorkspace={handleLeaveWorkspace}
+        onDeleteWorkspace={handleDeleteWorkspace}
       />
       <ToDoBoard
         tasksPlan={todoList.plan}

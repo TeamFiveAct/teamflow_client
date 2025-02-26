@@ -11,6 +11,18 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1050;
+}
+/* ✅ 모달 오버레이 (배경 흐리게 처리) */
+
+.header-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* ✅ 배경을 어둡게 */
+  backdrop-filter: blur(5px); /* ✅ 배경만 흐리게 처리 */
+  z-index: 1040;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,13 +32,27 @@
 /* ✅ 모달 공통 스타일 */
 .custom-modal-content,
 .aboutus-modal-content {
+}
+/* ✅ 모달 창 (모달은 선명하게 보이게 설정) */
+
+.custom-modal-content {
   width: 400px;
+  position: fixed; /* 🚀 모달이 부모의 blur 영향을 받지 않도록 함 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
   animation: fadeIn 0.3s ease-in-out;
   pointer-events: auto;
+  z-index: 1050; /* 🚀 모달이 오버레이보다 위에 위치 */
+}
+
+.aboutus-modal-footer button:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* ✅ 모달 헤더 */
@@ -42,6 +68,42 @@
 
 /* ✅ 모달 바디 */
 .aboutus-modal-body,
+.aboutus-modal-body {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ✅ 모달 푸터 */
+.aboutus-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+/* 모달 헤더 */
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+/* ✅ 모달 컨테이너 (화면 중앙 배치) */
+.custom-modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 모달 바디 */
 .custom-modal-body {
   font-size: 14px;
   color: #333;

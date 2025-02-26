@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../style/chatButton.scss';
 import ChatModal from '../chatcomp/ChatModal';
+import { useNavigate } from 'react-router-dom';
+import '../../style/chat/chat.scss';
 
 export default function ChatButton() {
   const location = useLocation();

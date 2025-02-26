@@ -1,38 +1,94 @@
-import React, { useEffect, useState, useCallback, useRef, MouseEvent } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MouseEvent,
+} from 'react';
 import { io, Socket } from 'socket.io-client';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import Prism from 'prismjs';
 import { Message as MessageType, ChatProps } from '../../types/chat';
-import '../../style/chat.scss';
+import '../../style/chat/chat.scss';
 
 // 아이콘 컴포넌트 (불필요한 리렌더링 방지를 위해 React.memo 사용)
 const PaperClipIcon = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+    />
   </svg>
 ));
 
 const SendIcon = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+    />
   </svg>
 ));
 
 const EmojiIcon = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 ));
 
 const CodeIcon = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+    />
   </svg>
 ));
 
 const FileIcon = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+    />
   </svg>
 ));
 
@@ -232,13 +288,23 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
     (message: MessageType) => {
       const isCurrentUser = message.user_id === user_id;
       return (
-        <div key={message.id} className={`message-wrapper ${isCurrentUser ? 'current-user' : ''}`}>
+        <div
+          key={message.id}
+          className={`message-wrapper ${isCurrentUser ? 'current-user' : ''}`}
+        >
           <span className="user-name">User {message.user_id}</span>
-          <div className={`message-content ${isCurrentUser ? 'current-user' : ''}`}>
+          <div
+            className={`message-content ${isCurrentUser ? 'current-user' : ''}`}
+          >
             {message.content_type === 'text' && message.content}
-            {message.content_type === 'emoji' && <span className="emoji">{message.content}</span>}
+            {message.content_type === 'emoji' && (
+              <span className="emoji">{message.content}</span>
+            )}
             {message.content_type === 'image' && (
-              <img src={message.content} alt={message.filename || 'Uploaded image'} />
+              <img
+                src={message.content}
+                alt={message.filename || 'Uploaded image'}
+              />
             )}
             {message.content_type === 'video' && (
               <video controls>
@@ -251,7 +317,9 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
                 href={message.content}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`file-attachment ${isCurrentUser ? 'current-user' : ''}`}
+                className={`file-attachment ${
+                  isCurrentUser ? 'current-user' : ''
+                }`}
               >
                 <FileIcon />
                 <div className="file-info">
@@ -261,7 +329,9 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
             )}
             {message.content_type === 'code' && (
               <pre className={isCurrentUser ? 'current-user' : ''}>
-                <code className={`language-${message.code_language}`}>{message.content}</code>
+                <code className={`language-${message.code_language}`}>
+                  {message.content}
+                </code>
               </pre>
             )}
           </div>
@@ -275,7 +345,13 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
       if (isMobile) return;
-      if (chatRef.current && !(e.target instanceof HTMLElement && e.target.closest('.window-controls'))) {
+      if (
+        chatRef.current &&
+        !(
+          e.target instanceof HTMLElement &&
+          e.target.closest('.window-controls')
+        )
+      ) {
         setIsDragging(true);
         setHasBeenDragged(true); // 드래그 시작 시 인라인 스타일 적용을 위해 true로 변경
         const { left, top } = chatRef.current.getBoundingClientRect();
@@ -339,17 +415,30 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
           : {}
       }
     >
-      <div className="chat-header" onMouseDown={!isMobile ? handleMouseDown : undefined}>
+      <div
+        className="chat-header"
+        onMouseDown={!isMobile ? handleMouseDown : undefined}
+      >
         <h2>Workspace Chat</h2>
         <div className="window-controls">
           <button onClick={() => setIsMinimized(true)} className="minimize-btn">
             <svg viewBox="0 0 24 24" width="14" height="14">
-              <path fill="currentColor" d="M20 12H4" strokeWidth="2" stroke="currentColor" />
+              <path
+                fill="currentColor"
+                d="M20 12H4"
+                strokeWidth="2"
+                stroke="currentColor"
+              />
             </svg>
           </button>
           <button onClick={onClose} className="close-btn">
             <svg viewBox="0 0 24 24" width="14" height="14">
-              <path fill="currentColor" d="M18 6L6 18M6 6l12 12" strokeWidth="2" stroke="currentColor" />
+              <path
+                fill="currentColor"
+                d="M18 6L6 18M6 6l12 12"
+                strokeWidth="2"
+                stroke="currentColor"
+              />
             </svg>
           </button>
         </div>
@@ -360,12 +449,21 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
       </div>
 
       <div className="chat-input-container">
-        <div className={`emoji-picker-container ${showEmojiPicker ? 'visible' : ''}`}>
+        <div
+          className={`emoji-picker-container ${
+            showEmojiPicker ? 'visible' : ''
+          }`}
+        >
           <EmojiPicker onEmojiClick={handleEmojiClick} />
         </div>
 
-        <div className={`code-editor-container ${showCodeEditor ? 'visible' : ''}`}>
-          <select value={selectedLanguage} onChange={e => setSelectedLanguage(e.target.value)}>
+        <div
+          className={`code-editor-container ${showCodeEditor ? 'visible' : ''}`}
+        >
+          <select
+            value={selectedLanguage}
+            onChange={e => setSelectedLanguage(e.target.value)}
+          >
             {SUPPORTED_CODE_LANGUAGES.map(lang => (
               <option key={lang} value={lang}>
                 {lang.charAt(0).toUpperCase() + lang.slice(1)}
@@ -397,10 +495,18 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
               <input type="file" onChange={handleFileUpload} />
               <PaperClipIcon />
             </label>
-            <button type="button" className="action-button" onClick={() => setShowEmojiPicker(prev => !prev)}>
+            <button
+              type="button"
+              className="action-button"
+              onClick={() => setShowEmojiPicker(prev => !prev)}
+            >
               <EmojiIcon />
             </button>
-            <button type="button" className="action-button" onClick={() => setShowCodeEditor(prev => !prev)}>
+            <button
+              type="button"
+              className="action-button"
+              onClick={() => setShowCodeEditor(prev => !prev)}
+            >
               <CodeIcon />
             </button>
           </div>
@@ -414,7 +520,11 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
             placeholder="메시지를 입력하세요..."
           />
 
-          <button className="send-button" onClick={() => sendMessage(messageInput)} disabled={!messageInput.trim()}>
+          <button
+            className="send-button"
+            onClick={() => sendMessage(messageInput)}
+            disabled={!messageInput.trim()}
+          >
             <SendIcon />
           </button>
         </div>

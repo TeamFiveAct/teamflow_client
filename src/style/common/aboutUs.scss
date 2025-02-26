@@ -1,0 +1,106 @@
+/* ✅ 모달 배경 오버레이 */
+.header-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* ✅ 배경을 어둡게 */
+  backdrop-filter: blur(3px); /* ✅ 배경만 흐리게 처리 */
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ 모달 기본 스타일 (최적 크기로 조정) */
+.aboutus-modal-content {
+  width: 50vw; /* 🚀 화면 너비의 50% */
+  max-width: 700px; /* 🚀 최대 너비 제한 */
+  min-width: 400px; /* 🚀 최소 너비 설정 */
+  height: auto; /* 🚀 높이를 내용에 맞게 자동 조정 */
+  max-height: 80vh; /* 🚀 화면 높이의 최대 80%까지만 차지 */
+  position: fixed;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* 🚀 너무 길어질 경우 스크롤 활성화 */
+}
+
+/* ✅ 팀 섹션 스타일 */
+.team-section {
+  margin-top: 15px;
+
+  h6 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: bold;
+  }
+}
+
+/* ✅ 팀원 전체 영역 */
+.team-roles {
+  display: flex;
+  flex-direction: column; /* 🚀 줄별 배치를 위해 column 사용 */
+  gap: 10px;
+  align-items: center;
+}
+
+/* ✅ 한 줄에 팀원들을 배치 */
+.team-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
+/* ✅ 개별 팀원 스타일 */
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  width: auto; /* 🚀 크기 자동 조정 */
+  min-width: 150px;
+  justify-content: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ 팀원 이모지 스타일 */
+.team-member-emoji {
+  font-size: 24px;
+}
+
+/* ✅ 팀원 정보 스타일 */
+.team-member-info {
+  text-align: center;
+
+  strong {
+    font-size: 14px;
+  }
+
+  p {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+/* ✅ 모달 푸터 스타일 */
+.aboutus-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}

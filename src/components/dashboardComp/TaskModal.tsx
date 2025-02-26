@@ -1,11 +1,12 @@
 // src/components/TaskModal.tsx
 import React, { useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../style/taskModal.scss';
+// import '../../style/taskModal.scss';
 import { useDispatch } from 'react-redux';
 import { createTask } from '../../store/modules/taskSlice';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import '../../style/dashboard/taskModal.scss';
 
 interface TaskModalProps {
   show: boolean;

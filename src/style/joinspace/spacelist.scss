@@ -1,0 +1,94 @@
+// ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트)
+.mySpacelistDiv {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; // 🔹 세로 중앙 정렬
+  text-align: center;
+  padding: 40px;
+  background: white;
+}
+
+// 🔹 "내가 참여한 워크스페이스" 제목
+.workspace-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+// 🔹 워크스페이스 리스트 전체 감싸는 박스
+.workspace-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 360px; // 🔹 딱 3개만 보이도록 설정
+  margin: 0 auto;
+}
+
+// 🔹 좌우 화살표 버튼 스타일
+.scroll-btn {
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.3s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+.scroll-left {
+  margin-right: 10px;
+}
+
+.scroll-right {
+  margin-left: 10px;
+}
+
+// 🔹 워크스페이스 리스트 (스크롤 제거하고 딱 3개만 보이도록)
+.workspace-list {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 300px; // 🔹 3개만 보이도록 크기 조절
+}
+
+// 🔹 개별 워크스페이스 아이템 (동그라미)
+.space-circle {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  border-radius: 50%;
+  border: 3px solid #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #007bff;
+    color: white;
+  }
+}

@@ -1,4 +1,3 @@
-// CreateSpace.tsx
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
@@ -107,3 +106,101 @@ const CreateSpace = ({
 };
 
 export default CreateSpace;
+
+// // CreateSpace.tsx
+// // CreateSpace.tsx
+
+// import React, { useState } from 'react';
+// import { Modal, Form, Button } from 'react-bootstrap';
+// import PasswordModal from './PasswordModal';
+// import axios from 'axios';
+
+// interface CreateRoomModalProps {
+//   show: boolean;
+//   onClose: () => void;
+//   refreshSpaces: () => void;
+// }
+
+// const CreateSpace = ({
+//   show,
+//   onClose,
+//   refreshSpaces,
+// }: CreateRoomModalProps) => {
+//   const [projectName, setProjectName] = useState('');
+//   const [spaceDescription, setSpaceDescription] = useState('');
+//   const [passwordModalShow, setPasswordModalShow] = useState(false);
+//   const [uniquePassword, setUniquePassword] = useState('');
+
+//   const handleCreateProject = async () => {
+//     try {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_API_SERVER}/workspace`,
+//         {
+//           space_title: projectName,
+//           space_description: spaceDescription,
+//         },
+//         { withCredentials: true },
+//       );
+//       if (response.data.status === 'SUCCESS') {
+//         setUniquePassword(response.data.data.space_password);
+//         setPasswordModalShow(true); // 비밀번호 모달을 표시
+//         refreshSpaces();
+//       } else {
+//         alert(response.data.message);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//     onClose();
+//   };
+
+//   return (
+//     <>
+//       <Modal show={show} onHide={onClose} centered>
+//         <Modal.Header closeButton>
+//           <Modal.Title>프로젝트 생성</Modal.Title>
+//         </Modal.Header>
+//         <Modal.Body>
+//           <Form>
+//             <Form.Group controlId="spaceName">
+//               <Form.Label>프로젝트 이름</Form.Label>
+//               <Form.Control
+//                 type="text"
+//                 placeholder="프로젝트 이름을 입력하세요."
+//                 value={projectName}
+//                 onChange={e => setProjectName(e.target.value)}
+//               />
+//             </Form.Group>
+//             <Form.Group controlId="spaceDescription" className="mt-3">
+//               <Form.Label>프로젝트 설명</Form.Label>
+//               <Form.Control
+//                 type="text"
+//                 placeholder="프로젝트 설명을 입력하세요."
+//                 value={spaceDescription}
+//                 onChange={e => setSpaceDescription(e.target.value)}
+//               />
+//             </Form.Group>
+//           </Form>
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button variant="secondary" onClick={onClose}>
+//             취소
+//           </Button>
+//           <Button variant="primary" onClick={handleCreateProject}>
+//             생성
+//           </Button>
+//         </Modal.Footer>
+//       </Modal>
+
+//       {/* 비밀번호 모달 */}
+//       <PasswordModal
+//         show={passwordModalShow}
+//         onClose={() => setPasswordModalShow(false)}
+//         password={uniquePassword}
+//         container={document.body} // 최상위 body에 렌더링
+//       />
+//     </>
+//   );
+// };
+
+// export default CreateSpace;

@@ -1,6 +1,6 @@
 // src/components/TaskDetailModal.tsx
 import React, { useState } from 'react';
-import '../../style/taskDetailModal.scss';
+import '../../style/dashboard/taskDetailModal.scss';
 
 interface TaskDetailModalProps {
   show: boolean;
