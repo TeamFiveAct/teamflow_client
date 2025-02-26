@@ -1,3 +1,4 @@
+//src\components\chatcomp\Chat.tsx
 import React, {
   useEffect,
   useState,
@@ -10,6 +11,7 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import Prism from 'prismjs';
 import { Message as MessageType, ChatProps } from '../../types/chat';
 import '../../style/chat/chat.scss';
+import UserAvatar from '../commonComp/UserAvatar';
 
 // 아이콘 컴포넌트 (불필요한 리렌더링 방지를 위해 React.memo 사용)
 const PaperClipIcon = React.memo(() => (
@@ -92,7 +94,6 @@ const FileIcon = React.memo(() => (
   </svg>
 ));
 
-// 지원하는 코드 언어 목록
 const SUPPORTED_CODE_LANGUAGES = [
   'javascript',
   'typescript',
@@ -120,7 +121,6 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
-  // hasBeenDragged 상태를 추가하여 사용자가 드래그한 경우에만 인라인 스타일을 적용합니다.
   const [hasBeenDragged, setHasBeenDragged] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -143,14 +143,10 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // PC 최초 로드시 중앙에 위치하도록 설정 (인라인 스타일 적용 전에는 기존 SCSS가 적용되어 중앙정렬됨)
+  // PC 최초 로드시 중앙 배치 (기존 CSS에 의해 처리)
   useEffect(() => {
     if (!isMobile && chatRef.current && !hasBeenDragged) {
-      // 별도 인라인 스타일을 적용하지 않으면 기존 CSS (top:50%, left:50%, transform: translate(-50%, -50%))가 그대로 적용됩니다.
-      // 최초 드래그 전까지는 기존 중앙 배치 상태를 유지합니다.
-      // 만약 최초 위치를 인라인 스타일로 관리하고 싶다면 아래처럼 계산할 수 있습니다.
-      // const { offsetWidth, offsetHeight } = chatRef.current;
-      // setPosition({ x: (window.innerWidth - offsetWidth) / 2, y: (window.innerHeight - offsetHeight) / 2 });
+      // 중앙 배치는 CSS로 관리
     }
   }, [isMobile, hasBeenDragged]);
 
@@ -283,16 +279,20 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
     [messageInput, sendMessage],
   );
 
-  // 메시지 렌더링 함수
+  // 메시지 렌더링 함수 – UserAvatar 컴포넌트를 사용하여 아바타 렌더링
   const renderMessage = useCallback(
     (message: MessageType) => {
       const isCurrentUser = message.user_id === user_id;
+      const nickname = message.user?.nickname || `User ${message.user_id}`;
       return (
         <div
           key={message.id}
           className={`message-wrapper ${isCurrentUser ? 'current-user' : ''}`}
         >
-          <span className="user-name">User {message.user_id}</span>
+          <div className="user-info">
+            <UserAvatar name={nickname} size={40} />
+            <span className="user-name">{nickname}</span>
+          </div>
           <div
             className={`message-content ${isCurrentUser ? 'current-user' : ''}`}
           >
@@ -345,17 +345,13 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
       if (isMobile) return;
-      if (
-        chatRef.current &&
-        !(
-          e.target instanceof HTMLElement &&
-          e.target.closest('.window-controls')
-        )
-      ) {
+      if (chatRef.current) {
+        const rect = chatRef.current.getBoundingClientRect();
+        // 현재 위치를 기록하여 transform으로 인한 순간이동 현상 방지
+        setPosition({ x: rect.left, y: rect.top });
+        setHasBeenDragged(true);
         setIsDragging(true);
-        setHasBeenDragged(true); // 드래그 시작 시 인라인 스타일 적용을 위해 true로 변경
-        const { left, top } = chatRef.current.getBoundingClientRect();
-        setDragOffset({ x: e.clientX - left, y: e.clientY - top });
+        setDragOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
       }
     },
     [isMobile],
@@ -404,7 +400,7 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
     <div
       ref={chatRef}
       className={`chat-container ${isMobile ? 'mobile' : 'desktop'}`}
-      // PC에서만, 사용자가 드래그한 경우 인라인 스타일로 위치를 업데이트
+      onMouseDown={!isMobile ? handleMouseDown : undefined}
       style={
         !isMobile && hasBeenDragged
           ? {
@@ -415,10 +411,7 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
           : {}
       }
     >
-      <div
-        className="chat-header"
-        onMouseDown={!isMobile ? handleMouseDown : undefined}
-      >
+      <div className="chat-header">
         <h2>Workspace Chat</h2>
         <div className="window-controls">
           <button onClick={() => setIsMinimized(true)} className="minimize-btn">
