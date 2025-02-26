@@ -14,6 +14,7 @@ export interface WorkspaceInfo {
   space_description: string;
   created_at: string;
   end_date?: string;
+  user_id: number;
 }
 
 export interface Workspace {
@@ -23,4 +24,13 @@ export interface Workspace {
 
 export interface SpaceListProps {
   spaces: Workspace[];
+}
+
+export interface ProjectInfoProps {
+  workspace: WorkspaceInfo;
+  isCollapsed: boolean;
+  toggleCollapse: () => void;
+  isOwner: boolean; // ✅ isOwner 추가
+  onLeaveWorkspace: () => void;
+  onDeleteWorkspace: () => void;
 }
