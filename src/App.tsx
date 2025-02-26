@@ -25,7 +25,6 @@ import { RootState } from './store/store';
 import Chat from './components/chatcomp/Chat';
 // import ChatButton from './components/chattingComp/ChatButton';
 import { createGlobalStyle } from 'styled-components';
-import ChatButton from './components/chattingComp/ChatButton';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -74,14 +73,9 @@ function App() {
           {/* /workspace 변경 */}
           <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
           {/* Chat 페이지 라우트 추가 */}
-          <Route
-            path="/chat"
-            element={<Chat user_id={user_id} workspace_id={workspace_id} />}
-          />
           <Route path="*" element={<NotFound />} />
         </Routes>
         {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
-        <ChatButton />
         <Footer />
       </Router>
     </>
