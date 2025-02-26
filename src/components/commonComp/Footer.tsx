@@ -9,7 +9,10 @@ export default function Footer() {
   return (
     <>
       <footer className="footer">
-        <span className="contact-text" onClick={() => setShowModal(true)}>
+        <span
+          className="contact-text contact-us-btn"
+          onClick={() => setShowModal(true)}
+        >
           Contact Us
         </span>
         <p className="license-text">Licensed by FiveAct © 2025</p>

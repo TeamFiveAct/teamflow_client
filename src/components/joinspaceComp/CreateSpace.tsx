@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PasswordModal from './PasswordModal';
+import '../../style/joinspace/createWorkspace.scss';
 
 interface CreateRoomModalProps {
   show: boolean;
@@ -56,7 +57,12 @@ const CreateSpace = ({
 
   return (
     <>
-      <Modal show={show} onHide={onClose} centered>
+      <Modal
+        show={show}
+        onHide={onClose}
+        centered
+        className="custom-modal-create"
+      >
         <Modal.Header closeButton>
           <Modal.Title>프로젝트 생성</Modal.Title>
         </Modal.Header>

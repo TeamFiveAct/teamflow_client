@@ -1,0 +1,30 @@
+/* 전체 페이지 레이아웃 설정 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 전체 화면 높이 */
+}
+
+/* 헤더(Header) 기본 스타일 */
+header {
+  width: 100%;
+  position: relative; /* 기존에 고정(fixed) 스타일이 적용되어 있다면 제거 */
+  z-index: 10;
+}
+
+/* 메인 페이지 컨텐츠 */
+.content {
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  padding: 20px; /* 여백 추가 */
+  margin-top: 60px; /* 헤더 높이만큼 여백 추가 */
+  margin-bottom: 50px; /* 푸터 높이만큼 여백 추가 */
+}
+
+/* 푸터(Footer) 스타일 */
+footer {
+  width: 100%;
+  position: relative; /* 기존 fixed 스타일 제거 */
+  bottom: 0;
+  height: 50px;
+  text-align: center;
+}

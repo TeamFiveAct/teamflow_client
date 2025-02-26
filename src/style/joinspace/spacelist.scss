@@ -1,43 +1,81 @@
-// ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트)
+// /* ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트) */
+// .mySpacelistDiv {
+//   width: 55%; /* 🔹 비율 조정 */
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 40px;
+//   background: white;
+// }
+// /* ✅ "내가 참여한 워크스페이스" 제목 스타일 */
+// .workspace-title {
+//   font-size: 1.5rem;
+//   font-weight: bold;
+//   color: #333;
+//   margin-bottom: 15px;
+//   padding-top: 10px;
+//   white-space: nowrap; /* 🔹 줄 바꿈 방지 */
+//   max-width: 100%; /* 🔹 최대 너비 설정 */
+//   text-align: center; /* 🔹 가운데 정렬 */
+//   display: block; /* 🔹 블록 요소로 설정하여 넓이 조절 */
+// }
+
+/* ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트) */
 .mySpacelistDiv {
-  width: 50%;
+  width: 50%; /* 🔹 가로 공간 확보 */
+  max-width: 800px; /* 🔹 최대 크기 지정 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; // 🔹 세로 중앙 정렬
-  text-align: center;
-  padding: 40px;
+  justify-content: center;
+  // padding: 10px;
   background: white;
 }
 
-// 🔹 "내가 참여한 워크스페이스" 제목
+/* ✅ "내가 참여한 워크스페이스" 제목 스타일 */
 .workspace-title {
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* 🔹 아래 여백 증가 */
+  padding-top: 5px; /* 🔹 위쪽 여백 조정 */
+  white-space: nowrap;
+  text-align: center;
+  display: block;
 }
 
-// 🔹 워크스페이스 리스트 전체 감싸는 박스
+/* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
+/* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
 .workspace-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100%;
-  max-width: 360px; // 🔹 딱 3개만 보이도록 설정
-  margin: 0 auto;
+  max-width: 600px; /* 🔹 한 줄에 3개가 들어가도록 조정 */
 }
 
-// 🔹 좌우 화살표 버튼 스타일
+/* ✅ 워크스페이스 리스트 (가로 정렬) */
+.workspace-list {
+  display: flex;
+  flex-direction: row; /* 🔹 가로 정렬 유지 */
+  justify-content: space-between; /* 🔹 동그라미 간격 균일 */
+  align-items: center;
+  width: 100%;
+  max-width: 360px; /* 🔹 3개가 들어갈 수 있도록 조정 */
+  flex-wrap: nowrap; /* 🔹 줄 바꿈 방지 */
+  gap: 15px; /* 🔹 여백 조정 */
+}
+/* ✅ 좌우 화살표 버튼 스타일 */
 .scroll-btn {
   background: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: 0.3s;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,26 +91,28 @@
   }
 }
 
+/* 🔹 좌우 버튼이 너무 붙지 않도록 여백 추가 */
 .scroll-left {
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 .scroll-right {
-  margin-left: 10px;
+  margin-left: 45px;
 }
 
-// 🔹 워크스페이스 리스트 (스크롤 제거하고 딱 3개만 보이도록)
-.workspace-list {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  width: 300px; // 🔹 3개만 보이도록 크기 조절
-}
+// /* ✅ 워크스페이스 리스트 */
+// .workspace-list {
+//   display: flex;
+//   gap: 15px; /* 🔹 여백 조정 */
+//   justify-content: center;
+//   align-items: center;
+//   width: 330px; /* 🔹 크기 조정 */
+// }
 
-// 🔹 개별 워크스페이스 아이템 (동그라미)
+/* ✅ 개별 워크스페이스 아이템 (동그라미) */
+/* ✅ 개별 워크스페이스 아이템 (동그라미) */
 .space-circle {
-  width: 100px;
+  width: 100px; /* 🔹 크기 조정 */
   height: 100px;
   background-color: white;
   border-radius: 50%;
@@ -80,12 +120,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: bold;
   color: #333;
   cursor: pointer;
   transition: 0.3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0; /* 🔹 크기 유지 */
 
   &:hover {
     background-color: #007bff;

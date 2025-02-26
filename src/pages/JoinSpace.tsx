@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreateSpace from '../components/joinspaceComp/CreateSpace';
-import '../style/joinspace/joinspace.scss';
+// import '../style/joinspace/joinspace.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import EnterSpacePassword from '../components/joinspaceComp/EnterSpacePassword';
@@ -76,8 +76,9 @@ export default function JoinSpace() {
     <section className="joinspaceSection container-fluid d-flex vh-100">
       {/* ✅ 왼쪽 패널 */}
       <div className="leftSideContainer d-flex flex-column justify-content-center align-items-center">
-        <div className="text-center">
+        <div className="text-center workspace-actions">
           <h3>TeamFlow에 오신 것을 환영합니다!</h3>
+          <br />
           <h5>워크스페이스를 생성하여 협업 공간을 만들어보세요!</h5>
           <Button className="mt-3 w-75" onClick={handleCreateRoom}>
             워크 스페이스 생성

@@ -42,6 +42,7 @@ export default function Header() {
 
         // ✅ 로그인 페이지로 이동
         navigate('/v1/user/login');
+        window.location.reload(); // 🔥 강제 새로고침 (헤더 즉시 변경)
       } else {
         alert('로그아웃 실패: ' + response.data.message);
       }

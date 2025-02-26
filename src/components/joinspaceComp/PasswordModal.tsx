@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import ClipboardJS from 'clipboard';
+import '../../style/joinspace/joinspace.scss';
 
 interface PasswordModalProps {
   show: boolean;
