@@ -404,6 +404,7 @@ export default function ProjectInfo({
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { space_id } = useParams<{ space_id: string }>();
+
   const usersPerPage = 3;
 
   // ✅ 현재 로그인한 사용자 정보 가져오기
@@ -453,7 +454,7 @@ export default function ProjectInfo({
         );
 
         if (response.data.status === 'SUCCESS') {
-          setUsers(response.data.data);
+          setUsers(response.data.data || []);
         } else {
           alert(`${response.data.message}, 참여자 목록을 불러오지 못했습니다.`);
         }

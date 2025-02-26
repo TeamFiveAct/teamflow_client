@@ -243,6 +243,11 @@ const SpaceList = ({ spaces }: SpaceListProps) => {
     (currentPage + 1) * ITEMS_PER_PAGE,
   );
 
+  const handleSelectWorkspace = (spaceId: number) => {
+    sessionStorage.setItem('selectedSpaceId', spaceId.toString()); // ✅ sessionStorage 저장
+    navigate(`/v1/workspace/${spaceId}`); // ✅ 해당 워크스페이스 페이지로 이동
+  };
+
   // 🔹 이전 버튼 클릭 (이전 3개 표시)
   const handlePrev = () => {
     setCurrentPage(prev => Math.max(prev - 1, 0));
@@ -274,7 +279,7 @@ const SpaceList = ({ spaces }: SpaceListProps) => {
             <div
               key={space.space_id}
               className="space-circle"
-              onClick={() => navigate(`/v1/workspace/${space.space_id}`)}
+              onClick={() => handleSelectWorkspace(space.space_id)}
             >
               {space.space_title}
             </div>

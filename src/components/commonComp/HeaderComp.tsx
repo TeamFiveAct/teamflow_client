@@ -179,8 +179,6 @@ import AboutUsModal from '../commonComp/AboutUsModal';
 import { RootState } from '../../store/store';
 
 export default function Header() {
-  
-
   const navigate = useNavigate();
   const isLoggedIn = useSelector(
     (state: RootState) => state.checkSession.sessionValid,
@@ -213,10 +211,11 @@ export default function Header() {
         document.cookie = 'connect.sid=; Max-Age=0; path=/';
         document.cookie = '_kadu=; Max-Age=0; path=/';
         document.cookie = '_kakao_sso=; Max-Age=0; path=/';
+        sessionStorage.removeItem('selectedSpaceId');
 
         // ✅ 2. Redux persist 초기화
-        persistor.purge();
 
+        persistor.purge();
         // ✅ 3. sessionStorage 삭제
         sessionStorage.removeItem('persist:root');
         sessionStorage.removeItem('persist:checkSession');
@@ -336,7 +335,7 @@ export default function Header() {
               </li>
 
               {isLoggedIn && (
-                <>
+                <ul className="navbar-nav ms-auto">
                   <li className="nav-item">
                     <button
                       className="nav-link btn"
@@ -348,7 +347,38 @@ export default function Header() {
                   <li className="nav-item">
                     <button
                       className="nav-link btn"
-                      onClick={() => navigate('/v1/workspace/:space_id')}
+                      onClick={async () => {
+                        // ✅ 현재 로그인한 유저의 워크스페이스 목록 조회
+                        try {
+                          const response = await axios.get(
+                            `${process.env.REACT_APP_API_SERVER}/workspace/user`,
+                            { withCredentials: true },
+                          );
+
+                          if (
+                            response.data.status === 'SUCCESS' &&
+                            response.data.data.length > 0
+                          ) {
+                            const storedSpaceId =
+                              sessionStorage.getItem('selectedSpaceId'); // ✅ `sessionStorage`에서 가져오기
+                            if (storedSpaceId) {
+                              navigate(`/v1/workspace/${storedSpaceId}`); // ✅ 저장된 워크스페이스로 이동
+                            } else {
+                              alert('워크스페이스를 선택해주세요.'); // ✅ 알람 표시
+                              navigate('/v1/mySpace'); // ✅ `MySpace` 페이지로 이동
+                            }
+                          } else {
+                            alert('참여한 워크스페이스가 없습니다.'); // ✅ 유저가 워크스페이스에 속해 있지 않음
+                            navigate('/v1/mySpace'); // ✅ `MySpace` 페이지로 이동
+                          }
+                        } catch (error) {
+                          console.error('워크스페이스 정보 확인 실패:', error);
+                          alert(
+                            '워크스페이스 정보를 불러오는 데 실패했습니다.',
+                          );
+                          navigate('/v1/mySpace'); // ✅ `MySpace` 페이지로 이동
+                        }
+                      }}
                     >
                       Workspace
                     </button>
@@ -364,7 +394,7 @@ export default function Header() {
                       MyPage
                     </button>
                   </li>
-                </>
+                </ul>
               )}
 
               <li className="nav-item d-none d-lg-block">
