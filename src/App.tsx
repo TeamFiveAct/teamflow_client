@@ -120,6 +120,7 @@ import Chat from './components/chatcomp/Chat';
 import ChatButton from './components/chattingComp/ChatButton';
 import NotFound from './pages/NotFound';
 import Footer from './components/commonComp/Footer';
+import ProtectedRoute from './components/commonComp/ProtectedRoute'; // ✅ 보호된 라우트
 // import { createGlobalStyle } from 'styled-components';
 
 // const GlobalStyle = createGlobalStyle`
@@ -161,12 +162,22 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<Layout />} /> */}
           <Route index element={<Home />} />
-          <Route path="/v1/user" element={<MyProfile />} />
           <Route path="/v1/user/login" element={<LoginPage />} />
           <Route path="/v1/user/join" element={<SignUp />} />
-          <Route path="/v1/mySpace" element={<JoinSpace />} />
+          {/* ✅ 로그인한 사용자만 접근 가능하도록 보호된 라우트 적용 */}
+          <Route
+            path="/v1/mySpace"
+            element={<ProtectedRoute element={<JoinSpace />} />}
+          />
+          <Route
+            path="/v1/workspace/:space_id"
+            element={<ProtectedRoute element={<DashBoard />} />}
+          />
+          <Route
+            path="/v1/user"
+            element={<ProtectedRoute element={<MyProfile />} />}
+          />
           {/* /workspace 변경 */}
-          <Route path="/v1/workspace/:space_id" element={<DashBoard />} />
           {/* Chat 페이지 라우트 추가 */}
           <Route
             path="/chat"
