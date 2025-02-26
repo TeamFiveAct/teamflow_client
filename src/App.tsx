@@ -4,21 +4,46 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
+import Home from './pages/Home';
+import MyProfile from './pages/MyProfile';
+import Header from './components/commonComp/HeaderComp';
 import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import useCheckSession from './hooks/useCheckSession';
 
-import Header from './components/commonComp/HeaderComp';
-import Home from './pages/Home';
+import Footer from './components/commonComp/Footer';
+import NotFound from './pages/NotFound';
+import DashBoard from './pages/DashBoard';
+import JoinSpace from './pages/JoinSpace';
+// import '../src/style/app.scss';
+
 import LoginPage from './pages/LoginPage';
 import SignUp from './components/LoginComp/SignUp';
-import MyProfile from './pages/MyProfile';
-import JoinSpace from './pages/JoinSpace';
-import DashBoard from './pages/DashBoard';
-import Chat from './components/chatcomp/Chat';
-import NotFound from './pages/NotFound';
-import Footer from './components/commonComp/Footer';
 import { RootState } from './store/store';
+
+// Chat 페이지와 ChatButton 컴포넌트 추가
+import Chat from './components/chatcomp/Chat';
+// import ChatButton from './components/chattingComp/ChatButton';
+import { createGlobalStyle } from 'styled-components';
+import ChatButton from './components/chattingComp/ChatButton';
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: #e9ecef;
+    color: #212529;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+`;
 
 function App() {
   const sessionValid = useSelector(
@@ -33,13 +58,15 @@ function App() {
 
   return (
     <>
+      <GlobalStyle />
       <Router>
         {/* 조건부로 SessionChecker 호출 */}
         {sessionValid && <SessionChecker />}
         {/* 세션이 유효할 경우에만 SessionChecker를 호출 */}
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Layout />} /> */}
+          <Route index element={<Home />} />
           <Route path="/v1/user" element={<MyProfile />} />
           <Route path="/v1/user/login" element={<LoginPage />} />
           <Route path="/v1/user/join" element={<SignUp />} />
@@ -53,7 +80,8 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
-
+        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
+        <ChatButton />
         <Footer />
       </Router>
     </>

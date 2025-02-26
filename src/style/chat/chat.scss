@@ -1,26 +1,546 @@
-.chat-button {
+// 변수 선언
+$primary-color: #2c3e50;
+$secondary-color: #e9ecef;
+$text-light: #fff;
+$text-dark: #2c3e50;
+$code-bg-current: #1a252f;
+$code-bg-other: #dee2e6;
+$bg-light: #f8f9fa;
+$shadow-default: 0 8px 24px rgba(0, 0, 0, 0.15);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$border-radius-container: 12px;
+
+// Mixins
+@mixin user-message($isCurrentUser) {
+  align-items: if($isCurrentUser, flex-end, flex-start);
+  align-self: if($isCurrentUser, flex-end, flex-start);
+}
+
+@mixin message-content($isCurrentUser) {
+  background-color: if($isCurrentUser, $primary-color, $secondary-color);
+  color: if($isCurrentUser, $text-light, $text-dark);
+  border-radius: if($isCurrentUser, 18px 18px 4px 18px, 18px 18px 18px 4px);
+}
+
+@mixin code-background($isCurrentUser) {
+  background: if($isCurrentUser, $code-bg-current, $code-bg-other);
+}
+
+// Chat Container
+// 데스크탑 버전 (.desktop)
+.chat-container.desktop {
+  width: 600px; // 첫번째 코드 기준
+  height: 700px;
   position: fixed;
-  right: 20px; /* ✅ 화면 오른쪽에 고정 */
-  width: 60px;
-  height: 60px;
-  background-color: #007bff;
-  color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: $border-radius-container;
+  background: $text-light;
+  box-shadow: $shadow-default;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  resize: both;
+  overflow: hidden;
+  min-width: 600px;
+  min-height: 600px;
+  max-width: 2000px;
+  max-height: 2030vh;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+}
+
+// 모바일 버전 (.mobile)
+.chat-container.mobile {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  background: $text-light;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+// 채팅 최소화 버튼
+.chat-minimized {
+  position: fixed;
+  bottom: 20px;
+  padding: 10px 20px;
+  background: $primary-color;
+  color: $text-light;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Chat Header
+.chat-header {
+  background-color: $primary-color;
+  color: $text-light;
+  padding: 12px 16px;
+  border-radius: $border-radius-container $border-radius-container 0 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .window-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    button {
+      background: none;
+      border: none;
+      color: $text-light;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &.close-btn:hover {
+        background-color: #e74c3c;
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}
+
+// Chat History
+.chat-history {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: $bg-light;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+}
+
+// Message Wrapper
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 2px 0;
+  max-width: 85%;
+
+  &.current-user {
+    @include user-message(true);
+  }
+
+  &:not(.current-user) {
+    @include user-message(false);
+  }
+}
+
+// Message Content
+.message-content {
+  max-width: 100%;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  &.current-user {
+    @include message-content(true);
+  }
+
+  &:not(.current-user) {
+    @include message-content(false);
+  }
+
+  img,
+  video {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin: 4px 0;
+  }
+
+  pre {
+    margin: 4px 0;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+
+    &.current-user {
+      @include code-background(true);
+    }
+
+    &:not(.current-user) {
+      @include code-background(false);
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+    }
+  }
+
+  .emoji {
+    font-size: 2rem;
+    line-height: 1;
+    margin: 4px 0;
+  }
+
+  .file-attachment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 4px 0;
+
+    &.current-user {
+      @include code-background(true);
+      .file-size {
+        color: #8ce99a;
+      }
+    }
+
+    &:not(.current-user) {
+      @include code-background(false);
+      .file-size {
+        color: #1971c2;
+      }
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .file-info {
+      overflow: hidden;
+
+      .filename {
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .file-size {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+// User Name 표시
+.user-name {
+  font-size: 0.75rem;
+  color: #868e96;
+  margin-bottom: 2px;
+  padding: 0 4px;
+}
+
+// Chat Input
+.chat-input-container {
+  padding: 16px;
+  background: $text-light;
+  border-top: 1px solid $secondary-color;
+  position: relative;
+}
+
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: $bg-light;
+  border-radius: 24px;
+  padding: 6px 12px;
+  border: 1px solid $secondary-color;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: $primary-color;
+  }
+}
+
+.input-button-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// 버튼 스타일
+.action-button {
+  background: none;
   border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: $primary-color;
   border-radius: 50%;
-  cursor: grab;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: background 0.2s ease-in-out;
-  z-index: 1000;
+  transition: all 0.2s;
 
-  &:hover {
-    background-color: #0056b3;
+  &:hover:not(:disabled) {
+    background-color: $secondary-color;
+    transform: scale(1.05);
   }
 
-  &:active {
-    cursor: grabbing;
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:disabled {
+    color: #adb5bd;
+    cursor: not-allowed;
+  }
+}
+
+.file-input-label {
+  @extend .action-button;
+  input {
+    display: none;
+  }
+}
+
+.text-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  padding: 8px;
+  min-height: 24px;
+
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.send-button {
+  @extend .action-button;
+  color: $primary-color;
+}
+
+// Emoji Picker
+.emoji-picker-container {
+  position: absolute;
+  bottom: 100%;
+  right: 16px;
+  z-index: 1000;
+
+  &.visible {
+    display: block;
+  }
+
+  &:not(.visible) {
+    display: none;
+  }
+
+  .emoji-picker-react {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Code Editor
+.code-editor-container {
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  right: 16px;
+  background: $text-light;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  z-index: 1000;
+
+  &.visible {
+    display: flex;
+  }
+
+  &:not(.visible) {
+    display: none;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 8px;
+    border: 1px solid $secondary-color;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+  }
+
+  select {
+    padding: 8px;
+    border: 1px solid $secondary-color;
+    border-radius: 4px;
+    background: $text-light;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &.cancel {
+        background: $secondary-color;
+        color: $text-dark;
+      }
+
+      &.send {
+        background: $primary-color;
+        color: $text-light;
+      }
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+// 미디어 쿼리 (반응형 디자인)
+// 768px 이하
+@media (max-width: 768px) {
+  .chat-container.mobile {
+    padding: 0.5rem;
+  }
+  .chat-header {
+    padding: 0.75rem 1rem;
+    h2 {
+      font-size: 1.1rem;
+    }
+    .window-controls {
+      button {
+        padding: 0.4rem;
+        svg {
+          width: 0.9rem;
+          height: 0.9rem;
+        }
+      }
+    }
+  }
+  .chat-history {
+    padding: 0.75rem;
+  }
+  .chat-input-container {
+    padding: 0.75rem;
+  }
+  .chat-input-wrapper {
+    padding: 0.5rem 0.75rem;
+    input.text-input {
+      font-size: 0.9rem;
+      padding: 0.4rem;
+    }
+    .send-button {
+      padding: 0.4rem;
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}
+
+// 480px 이하
+@media (max-width: 480px) {
+  .chat-header {
+    padding: 0.5rem 0.75rem;
+    h2 {
+      font-size: 1rem;
+    }
+    .window-controls {
+      button {
+        padding: 0.3rem;
+        svg {
+          width: 0.8rem;
+          height: 0.8rem;
+        }
+      }
+    }
+  }
+  .chat-history {
+    padding: 0.5rem;
+  }
+  .chat-input-container {
+    padding: 0.5rem;
+  }
+  .chat-input-wrapper {
+    padding: 0.4rem 0.5rem;
+    input.text-input {
+      font-size: 0.85rem;
+      padding: 0.3rem;
+    }
+    .send-button {
+      padding: 0.3rem;
+      svg {
+        width: 0.9rem;
+        height: 0.9rem;
+      }
+    }
   }
 }

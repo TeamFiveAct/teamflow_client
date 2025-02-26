@@ -13,6 +13,7 @@ export interface Message {
 export interface ChatProps {
   user_id: number;
   workspace_id: number;
+  onClose?: () => void;
 }
 
 export interface FileMessage {

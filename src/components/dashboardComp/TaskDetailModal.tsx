@@ -8,7 +8,7 @@ interface TaskDetailModalProps {
   task?: {
     title: string;
     description: string;
-    priority: 'small' | 'medium' | 'high' | 'very_high';
+    priority: 'low' | 'medium' | 'high';
     start_date: string;
     due_date: string;
   } | null;

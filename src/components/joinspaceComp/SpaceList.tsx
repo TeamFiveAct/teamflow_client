@@ -219,18 +219,15 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Spinner, Container, Row, Col, Button } from 'react-bootstrap';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import { SpaceListProps } from '../../types/types';
+
+// const ITEMS_PER_PAGE = 6; // ✅ 한 번에 보여줄 개수 (2줄 × 3개)
+// import { Button } from 'react-bootstrap';
 import { ChevronLeft, ChevronRight } from 'react-bootstrap-icons'; // 🔹 화살표 아이콘 추가
 import '../../style/joinspace/spacelist.scss';
-
-interface Workspace {
-  space_id: number;
-  space_title: string;
-}
-
-interface SpaceListProps {
-  spaces: Workspace[];
-}
 
 const ITEMS_PER_PAGE = 3; // 🔹 한 번에 보이는 개수
 

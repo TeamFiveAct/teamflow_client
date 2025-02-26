@@ -146,6 +146,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../style/dashboard/ProjectInfo.scss';
 import { WorkspaceInfo } from '../../types/types';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 interface ProjectInfoProps {
   workspace: WorkspaceInfo;
@@ -155,6 +156,51 @@ interface ProjectInfoProps {
   onLeaveWorkspace: () => void;
   onDeleteWorkspace: () => void;
 }
+
+// ✅ 더미 사용자 데이터
+const dummyUsers = [
+  {
+    id: 1,
+    nickname: 'User1',
+    profileImg: 'https://via.placeholder.com/40',
+    isOnline: true,
+  },
+  {
+    id: 2,
+    nickname: 'User2',
+    profileImg: 'https://via.placeholder.com/40',
+    isOnline: false,
+  },
+  {
+    id: 3,
+    nickname: 'User3',
+    profileImg: 'https://via.placeholder.com/40',
+    isOnline: true,
+  },
+  {
+    id: 4,
+    nickname: 'User4',
+    profileImg: 'https://via.placeholder.com/40',
+    isOnline: false,
+  },
+  {
+    id: 5,
+    nickname: 'User5',
+    profileImg: 'https://via.placeholder.com/40',
+    isOnline: true,
+  },
+];
+
+// 날짜를 "yyyy-MM-dd" 형식으로 변환
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
 
 export default function ProjectInfo({
   workspace,
@@ -166,6 +212,7 @@ export default function ProjectInfo({
 }: ProjectInfoProps) {
   const [users, setUsers] = useState<any[]>([]); // 실제 워크스페이스 참여자들
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { space_id } = useParams<{ space_id: string }>();
   const usersPerPage = 3;
 
   useEffect(() => {
@@ -173,15 +220,16 @@ export default function ProjectInfo({
       try {
         // API에서 워크스페이스에 참여한 유저 정보 가져오기
         const response = await axios.get(
-          `/v1/workspace/${workspace.space_id}/member`,
+          `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/member`,
           {
             withCredentials: true,
           },
         );
+        const serverres = response.data;
         if (response.data.status === 'SUCCESS') {
           setUsers(response.data.data); // 유저 목록을 상태에 저장
         } else {
-          alert('참여자 목록을 불러오지 못했습니다.');
+          alert(`${response.data.message},참여자 목록을 불러오지 못했습니다.`);
         }
       } catch (error) {
         console.error('워크스페이스 참여자 조회 중 오류 발생', error);
@@ -189,8 +237,10 @@ export default function ProjectInfo({
       }
     };
 
-    fetchWorkspaceMembers();
-  }, [workspace.space_id]);
+    if (space_id) {
+      fetchWorkspaceMembers();
+    }
+  }, [space_id]);
 
   const handlePrev = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
@@ -250,7 +300,8 @@ export default function ProjectInfo({
                 {workspace.space_description}
               </p>
               <p className="project-date">
-                진행 기간: {workspace.created_at} ~ {workspace.end_date}
+                진행 기간: {formatDate(workspace.created_at)} ~
+                {/* {formatDate(workspace.end_date)} */}
               </p>
             </>
           )}
