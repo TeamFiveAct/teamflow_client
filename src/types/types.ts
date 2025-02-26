@@ -37,3 +37,12 @@ export interface Workspace {
 export interface SpaceListProps {
   spaces: Workspace[];
 }
+
+export interface ProjectInfoProps {
+  workspace: WorkspaceInfo;
+  isCollapsed: boolean;
+  toggleCollapse: () => void;
+  isOwner: boolean; // ✅ isOwner 추가
+  onLeaveWorkspace: () => void;
+  onDeleteWorkspace: () => void;
+}
