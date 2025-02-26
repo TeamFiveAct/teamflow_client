@@ -12,9 +12,22 @@ export interface WorkspaceInfo {
   space_id: number;
   space_title: string;
   space_description: string;
+  space_password: string;
   created_at: string;
   end_date?: string;
+  user_id: number;
 }
+
+export interface TaskState {
+  tasks: Task[];
+  loading: boolean;
+  error: string | null;
+}
+const initialState: TaskState = {
+  tasks: [],
+  loading: false,
+  error: null,
+};
 
 export interface Workspace {
   space_id: number;

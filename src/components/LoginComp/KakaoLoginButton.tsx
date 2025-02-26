@@ -20,7 +20,7 @@ export default function KakaoLoginButton() {
 
     // 새 팝업 창을 열고 카카오 로그인 페이지로 이동
     const popup = window.open(
-      `http://localhost:8000/v1/user/kakao-login`,
+      `${process.env.REACT_APP_API_SERVER}/user/kakao-login`,
       'kakaoLogin',
       'width=500,height=600',
     );
@@ -35,7 +35,7 @@ export default function KakaoLoginButton() {
     // 부모 창에서 메시지 수신
     const messageHandler = (event: MessageEvent) => {
       // event.origin이 백엔드 도메인인지 확인 (개발 환경이므로 localhost 확인)
-      if (event.origin !== 'http://localhost:8000/v1') return;
+      if (event.origin !== `${process.env.REACT_APP_API_SERVER}`) return;
       const { status, data, message } = event.data;
       if (status === 'SUCCESS' && message.includes('성공')) {
         dispatch(login({ nickname: data.nickname, authProvider: '카카오' }));

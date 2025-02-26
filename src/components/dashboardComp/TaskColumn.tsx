@@ -4,12 +4,13 @@ import TaskDetailModal from './TaskDetailModal';
 import TaskModal from './TaskModal'; // ✅ TaskModal 추가
 import '../../style/dashboard/taskColumn.scss';
 import { Task } from '../../types/types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateTask, deleteTask } from '../../store/modules/taskSlice';
+import { RootState } from '../../store/store';
 
 interface TaskColumnProps {
   title: string;
-  state: 'plan' | 'progress' | 'done';
+  status: 'plan' | 'progress' | 'done';
   tasks: Task[];
   // onCreate: (state: 'plan' | 'progress' | 'done') => void;
   onEdit: (task: Task) => void;
@@ -19,13 +20,14 @@ interface TaskColumnProps {
 
 export default function TaskColumn({
   title,
-  state,
+  status,
   tasks,
   // onCreate,
   onEdit,
   onDelete,
 }: // onFilter,
 TaskColumnProps) {
+  const updatetasks = useSelector((state: RootState) => state.tasks);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   // const [showCreateModal, setShowCreateModal] = useState(false); // ✅ 생성 모달 상태 추가
@@ -40,7 +42,7 @@ TaskColumnProps) {
   useEffect(() => {
     setVisibleTasks(tasks.slice(0, TASKS_PER_LOAD));
     setPage(1);
-  }, [tasks]);
+  }, [tasks, updatetasks]);
 
   const loadMoreTasks = () => {
     const nextTasks = tasks.slice(0, (page + 1) * TASKS_PER_LOAD);
@@ -68,6 +70,9 @@ TaskColumnProps) {
   const handleOpenDetail = (task: Task) => {
     setSelectedTask(task);
     setShowDetailModal(true);
+  };
+  const handleSave = (updatedTask: Task) => {
+    dispatch(updateTask(updatedTask));
   };
 
   return (
@@ -118,8 +123,7 @@ TaskColumnProps) {
               <button
                 className="task-action-btn"
                 onClick={() => {
-                  setSelectedTask(task);
-                  setShowDetailModal(true);
+                  handleOpenDetail(task);
                 }}
               >
                 <FaEllipsisH />
@@ -136,11 +140,14 @@ TaskColumnProps) {
       </div>
 
       {/* ✅ TaskDetailModal (할 일 상세보기 모달) */}
-      <TaskDetailModal
-        show={showDetailModal}
-        onClose={() => setShowDetailModal(false)}
-        task={selectedTask}
-      />
+      {selectedTask && (
+        <TaskDetailModal
+          show={showDetailModal}
+          onClose={() => setShowDetailModal(false)}
+          task={selectedTask}
+          onSave={handleSave}
+        />
+      )}
 
       {/* ✅ TaskModal (할 일 생성 모달) */}
       {/* <TaskModal

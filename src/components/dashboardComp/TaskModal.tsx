@@ -11,10 +11,23 @@ import '../../style/dashboard/taskModal.scss';
 interface TaskModalProps {
   show: boolean;
   onHide: () => void;
-  taskState: 'plan' | 'progress' | 'done' | null;
+  taskState: 'plan' | 'progress' | 'done';
+  onCreate: (taskData: {
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high';
+    startDate: string;
+    dueDate: string;
+    taskState: 'plan' | 'progress' | 'done';
+  }) => void;
 }
 
-export default function TaskModal({ show, onHide, taskState }: TaskModalProps) {
+export default function TaskModal({
+  show,
+  onHide,
+  taskState,
+  onCreate,
+}: TaskModalProps) {
   const [title, setTitle] = useState(''); // 제목
   const titleRef = useRef<HTMLInputElement>(null);
   const startDateRef = useRef<HTMLInputElement>(null);
@@ -25,6 +38,7 @@ export default function TaskModal({ show, onHide, taskState }: TaskModalProps) {
   const { space_id } = useParams<{ space_id: string }>();
 
   const dispatch = useDispatch();
+
   const handleCreateTask = async () => {
     if (title.trim() === '') {
       alert('제목을 입력해주세요');
@@ -40,7 +54,7 @@ export default function TaskModal({ show, onHide, taskState }: TaskModalProps) {
       return;
     }
 
-    const validDueDate = dueDate ? dueDate : null;
+    const validDueDate = dueDate ? dueDate : 'none';
     // createTask 액션을 dispatch하여 상태에 새로운 task 추가
     dispatch(
       createTask({
@@ -70,17 +84,33 @@ export default function TaskModal({ show, onHide, taskState }: TaskModalProps) {
         { withCredentials: true }, // 쿠키 전송
       );
 
-      console.log(response.data); // 서버 응답 처리
+      console.log('taskmodal의 콘솔::', response.data); // 서버 응답 처리
       // 서버 응답에 따라 필요한 후속 처리 (예: 알림, 상태 갱신 등)
-      alert(response.data.message);
 
-      setTitle('');
-      setDescription('');
-      setPriority('low');
-      setStartDate('');
-      setDueDate('');
-      // 저장 후 모달 닫기
-      onHide();
+      if (response.data.status === 'SUCCESS') {
+        // 생성된 업무를 Redux 상태에 추가
+        dispatch(createTask(response.data.data.todo)); // 데이터 구조에 맞게 수정 필요
+        alert(response.data.message);
+
+        setTitle('');
+        setDescription('');
+        setPriority('low');
+        setStartDate('');
+        setDueDate('');
+        onCreate({
+          title,
+          description,
+          priority,
+          startDate,
+          dueDate: validDueDate,
+          taskState: taskState || 'plan',
+        });
+
+        // 저장 후 모달 닫기
+        onHide();
+      } else {
+        console.error('업무 생성 실패');
+      }
     } catch (error) {
       console.error('Error creating task:', error);
       alert('서버와의 연결에 문제가 있습니다.');

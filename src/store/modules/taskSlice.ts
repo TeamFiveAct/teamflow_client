@@ -37,7 +37,7 @@ const taskSlice = createSlice({
         title?: string;
         description?: string;
         priority?: 'low' | 'medium' | 'high';
-        state?: 'plan' | 'progress' | 'done';
+        status?: 'plan' | 'progress' | 'done';
         start_date?: string;
         due_date?: string;
       }>,
@@ -55,9 +55,25 @@ const taskSlice = createSlice({
     deleteTask: (state, action: PayloadAction<number>) => {
       state.tasks = state.tasks.filter(task => task.todo_id !== action.payload);
     },
+
+    // 🟢 추가: 드래그 & 드랍을 위한 상태 변경 액션
+    moveTask: (
+      state,
+      action: PayloadAction<{
+        todo_id: number;
+        newState: 'plan' | 'progress' | 'done';
+      }>,
+    ) => {
+      const task = state.tasks.find(
+        task => task.todo_id === action.payload.todo_id,
+      );
+      if (task) {
+        task.status = action.payload.newState; // 상태 업데이트
+      }
+    },
   },
 });
 
-export const { initializeTasks, createTask, updateTask, deleteTask } =
+export const { initializeTasks, createTask, updateTask, deleteTask, moveTask } =
   taskSlice.actions;
 export default taskSlice.reducer;
