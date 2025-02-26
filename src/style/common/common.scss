@@ -1,102 +1,59 @@
-/* Bootstrap 기본 스타일 조정 */
-.card {
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-input,
-.form-control {
-  border-radius: 30px;
-}
-
-button {
-  border-radius: 30px;
-  padding: 10px;
-}
-
-.avatar-dropdown {
-  position: relative;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: row; /* ✅ 가로 정렬로 변경 */
-  gap: 5px; /* ✅ 간격 줄이기 */
-  justify-content: center;
-  overflow-x: auto; /* ✅ 가로 스크롤 가능 */
-  white-space: nowrap;
-  max-width: 90%; /* ✅ 컨테이너 크기 축소 */
-  margin: 0 auto; /* ✅ 중앙 정렬 */
+  flex-direction: column;
 }
 
-.avatar-option {
+/* 🔹 전체 페이지 컨테이너 */
+.app-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px; /* ✅ 아바타 크기에 맞게 조정 */
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
+  flex-direction: column;
+  min-height: 100vh; /* 전체 화면 높이를 기준으로 설정 */
 }
 
-.avatar-option:hover {
-  background-color: #f0f0f0;
-}
-
-/* ✅ Contact Us 텍스트 스타일 */
-.contact-text {
-  color: #007bff;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.2s ease-in-out;
-  margin-top: 4px;
-}
-
-.contact-text:hover {
-  color: #0056b3;
-  text-decoration: underline;
-}
-
-/* ✅ Licensed by FiveAct 텍스트 스타일 */
-.license-text {
-  font-size: 12px;
-  color: #6c757d;
-  margin-top: 6px;
-}
-
+/* 🔹 헤더(Header) 스타일 */
 .navbar {
-  position: relative;
+  position: relative; /* 🔥 기존 fixed 제거 */
   width: 100%;
   background: white;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  height: 60px; /* 기존보다 살짝 줄인 높이 */
+  padding: 10px 15px; /* 내부 여백 조정 */
+  font-size: 1rem; /* 글자 크기 조정 */
 }
 
+/* ✅ 로그인/로그아웃 버튼 크기 줄이기 */
+.navbar .btn-primary,
+.navbar .btn-outline-primary {
+  font-size: 0.9rem; /* 글자 크기 줄이기 */
+  padding: 6px 12px; /* 버튼 크기 조정 */
+  height: 36px; /* 높이 조정 */
+}
+
+/* ✅ 모바일 메뉴 버튼 크기 조정 */
 .navbar-toggler {
-  border: none;
+  padding: 5px; /* 토글 버튼 여백 조정 */
+  font-size: 1rem; /* 아이콘 크기 조정 */
 }
 
-.navbar-toggler:focus {
-  box-shadow: none;
+/* 🔹 메인 컨텐츠 영역 (헤더 아래, 푸터 위에 위치) */
+.content {
+  flex-grow: 1; /* 🏆 남은 공간을 자동으로 차지 */
+  padding: 20px;
+  margin-top: 70px; /* ✅ 헤더 높이만큼 여백 추가 */
+  margin-bottom: 50px; /* ✅ 푸터 높이만큼 여백 추가 */
 }
 
-.collapse.show {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-radius: 5px;
-}
-
+/* 🔹 푸터(Footer) 스타일 */
 .footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  position: relative; /* 🔥 기존 fixed 제거 */
   width: 100%;
-  background: white;
-  z-index: 1000;
   height: 50px;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   text-align: center;
   font-size: 12px;
   color: #6c757d;
@@ -106,47 +63,12 @@ button {
   align-items: center;
   justify-content: center;
   padding: 10px 0;
-  margin-top: 50px;
 }
 
-.page-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content-wrap {
-  flex: 1;
-}
-
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  background: white;
-  z-index: 1000;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.content {
-  flex: 1;
-  padding-top: 70px;
-  padding-bottom: 50px;
-  overflow-y: auto;
-  padding: 20px;
-}
-
+/* 🔹 반응형 스타일 (모바일) */
 @media (max-width: 768px) {
   .content {
-    margin-top: 80px;
-    margin-bottom: 60px;
+    margin-top: 80px; /* 모바일에서 헤더가 커질 경우 여백 증가 */
+    margin-bottom: 60px; /* 모바일에서 푸터가 커질 경우 여백 증가 */
   }
 }

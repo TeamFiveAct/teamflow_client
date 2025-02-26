@@ -1,6 +1,5 @@
 /* joinspaceContainer 스타일 */
 .joinspaceContainer {
-  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,72 +7,222 @@
   height: 100vh;
   background-color: #f4f4f4;
   padding: 20px;
+  margin-top: 40px;
 }
 
 /* 중앙 상단 환영 메시지 */
 .welcomeMessage {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   h3 {
     font-size: 1.6rem;
     font-weight: bold;
     color: #007bff;
-    margin: 0;
   }
 }
 
-/* 메인 컨텐츠 (왼쪽 & 오른쪽 패널) */
 .joinspaceSection {
-  display: flex; /* 왼쪽과 오른쪽을 가로로 배치 */
-  width: 100%;
-  max-width: 1200px; /* 전체 컨텐츠 최대 너비 설정 */
-  margin: 0 auto; /* 중앙 정렬 */
-  height: 80vh; /* 높이 조정 */
-}
-
-/* 왼쪽 패널 (워크스페이스 생성 & 참여) */
-.leftSideContainer {
-  width: 50%;
-  background: white;
-  padding: 40px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-right: 2px solid #e0e0e0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  align-items: center; /* 🔹 패널 높이 균형 */
 }
 
 /* 모달 위치 설정 */
 .create-space-modal .modal-dialog {
   position: fixed;
   top: 50%;
-  left: 50% !important;
+  left: 50%;
   transform: translate(-50%, -50%);
   max-width: 500px;
   width: 90%;
   z-index: 1050;
 }
 
-.create-space-modal .modal-content {
-  border-radius: 12px;
-  border: none;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+/* ✅ 모달 전체 배경 (오버레이) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 🔹 반투명 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.create-space-modal .modal-header {
-  background-color: #007bff;
-  color: white;
-  border-radius: 12px 12px 0 0;
+/* ✅ 모달 본체 */
+.custom-modal {
+  background: white;
+  width: 90%;
+  max-width: 400px; /* 🔹 최대 너비 제한 */
+  padding: 20px;
+  border-radius: 12px; /* 🔹 모서리 둥글게 */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.create-space-modal .modal-footer {
-  border-top: none;
+
+
+/* ✅ 모달 헤더 */
+.modal-header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* ✅ 모달 바디 */
+.modal-body {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* ✅ 모달 푸터 (버튼 영역) */
+.modal-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* 🔹 버튼을 한 줄에 정렬 */
+  gap: 10px; /* 🔹 버튼 사이 여백 추가 */
+}
+
+/* ✅ 버튼 스타일 통일 */
+.modal-footer .btn {
+  flex: 1; /* 🔹 버튼 크기를 균등하게 설정 */
+  height: 40px;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+/* ✅ 닫기 버튼 스타일 */
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+/* ✅ 제목 스타일 */
+.leftSideContainer h3 {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 10px; /* 🔹 제목과 설명 간격 조정 */
+}
+
+.leftSideContainer h5 {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* ✅ 버튼과 입력창을 감싸는 컨테이너 */
+.workspace-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ✅ 모든 버튼과 입력창 크기 통일 */
+.leftSideContainer .btn,
+.leftSideContainer input,
+.workspace-actions .btn,
+.workspace-actions input {
+  width: 80%;
+  max-width: 400px;
+  height: 45px;
+  box-sizing: border-box;
+}
+
+/* ✅ 입력창 스타일 */
+.leftSideContainer input,
+.workspace-actions input {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.leftSideContainer input:focus,
+.workspace-actions input:focus {
+  border-color: #007bff;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+}
+
+/* ✅ 버튼 스타일 */
+.leftSideContainer .btn,
+.workspace-actions .btn {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px; /* ✅ 버튼 간격 동일하게 설정 */
+}
+
+.leftSideContainer {
+  width: 50%;
+  padding: 40px 30px; /* 🔹 내부 여백 추가 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: white;
+  border-right: 2px solid #e0e0e0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* ✅ 내부 컨텐츠를 감싸는 래퍼 (정렬 보장) */
+.content-wrapper {
+  width: 100%;
+  max-width: 450px; /* 🔹 내부 요소가 일정한 크기로 유지됨 */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 🔹 내부 요소 가운데 정렬 */
+}
+
+.enterSpaceBtnDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.enterSpaceBtnDiv .btn,
+.enterSpaceBtnDiv input {
+  width: 100%;
+  padding: 0px;
+}
+
+.enterSpaceBtnDiv .spacePasswordForm {
+  width: 100%;
+  padding: 0px;
 }

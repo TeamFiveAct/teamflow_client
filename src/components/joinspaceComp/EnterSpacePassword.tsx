@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../../style/joinspace/joinspace.scss';
 
 interface EnterSpacePasswordProps {
   refreshSpaces: () => void;
@@ -45,7 +46,7 @@ const EnterSpacePassword = ({ refreshSpaces }: EnterSpacePasswordProps) => {
 
   return (
     <>
-      <Form>
+      <Form className="spacePasswordForm">
         <Form.Group controlId="spacePasswordInput">
           <Form.Label>
             <h5>참여할 프로젝트가 있으신가요?</h5>

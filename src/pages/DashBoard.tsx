@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProjectInfo from '../components/dashboardComp/ProjectInfo';
 import ToDoBoard from '../components/dashboardComp/ToDoBoard';
 import { Task, WorkspaceInfo } from '../types/types';
+
 // import '../style/dashboard.scss';
 // import ChatButton from '../components/chattingComp/ChatButton';
 import axios from 'axios';
