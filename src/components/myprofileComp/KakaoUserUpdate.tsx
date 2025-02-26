@@ -1,7 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSelector } from 'react-redux';
-// import { selectAuthProvider } from '../../store/authSlice';
 import ProfileImg from '../LoginComp/ProfileImg';
 import Avatar from 'boring-avatars';
 import useUserData from '../../hooks/useUserData';
@@ -10,41 +9,33 @@ import { RootState } from '../../store/store';
 
 export default function KakaoUserUpdate() {
   const { userData, editMode, setEditMode } = useUserData();
-  const authProvider = useSelector(
-    (state: RootState) => state.checkSession.authProvider,
-  ); // ✅ Redux에서 가져오기
-  // const authProvider = useSelector(selectAuthProvider); // ✅ Redux에서 가져오기
-  const isKakaoUser = authProvider === 'kakao';
-
   const {
     formData,
     setFormData,
     handleChange,
-    updateUser, // ✅ 비밀번호 검증을 안 하는 업데이트 함수
+    updateUser,
     selectedAvatar,
     setSelectedAvatar,
   } = useUserActions(userData, setEditMode);
 
-  // 🔹 userData 변경 시 formData 업데이트 (닉네임 표시)
+  // ✅ 마이페이지 진입 시 기본적으로 수정 불가 상태 유지 (editMode = false)
   React.useEffect(() => {
+    setEditMode(false); // 🔹 마이페이지 들어가면 "수정하기" 버튼만 보이게 초기화
     setFormData(prev => ({
       ...prev,
       nickname: userData.nickname || '',
     }));
-  }, [userData.nickname, setFormData]);
+  }, [userData.nickname, setFormData, setEditMode]);
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center">
-        {userData.nickname ? `${userData.nickname}님의 정보` : '회원 정보'}
-      </h2>
+      <h2 className="text-center">{userData.nickname}님의 정보</h2>
       <p className="text-center text-muted">
-        {isKakaoUser
-          ? '카카오 계정으로 로그인하였습니다.'
-          : '일반 계정으로 로그인하였습니다.'}
+        카카오 계정으로 로그인하였습니다.
       </p>
 
       <form onSubmit={updateUser} className="profile-form">
+        {/* ✅ 프로필 이미지 */}
         {editMode ? (
           <ProfileImg
             onSelectAvatar={setSelectedAvatar}
@@ -56,24 +47,11 @@ export default function KakaoUserUpdate() {
               name={userData.profile_image || 'Default Avatar'}
               variant="beam"
               size={150}
-              colors={['#0db2ac', '#f5dd7e', '#fc8d4d', '#fc694d', '#faba32']}
             />
           </div>
         )}
 
-        {/* ✅ 이메일 (읽기 전용) */}
-        <div className="mb-3">
-          <label className="form-label">이메일</label>
-          <input
-            type="text"
-            name="email"
-            value={userData.email}
-            className="form-control readonly-style"
-            readOnly
-          />
-        </div>
-
-        {/* ✅ 닉네임 (수정 가능) */}
+        {/* ✅ 닉네임 입력 필드 (수정 불가능 상태 유지) */}
         <div className="mb-3">
           <label className="form-label">닉네임</label>
           <input
@@ -82,13 +60,11 @@ export default function KakaoUserUpdate() {
             value={formData.nickname}
             onChange={handleChange}
             className="form-control"
-            disabled={!editMode}
+            disabled={!editMode} // 🔹 초기에는 수정 불가 상태
           />
         </div>
 
-        {/* ✅ 비밀번호 입력 필드 없음 */}
-
-        {/* ✅ 수정하기 버튼 / 저장 + 취소 버튼 */}
+        {/* ✅ 버튼 상태 전환 */}
         {!editMode ? (
           <button
             type="button"
