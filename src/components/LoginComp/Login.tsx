@@ -122,23 +122,24 @@ export default function Login() {
   const handlePasswordReset = async (event: React.FormEvent) => {
     event.preventDefault();
     setResetMessage({ text: '', type: null });
-    // setResetError({ text: '', type: null });
-
+  
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/user/request-reset`,
-        { email: resetEmail },
+        { email: resetEmail }
       );
-      const { status, message } = response.data;
-      if (status === 'SUCCESS') {
+  
+      // 서버 응답 구조 변경 반영
+      const { emailStatus, message } = response.data;
+  
+      if (emailStatus === 'success') {  // ✅ 변경된 필드 사용
         setResetMessage({
-          text: '재설정 링크가 이메일로 발송되었습니다.',
+          text: message, // 서버에서 온 메시지 그대로 사용
           type: 'success',
         });
       } else {
-        // setResetError(message || '비밀번호 재설정 요청에 실패했습니다.');
         setResetMessage({
-          text: '비밀번호 재설정 요청에 실패했습니다.',
+          text: message || '비밀번호 재설정 요청에 실패했습니다.',
           type: 'error',
         });
       }
@@ -147,11 +148,10 @@ export default function Login() {
         text: '비밀번호 재설정 요청 중 오류가 발생했습니다.',
         type: 'error',
       });
-      // setResetError('비밀번호 재설정 요청 중 오류가 발생했습니다.');
       console.error('비밀번호 재설정 오류:', error);
     }
   };
-
+  
   return (
     <section
       className="d-flex justify-content-center align-items-center px-0 mt-4"
