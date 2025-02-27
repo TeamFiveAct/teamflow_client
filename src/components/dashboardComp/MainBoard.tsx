@@ -1,9 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Task } from '../../types/types';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import TaskModal from './TaskModal';
 import ToDoBoard from './ToDoBoard';
+import { AppDispatch, RootState } from '../../store/store';
+// import { updateTask, loadMoreTasks } from '../../store/modules/taskSlice';
+import { Task } from '../../types/types';
+import {
+  createTaskAsync,
+  deleteTaskAsync,
+} from '../../store/modules/taskSlice';
+// import { deleteTask, moveTaskAsync } from '../../store/modules/taskSlice';
 
 const getWorkSpaceDataList = async (space_id: string | undefined) => {
   console.log('spaceid', space_id);
@@ -37,10 +45,25 @@ const getWorkSpaceDataList = async (space_id: string | undefined) => {
 };
 export default function MainBoard() {
   const { space_id } = useParams<{ space_id: string }>();
-  const [currentFilter, setCurrentFilter] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const [isOpen, setIsOpen] = useState(false); // 모달 상태 관리
+  // const handleDragEnd = (
+  //   todo_id: number,
+  //   newState: 'plan' | 'progress' | 'done',
+  // ) => {
+  //   dispatch(
+  //     moveTaskAsync({ todo_id, newState } as {
+  //       todo_id: number;
+  //       newState: 'plan' | 'progress' | 'done';
+  //     }),
+  //   );
+  // };
 
+  const [currentFilter, setCurrentFilter] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
+
   const [todoList, setTodoList] = useState<{
     plan: Task[];
     progress: Task[];
@@ -52,20 +75,14 @@ export default function MainBoard() {
     filterType: 'priority' | 'due_date' | 'start_date',
   ) => {
     try {
-      setCurrentFilter(filterType);
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
         { state: filterType, limit: 100, offset: 0 },
         { withCredentials: true },
       );
-      console.log('필터링 정보 조회::', response.data);
       if (response.data.status === 'SUCCESS') {
-        const filteredData: Task[] = response.data.data;
-        setTodoList({
-          plan: filteredData.filter(task => task.status === 'plan'),
-          progress: filteredData.filter(task => task.status === 'progress'),
-          done: filteredData.filter(task => task.status === 'done'),
-        });
+        // dispatch(loadTasksAsync(response.data.data));
+        console.log(response.data);
       }
     } catch (error) {
       console.error('서버 요청 중 오류 발생:', error);
@@ -91,16 +108,76 @@ export default function MainBoard() {
       due_date: newTaskData.dueDate || 'none',
     };
 
+    // space_id를 함께 전달하여 작업을 생성
+    if (space_id) {
+      dispatch(createTaskAsync({ spaceId: space_id, newTask })); // Slice에서 space_id를 처리하도록 수정
+    }
+
     setTodoList(prev => ({
       ...prev,
       plan: [...prev.plan, newTask], // 새로 생성된 투두는 plan 상태에 추가
       // progress: [...prev.progress, newTask], // 새로 생성된 투두는 progress 상태에 추가
       // done: [...prev.done, newTask], // 새로 생성된 투두는 done 상태에 추가
     }));
+    // dispatch(loadTasksAsync([...tasks, newTask])); // 새 작업을 상태에 추가
   };
 
   const handleEditTask = () => {};
-  const handleDeleteTask = () => {};
+
+  // const handleDeleteTask = async (task: Task) => {
+  //   try {
+  //     alert('이 업무내용을 삭제하시겠습니까?');
+  //     // 서버에 삭제 요청
+  //     const response = await axios.delete(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/${task.todo_id}`,
+  //       { withCredentials: true },
+  //     );
+  //     console.log('delete버튼의 콘솔::', response.data);
+  //     if (response.data.status === 'SUCCESS') {
+  //       // 서버에서 성공적으로 삭제되면 상태에서 바로 삭제
+  //       dispatch(deleteTaskAsync(task.todo_id));
+
+  //       setTodoList(prev => ({
+  //         plan: prev.plan.filter(item => item.todo_id !== task.todo_id),
+  //         progress: prev.progress.filter(item => item.todo_id !== task.todo_id),
+  //         done: prev.done.filter(item => item.todo_id !== task.todo_id),
+  //       }));
+  //     } else {
+  //       console.error('업무 삭제 실패:', response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('업무 삭제 중 오류 발생:', error);
+  //   }
+  // };
+  const handleDeleteTask = async (task: Task) => {
+    try {
+      alert('이 업무내용을 삭제하시겠습니까?');
+      // if (space_id) {
+      //   dispatch(deleteTaskAsync({ space_id, taskId }));
+      // } else {
+      //   console.error('space_id가 없습니다.');
+      // }
+      if (space_id) {
+        // dispatch(deleteTaskAsync({ spaceId: space_id, taskId: task.todo_id })); // Slice에서 space_id를 처리하도록 수정
+        const response = await dispatch(
+          deleteTaskAsync({ spaceId: space_id, taskId: task.todo_id }),
+        ).unwrap(); // ✅ unwrap() 사용
+
+        if (response === task.todo_id) {
+          // 성공하면
+          setTodoList(prev => ({
+            plan: prev.plan.filter(item => item.todo_id !== task.todo_id),
+            progress: prev.progress.filter(
+              item => item.todo_id !== task.todo_id,
+            ),
+            done: prev.done.filter(item => item.todo_id !== task.todo_id),
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('업무 삭제 중 오류 발생:', error);
+    }
+  };
 
   useEffect(() => {
     console.log('🚀 useEffect 실행됨, space_id:', space_id);
@@ -115,7 +192,7 @@ export default function MainBoard() {
     };
 
     loadWorkSpaceDataList();
-  }, [space_id]);
+  }, [space_id, dispatch]);
   return (
     <>
       <div className="task-actions">
@@ -148,12 +225,169 @@ export default function MainBoard() {
         />
       </div>
       <ToDoBoard
-        tasksPlan={todoList.plan}
+        tasksPlan={todoList.plan} // todoList를 사용하도록 수정
         tasksProgress={todoList.progress}
         tasksDone={todoList.done}
-        onEdit={handleEditTask}
         onDelete={handleDeleteTask}
       />
+      {/* <ToDoBoard
+        tasksPlan={tasks.filter(task => task.status === 'plan')}
+        tasksProgress={tasks.filter(task => task.status === 'progress')}
+        tasksDone={tasks.filter(task => task.status === 'done')}
+        // onDragEnd={handleDragEnd} // 드래그 앤 드랍 처리
+      /> */}
     </>
   );
 }
+
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { useParams } from 'react-router-dom';
+// import TaskModal from './TaskModal';
+// import ToDoBoard from './ToDoBoard';
+// import { RootState } from '../../store/store';
+// import { updateTasks, loadMoreTasks } from '../../store/taskSlice';
+// import { Task } from '../../types/types';
+
+// const TASKS_PER_LOAD = 5; // 한 번에 불러올 업무 개수
+
+// export default function MainBoard() {
+//   const { space_id } = useParams<{ space_id: string }>();
+//   const dispatch = useDispatch();
+//   const tasks = useSelector((state: RootState) => state.tasks);
+
+//   const [currentFilter, setCurrentFilter] = useState<string | null>(null);
+//   const [showCreateModal, setShowCreateModal] = useState(false);
+//   const [showFilterOptions, setShowFilterOptions] = useState(false);
+//   const [offsets, setOffsets] = useState({ plan: 0, progress: 0, done: 0 });
+
+//   // ✅ 전체 업무 리스트 가져오기
+//   const fetchTaskList = async () => {
+//     if (!space_id) return;
+//     try {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos`,
+//         {},
+//         { withCredentials: true },
+//       );
+//       if (response.data.status === 'SUCCESS' && response.data.data) {
+//         dispatch(updateTasks(response.data.data)); // Redux 상태 업데이트
+//       }
+//     } catch (error) {
+//       console.error('전체 업무 조회 오류:', error);
+//     }
+//   };
+
+//   // ✅ 특정 상태별 업무 리스트 추가 로드 (무한 스크롤)
+//   const loadMore = async (status: 'plan' | 'progress' | 'done') => {
+//     if (!space_id) return;
+//     try {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
+//         { state: status, limit: TASKS_PER_LOAD, offset: offsets[status] },
+//         { withCredentials: true },
+//       );
+//       if (response.data.status === 'SUCCESS') {
+//         dispatch(loadMoreTasks({ status, newTasks: response.data.data }));
+//         setOffsets(prev => ({
+//           ...prev,
+//           [status]: prev[status] + TASKS_PER_LOAD,
+//         }));
+//       }
+//     } catch (error) {
+//       console.error('추가 업무 로드 오류:', error);
+//     }
+//   };
+
+//   // ✅ 필터링된 업무 리스트 가져오기
+//   const handleFilter = async (
+//     filterType: 'priority' | 'due_date' | 'start_date',
+//   ) => {
+//     if (!space_id) return;
+//     try {
+//       setCurrentFilter(filterType);
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
+//         { state: filterType, limit: 100, offset: 0 },
+//         { withCredentials: true },
+//       );
+//       if (response.data.status === 'SUCCESS') {
+//         dispatch(updateTasks(response.data.data));
+//       }
+//     } catch (error) {
+//       console.error('필터링 오류:', error);
+//     }
+//   };
+
+//   const handleCreateTask = (newTaskData: {
+//     title: string;
+//     description: string;
+//     priority: 'low' | 'medium' | 'high';
+//     startDate: string;
+//     dueDate: string | null;
+//     taskState: 'plan' | 'progress' | 'done';
+//   }) => {
+//     // Task 타입에 맞게 변환
+//     const newTask: Task = {
+//       todo_id: 0, // 서버에서 생성된 ID로 대체됨
+//       title: newTaskData.title,
+//       description: newTaskData.description,
+//       priority: newTaskData.priority,
+//       status: newTaskData.taskState, // taskState를 status로 변경
+//       start_date: newTaskData.startDate,
+//       due_date: newTaskData.dueDate || 'none',
+//     };
+
+//     // setTodoList(prev => ({
+//     //   ...prev,
+//     //   plan: [...prev.plan, newTask], // 새로 생성된 투두는 plan 상태에 추가
+//     //   // progress: [...prev.progress, newTask], // 새로 생성된 투두는 progress 상태에 추가
+//     //   // done: [...prev.done, newTask], // 새로 생성된 투두는 done 상태에 추가
+//     // }));
+//   };
+
+//   useEffect(() => {
+//     fetchTaskList(); // 공간 변경 시 전체 리스트 다시 가져오기
+//   }, [space_id, dispatch]);
+
+//   return (
+//     <>
+//       <div className="task-actions">
+//         <button
+//           className="btn btn-sm btn-primary"
+//           onClick={() => setShowCreateModal(true)}
+//         >
+//           + 생성
+//         </button>
+//         <div className="filter-container">
+//           <button
+//             className="btn btn-sm btn-secondary filter-btn"
+//             onClick={() => setShowFilterOptions(!showFilterOptions)}
+//           >
+//             🔍 조회
+//           </button>
+//           {showFilterOptions && (
+//             <div className="filter-options">
+//               <button onClick={() => handleFilter('priority')}>우선순위</button>
+//               <button onClick={() => handleFilter('due_date')}>마감일</button>
+//               <button onClick={() => handleFilter('start_date')}>시작일</button>
+//             </div>
+//           )}
+//         </div>
+//         <TaskModal
+//           show={showCreateModal}
+//           onHide={() => setShowCreateModal(false)}
+//           taskState="plan"
+//           onCreate={handleCreateTask}
+//         />
+//       </div>
+//       <ToDoBoard
+//         tasksPlan={tasks.plan}
+//         tasksProgress={tasks.progress}
+//         tasksDone={tasks.done}
+//         onLoadMore={loadMore} // 스크롤링 시 추가 로드
+//       />
+//     </>
+//   );
+// }

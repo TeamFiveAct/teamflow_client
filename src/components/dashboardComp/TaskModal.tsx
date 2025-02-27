@@ -3,10 +3,13 @@ import React, { useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import '../../style/taskModal.scss';
 import { useDispatch } from 'react-redux';
-import { createTask } from '../../store/modules/taskSlice';
+// import { createTask } from '../../store/modules/taskSlice';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import '../../style/dashboard/taskModal.scss';
+import { AppDispatch } from '../../store/store';
+import { createTaskAsync } from '../../store/modules/taskSlice';
+import { Task } from '../../types/types';
 
 interface TaskModalProps {
   show: boolean;
@@ -31,13 +34,14 @@ export default function TaskModal({
   const [title, setTitle] = useState(''); // 제목
   const titleRef = useRef<HTMLInputElement>(null);
   const startDateRef = useRef<HTMLInputElement>(null);
+  const dueDateRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState(''); // 설명
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('low'); // 우선순위
   const [startDate, setStartDate] = useState(''); // 시작 날짜
   const [dueDate, setDueDate] = useState(''); // 마감 날짜
   const { space_id } = useParams<{ space_id: string }>();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleCreateTask = async () => {
     if (title.trim() === '') {
@@ -52,22 +56,18 @@ export default function TaskModal({
       }
       alert('시작 날짜를 선택해주세요');
       return;
+    } else if (dueDate.trim() === '') {
+      if (dueDateRef.current) {
+        dueDateRef.current.focus();
+      }
+      alert('시작 날짜를 선택해주세요');
+      return;
     }
 
     const validDueDate = dueDate ? dueDate : 'none';
     // createTask 액션을 dispatch하여 상태에 새로운 task 추가
-    dispatch(
-      createTask({
-        title,
-        description,
-        priority,
-        status: taskState || 'plan', // taskState가 null일 경우 기본값 'plan'
-        start_date: startDate,
-        due_date: dueDate || 'none',
-      }),
-    );
-
     const createTaskData = {
+      // todo_id: 0,
       space_id: space_id,
       title: title,
       description: description,
@@ -75,6 +75,16 @@ export default function TaskModal({
       start_date: startDate,
       due_date: validDueDate,
     };
+    // dispatch(
+    //   createTask({
+    //     title,
+    //     description,
+    //     priority,
+    //     status: taskState || 'plan', // taskState가 null일 경우 기본값 'plan'
+    //     start_date: startDate,
+    //     due_date: dueDate || 'none',
+    //   }),
+    // );
 
     try {
       // 서버에 요청 보내기 (비동기 처리)
@@ -86,39 +96,81 @@ export default function TaskModal({
 
       console.log('taskmodal의 콘솔::', response.data); // 서버 응답 처리
       // 서버 응답에 따라 필요한 후속 처리 (예: 알림, 상태 갱신 등)
+      const newTask = {
+        todo_id: response.data.todo_id, // 서버에서 생성된 todo_id 사용
+        title: title,
+        description: description,
+        priority: priority,
+        status: taskState || 'plan', // taskState가 없다면 기본값 'plan' 사용
+        start_date: startDate,
+        due_date: validDueDate,
+      };
+      try {
+        if (space_id) {
+          const actionResult = await dispatch(
+            createTaskAsync({ spaceId: space_id, newTask: newTask }),
+          );
 
-      if (response.data.status === 'SUCCESS') {
-        // 생성된 업무를 Redux 상태에 추가
-        dispatch(createTask(response.data.data.todo)); // 데이터 구조에 맞게 수정 필요
-        alert(response.data.message);
-
-        setTitle('');
-        setDescription('');
-        setPriority('low');
-        setStartDate('');
-        setDueDate('');
-        onCreate({
-          title,
-          description,
-          priority,
-          startDate,
-          dueDate: validDueDate,
-          taskState: taskState || 'plan',
-        });
-
-        // 저장 후 모달 닫기
-        onHide();
-      } else {
-        console.error('업무 생성 실패');
+          if (createTaskAsync.fulfilled.match(actionResult)) {
+            alert('업무가 성공적으로 생성되었습니다!');
+            setTitle('');
+            setDescription('');
+            setPriority('low');
+            setStartDate('');
+            setDueDate('');
+            onCreate({
+              title,
+              description,
+              priority,
+              startDate,
+              dueDate: validDueDate,
+              taskState: taskState || 'plan',
+            });
+            onHide();
+          } else {
+            alert('업무 생성에 실패했습니다.');
+          }
+        }
+      } catch (error) {
+        console.error('Error creating task:', error);
+        alert('서버와의 연결에 문제가 있습니다.');
       }
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('Error during request:', error);
       alert('서버와의 연결에 문제가 있습니다.');
     }
+
+    //     if (response.data.status === 'SUCCESS') {
+    //       // 생성된 업무를 Redux 상태에 추가
+    //       dispatch(createTask(response.data.data.todo)); // 데이터 구조에 맞게 수정 필요
+    //       alert(response.data.message);
+
+    //       setTitle('');
+    //       setDescription('');
+    //       setPriority('low');
+    //       setStartDate('');
+    //       setDueDate('');
+    //       onCreate({
+    //         title,
+    //         description,
+    //         priority,
+    //         startDate,
+    //         dueDate: validDueDate,
+    //         taskState: taskState || 'plan',
+    //       });
+
+    //       // 저장 후 모달 닫기
+    //       onHide();
+    //     } else {
+    //       console.error('업무 생성 실패');
+    //     }
+    //   } catch (error) {
+    //     console.error('Error creating task:', error);
+    //     alert('서버와의 연결에 문제가 있습니다.');
+    //   }
+    // };
   };
-
   if (!show) return null;
-
   return (
     <div className="modal-overlay">
       <div className="custom-modal">
@@ -178,6 +230,7 @@ export default function TaskModal({
                 type="date"
                 className="form-control"
                 value={dueDate}
+                ref={dueDateRef}
                 onChange={e => setDueDate(e.target.value)}
               />
             </div>
