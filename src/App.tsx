@@ -191,8 +191,8 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
-        <ChatButton />
+        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동
+        <ChatButton /> */}
         <Footer />
       </Router>
     </>
