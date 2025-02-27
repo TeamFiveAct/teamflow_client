@@ -281,13 +281,15 @@ export default function Header() {
         const response = await axios.get('/v1/user/session', {
           withCredentials: true,
         });
+        console.log('세션 응답:', response.data); // ✅ 디버깅을 위한 로그
 
         if (response.data.status !== 'SUCCESS') {
+          console.warn('세션 만료됨, 로그아웃 실행'); // 추가 로그
           handleLogout();
         }
       } catch (error) {
         console.error('세션 확인 실패:', error);
-        handleLogout();
+        alert('세션 확인 중 오류가 발생했습니다.');
       }
     };
 
