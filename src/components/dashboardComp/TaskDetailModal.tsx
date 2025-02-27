@@ -182,7 +182,8 @@ export default function TaskDetailModal({
           {editMode ? (
             <button
               className="btn btn-success"
-              onClick={handleSave}
+              // onClick={handleSave}
+              onClick={() => onEdit(updatedTask)}
               disabled={isLoading}
             >
               {isLoading ? '저장 중...' : '저장'}

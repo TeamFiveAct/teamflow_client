@@ -19,7 +19,16 @@ interface TaskColumnProps {
   tasks: Task[];
   // onDragEnd: (todo_id: number, newState: 'plan' | 'progress' | 'done') => void;
   // onCreate: (state: 'plan' | 'progress' | 'done') => void;
-  onEdit: (task: Task) => void;
+  onEdit: (updatedTaskData: {
+    space_id?: string;
+    todo_id: number;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'plan' | 'progress' | 'done';
+    start_date: string;
+    due_date: string | null;
+  }) => void;
   onDelete: (task: Task) => void;
   // onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
 }
@@ -91,12 +100,12 @@ TaskColumnProps) {
     setSelectedTask(task);
     setShowDetailModal(true);
   };
-  const handleSave = (updatedTask: Task) => {
-    if (space_id) {
-      dispatch(updateTaskAsync({ spaceId: space_id, updatedTask }));
-    }
-    setShowDetailModal(false); // 모달 닫기
-  };
+  // const handleSave = (updatedTask: Task) => {
+  //   if (space_id) {
+  //     dispatch(updateTaskAsync({ spaceId: space_id, updatedTask }));
+  //   }
+  //   setShowDetailModal(false); // 모달 닫기
+  // };
   // const handleDeleteTask = (task: Task) => {
   //   console.log('삭제할 todo_id:', task.todo_id); // 선택된 task의 todo_id를 확인
   //   dispatch(deleteTask(task.todo_id)); // task의 todo_id로 삭제 요청
@@ -154,7 +163,7 @@ TaskColumnProps) {
           show={showDetailModal}
           onClose={() => setShowDetailModal(false)}
           task={selectedTask}
-          onEdit={handleSave}
+          onEdit={onEdit}
         />
       )}
 
