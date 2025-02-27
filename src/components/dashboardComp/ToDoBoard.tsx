@@ -87,7 +87,16 @@ interface ToDoBoardProps {
   // onDragEnd: (todo_id: number, newState: 'plan' | 'progress' | 'done') => void;
   // onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
-  onEdit: (task: Task) => void;
+  onEdit: (updatedTaskData: {
+    space_id?: string;
+    todo_id: number;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'plan' | 'progress' | 'done';
+    start_date: string;
+    due_date: string | null;
+  }) => void;
 }
 
 export default function ToDoBoard({

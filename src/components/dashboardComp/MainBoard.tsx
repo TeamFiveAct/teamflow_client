@@ -134,7 +134,18 @@ export default function MainBoard() {
         const createdTask = response; // 이미 반환된 데이터는 createdTask
         setTodoList(prev => ({
           ...prev,
-          plan: prev.plan ? [...prev.plan, createdTask] : [createdTask], // 새로 생성된 투두를 plan 상태에 추가
+          plan:
+            createdTask.status === 'plan'
+              ? [...(prev.plan || []), createdTask]
+              : prev.plan || [],
+          progress:
+            createdTask.status === 'progress'
+              ? [...(prev.progress || []), createdTask]
+              : prev.progress || [],
+          done:
+            createdTask.status === 'done'
+              ? [...(prev.done || []), createdTask]
+              : prev.done || [],
         }));
       } catch (error) {
         console.error('Error creating task:', error);
@@ -157,12 +168,31 @@ export default function MainBoard() {
   };
 
   // Task 수정 함수 (추가)
-  const handleSave = async (task: Task) => {
+  const handleEditTask = async (updatedTaskData: {
+    space_id?: string;
+    todo_id: number;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'plan' | 'progress' | 'done';
+    start_date: string;
+    due_date: string | null;
+  }) => {
+    const updatedTasks = {
+      // space_id: space_id,
+      todo_id: updatedTaskData.todo_id, // 서버에서 생성된 ID로 대체됨
+      title: updatedTaskData.title,
+      description: updatedTaskData.description,
+      priority: updatedTaskData.priority,
+      status: updatedTaskData.status, // taskState를 status로 변경
+      start_date: updatedTaskData.start_date,
+      due_date: updatedTaskData.due_date || 'none',
+    };
     try {
       const spaceId = space_id;
-      const updatedTask = task;
-      console.log('updatedTask::', task);
-      console.log('updatedTask::', updatedTask);
+      // const updatedTask = updatedTaskData;
+      // console.log('updatedTask::', task);
+      console.log('updatedTask::', updatedTasks);
       console.log('updatedTask::', spaceId);
 
       if (!spaceId) {
@@ -171,7 +201,7 @@ export default function MainBoard() {
       }
 
       const actionResult = await dispatch(
-        updateTaskAsync({ spaceId: spaceId, updatedTask: updatedTask }),
+        updateTaskAsync({ spaceId: spaceId, updatedTask: updatedTasks }),
       ).unwrap();
 
       console.log('업데이트된 데이터:', actionResult);
@@ -181,20 +211,20 @@ export default function MainBoard() {
         const updatedList: TodoList = { ...prevTodoList };
 
         // 해당 상태(TaskColumn) 내에서 수정된 task를 반영
-        updatedList[actionResult.status as keyof TodoList] = updatedList[
-          actionResult.status as keyof TodoList
+        updatedList[actionResult.data.status as keyof TodoList] = updatedList[
+          actionResult.data.status as keyof TodoList
         ].map((task: Task) =>
-          task.todo_id === actionResult.todo_id ? actionResult : task,
+          task.todo_id === actionResult.data.todo_id ? actionResult : task,
         );
 
         // 상태 변경 후 해당 상태(TaskColumn으로 이동)
-        if (actionResult.status !== task.status) {
-          updatedList[task.status as keyof TodoList] = updatedList[
-            task.status as keyof TodoList
-          ].filter((task: Task) => task.todo_id !== actionResult.todo_id);
+        if (actionResult.data.status !== updatedTaskData.status) {
+          updatedList[updatedTaskData.status as keyof TodoList] = updatedList[
+            updatedTaskData.status as keyof TodoList
+          ].filter((task: Task) => task.todo_id !== actionResult.data.todo_id);
 
-          updatedList[actionResult.status as keyof TodoList] = [
-            ...updatedList[actionResult.status as keyof TodoList],
+          updatedList[actionResult.data.status as keyof TodoList] = [
+            ...updatedList[actionResult.data.status as keyof TodoList],
             actionResult,
           ];
         }
@@ -206,9 +236,11 @@ export default function MainBoard() {
       if (ListData) {
         setTodoList(ListData); // 최신 데이터를 업데이트
       }
+      return true;
     } catch (error) {
       console.error('업무 수정에 실패했습니다:', error);
       alert('업무 수정에 실패했습니다.');
+      return false;
     }
   };
   // const handleSave = async (task: Task) => {
@@ -373,7 +405,7 @@ export default function MainBoard() {
         tasksProgress={todoList.progress}
         tasksDone={todoList.done}
         onDelete={handleDeleteTask}
-        onEdit={handleSave}
+        onEdit={handleEditTask}
       />
       {/* <ToDoBoard
         tasksPlan={tasks.filter(task => task.status === 'plan')}
