@@ -16,7 +16,12 @@ function InviteButton() {
       <FontAwesomeIcon
         icon={faShareNodes}
         onClick={() => setIsModalOpen(true)}
-        style={{ color: '#337aff' }}
+        style={{
+          color: '#337aff',
+          transition: 'border-color 0.3s ease-in-out',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.color = '#555')} // hover 시 검은 회색
+        onMouseLeave={e => (e.currentTarget.style.color = '#337aff')}
       />
       <InviteMember
         isOpen={isModalOpen}

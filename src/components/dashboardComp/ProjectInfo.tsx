@@ -376,6 +376,7 @@ export default function ProjectInfo({
                 borderRadius: '20px', // 원형 버튼
                 padding: '3px 6px', // 내부 여백 조정
                 transition: 'border-color 0.3s ease-in-out', // 부드러운 색 변경 효과
+                cursor: 'pointer',
               }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = '#555')} // hover 시 검은 회색
               onMouseLeave={e =>
