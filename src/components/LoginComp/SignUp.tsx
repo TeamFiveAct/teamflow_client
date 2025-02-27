@@ -190,7 +190,10 @@ export default function SignUp() {
       className="d-flex justify-content-center align-items-center min-vh-100 py-4"
       style={{ paddingTop: '80px' }} // 기본 paddingTop 설정
     >
-      <Row className="w-100 justify-content-center g-3">
+      <Row
+        className="w-100 justify-content-center g-3"
+        style={{ paddingTop: '70px' }}
+      >
         {/* 회원가입 카드 */}
         <Col xs={12} md={5} className="d-flex justify-content-center px-3">
           <div className="card p-4 w-100" style={{ maxWidth: '500px' }}>

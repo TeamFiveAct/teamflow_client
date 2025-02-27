@@ -1,0 +1,198 @@
+// // 화면 높이에 따른 스타일 조정
+// // .loginContainer {
+// //   display: flex;
+// //   justify-content: center;
+// //   align-items: center;
+// //   height: calc(100vh - 70px); // 기본적으로 화면 전체를 차지하도록 설정
+// //   padding: 20px; // 작은 화면에서 내부 여백 추가
+// //   .rowContainer {
+// //     display: flex;
+// //     flex-direction: row;
+// //     width: 50%;
+// //     .cardContainer {
+// //       max-width: 500px;
+// //       width: 100%;
+// //       padding: 20px;
+// //       background-color: #fff;
+// //       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+// //       border-radius: 8px;
+// //     }
+// //   }
+// // }
+// /* loginContainer */
+// .loginContainer {
+//   /* 로그인 화면을 감싸는 컨테이너 */
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100vh; /* 화면 전체 높이 */
+//   padding-top: 80px; /* 상단 여백 */
+// }
+
+// /* rowContainer */
+// .rowContainer {
+//   /* 모든 콘텐츠가 수평으로 정렬되는 영역 */
+//   display: flex;
+//   justify-content: center;
+//   width: 100%;
+// }
+
+// /* colContainer */
+// .colContainer {
+//   /* 로그인 폼의 컬럼을 감싸는 컨테이너 */
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 100%;
+//   height: auto;
+// }
+
+// /* cardContainer */
+// /* cardContainer */
+// .cardContainer {
+//   border: 1px solid black;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   padding: 30px;
+//   max-width: 500px;
+//   width: 100%;
+//   height: auto; /* 내용에 맞게 높이 조정 */
+//   min-height: 400px; /* 최소 높이 설정 */
+//   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+//   border-radius: 8px; /* 카드의 둥근 모서리 */
+//   background-color: white;
+//   overflow-y: auto; /* 내용이 넘칠 경우 스크롤 */
+// }
+
+// .custom-container {
+//   // top: 0;
+//   height: 500px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+
+// .custom-row {
+//   // border: 1px solid black;
+//   // width: 100vh;
+//   height: 100%;
+//   text-align: center;
+//   display: flex;
+//   justify-content: center;
+// }
+
+// .custom-col {
+//   // border: 1px solid black;
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-start;
+//   align-items: center;
+//   height: 100%;
+// }
+
+// // 반응형 처리
+// @media (max-height: 700px) {
+//   .loginContainer {
+//     height: auto; // 화면이 작아질 경우 전체 높이를 해제
+//     margin-top: 50px;
+//     margin-bottom: 50px;
+//   }
+// }
+
+// @media (max-width: 576px) {
+//   .loginContainer {
+//     padding: 10px; // 모바일에서는 더 작은 여백 사용
+//   }
+
+//   .login-box {
+//     padding: 15px;
+//   }
+// }
+
+/* loginContainer */
+.loginContainer {
+  /* 로그인 화면을 감싸는 컨테이너 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 80px); /* 화면 전체 높이에서 80px을 제외 */
+  padding-top: 80px; /* 상단 여백 */
+}
+
+/* cardContainer */
+.cardContainer {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+  width: 100%;
+  height: 100%; /* 내용에 맞게 높이와 넓이를 동일하게 설정 */
+  max-width: 500px;
+  min-height: 400px; /* 최소 높이 설정 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  border-radius: 8px; /* 카드의 둥근 모서리 */
+  background-color: white;
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤 */
+}
+
+/* custom-col */
+.custom-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  /* 카드와 동일한 높이를 적용 */
+  max-width: 500px;
+  min-height: 400px; /* 동일한 최소 높이 설정 */
+}
+
+/* 반응형 처리 */
+@media (max-height: 700px) {
+  .loginContainer {
+    height: auto; /* 화면이 작아질 경우 전체 높이를 해제 */
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+}
+
+@media (max-width: 576px) {
+  .loginContainer {
+    height: auto; /* 모바일에서는 높이를 자동으로 설정 */
+    margin-top: 50px; /* 로그인 컨테이너 위치를 약간 아래로 설정 */
+    margin-bottom: 50px;
+    padding: 10px; /* 모바일에서는 더 작은 여백 사용 */
+  }
+
+  .login-box {
+    padding: 15px;
+  }
+
+  .custom-container {
+    height: auto;
+    padding: 10px; /* custom-container에 대한 패딩 설정 */
+  }
+
+  .custom-row {
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    justify-content: flex-start; /* 상단 정렬 */
+  }
+
+  .custom-col {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: auto; /* 높이 자동 조정 */
+    max-width: 100%; /* 모바일에서는 가로 크기 제한 */
+    min-height: 300px; /* 최소 높이 설정 */
+  }
+}

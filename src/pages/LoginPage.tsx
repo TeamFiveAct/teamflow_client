@@ -1,5 +1,5 @@
 import Login from '../components/LoginComp/Login';
-import '../style/common/common.scss';
+import '../style/homepage/Loginpage.scss';
 
 export default function LoginPage() {
   return (

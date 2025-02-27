@@ -261,6 +261,8 @@ import '../../style/dashboard/ProjectInfo.scss';
 import { WorkspaceInfo, ProjectInfoProps } from '../../types/types';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import InviteMember from './InviteMember';
+import InviteButton from './InviteButton';
 
 export default function ProjectInfo({
   workspace,
@@ -364,7 +366,25 @@ export default function ProjectInfo({
       <div className="project-info-wrapper">
         {/* 프로젝트 정보 */}
         <div className="project-info">
-          <h5 className="fw-bold">{workspace.space_title}</h5>
+          <h5 className="fw-bold">
+            {workspace.space_title}
+            {'      '}
+            <span
+              style={{
+                display: 'inline-block',
+                border: '2px solid #337aff', // 기본 파란색 테두리
+                borderRadius: '20px', // 원형 버튼
+                padding: '3px 6px', // 내부 여백 조정
+                transition: 'border-color 0.3s ease-in-out', // 부드러운 색 변경 효과
+              }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = '#555')} // hover 시 검은 회색
+              onMouseLeave={e =>
+                (e.currentTarget.style.borderColor = '#337aff')
+              } // 원래 색상 복구
+            >
+              <InviteButton />
+            </span>
+          </h5>
           {!isCollapsed && (
             <>
               <p className="project-description">
