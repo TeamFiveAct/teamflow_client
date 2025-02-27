@@ -1,4 +1,4 @@
-//src\components\chatcomp\Chat.tsx
+// src/components/chatcomp/Chat.tsx
 import React, {
   useEffect,
   useState,
@@ -11,9 +11,9 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import Prism from 'prismjs';
 import { Message as MessageType, ChatProps } from '../../types/chat';
 import '../../style/chat/chat.scss';
-import UserAvatar from '../commonComp/UserAvatar';
+// 기존 UserAvatar 대신 boring-avatars 사용
+import Avatar from 'boring-avatars';
 
-// 아이콘 컴포넌트 (불필요한 리렌더링 방지를 위해 React.memo 사용)
 const PaperClipIcon = React.memo(() => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,6 @@ interface Position {
   y: number;
 }
 
-// 고유 ID 생성 헬퍼 함수
 const generateId = (user_id: number) =>
   `${user_id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -279,18 +278,47 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
     [messageInput, sendMessage],
   );
 
-  // 메시지 렌더링 함수 – UserAvatar 컴포넌트를 사용하여 아바타 렌더링
+  // 메시지 렌더링 함수 – boring-avatars를 사용하여 아바타 렌더링
   const renderMessage = useCallback(
     (message: MessageType) => {
       const isCurrentUser = message.user_id === user_id;
+      // message.user에 포함된 사용자 정보에서 닉네임과 프로필 이미지 확인
       const nickname = message.user?.nickname || `User ${message.user_id}`;
+      const profileImage = message.user?.profile_image; // 프로필 이미지 필드 (존재 시)
+
       return (
         <div
           key={message.id}
           className={`message-wrapper ${isCurrentUser ? 'current-user' : ''}`}
         >
           <div className="user-info">
-            <UserAvatar name={nickname} size={40} />
+            {profileImage ? (
+              <Avatar
+                name={profileImage}
+                colors={[
+                  '#0db2ac',
+                  '#f5dd7e',
+                  '#fc8d4d',
+                  '#fc694d',
+                  '#faba32',
+                ]}
+                variant="beam"
+                size={40}
+              />
+            ) : (
+              <Avatar
+                name={nickname || 'Unknown User'}
+                colors={[
+                  '#0db2ac',
+                  '#f5dd7e',
+                  '#fc8d4d',
+                  '#fc694d',
+                  '#faba32',
+                ]}
+                variant="beam"
+                size={40}
+              />
+            )}
             <span className="user-name">{nickname}</span>
           </div>
           <div
@@ -347,7 +375,7 @@ const Chat: React.FC<ChatProps> = ({ user_id, workspace_id, onClose }) => {
       if (isMobile) return;
       if (chatRef.current) {
         const rect = chatRef.current.getBoundingClientRect();
-        // 현재 위치를 기록하여 transform으로 인한 순간이동 현상 방지
+        // 현재 위치 기록하여 transform에 의한 순간이동 방지
         setPosition({ x: rect.left, y: rect.top });
         setHasBeenDragged(true);
         setIsDragging(true);
