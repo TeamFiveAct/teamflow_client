@@ -69,8 +69,6 @@
   text-align: center;
 }
 
-
-
 /* ✅ 모달 헤더 */
 .modal-header {
   width: 100%;
@@ -225,4 +223,85 @@
 .enterSpaceBtnDiv .spacePasswordForm {
   width: 100%;
   padding: 0px;
+}
+
+/* ✅ 페이지 컨테이너 */
+.joinspaceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+/* ✅ 중앙 상단 환영 메시지 */
+.welcomeMessage {
+  text-align: center;
+  margin-bottom: 10px;
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #007bff;
+  }
+}
+
+/* ✅ 반응형 적용 */
+@media (max-width: 768px) {
+  .welcomeMessage h3 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcomeMessage h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ✅ 전체 컨테이너 (데스크탑에서는 기존 레이아웃 유지) */
+.joinspaceSection {
+  display: flex;
+  flex-direction: row; /* 🔹 기본적으로 가로 배치 (데스크탑 유지) */
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ 반응형: 태블릿 & 모바일에서는 위아래 배치 */
+@media (max-width: 1024px) {
+  .joinspaceSection {
+    flex-direction: column; /* 🔹 태블릿부터 세로 정렬 */
+    align-items: center;
+  }
+
+  .leftSideContainer,
+  .mySpacelistDiv {
+    width: 100%; /* 🔹 전체 너비 차지 */
+    border-right: none; /* 🔹 테두리 제거 */
+  }
+
+  .leftSideContainer {
+    border-bottom: 2px solid #e0e0e0; /* 🔹 구분선 추가 */
+  }
+}
+
+/* ✅ 모바일 최적화 */
+@media (max-width: 768px) {
+  .leftSideContainer,
+  .mySpacelistDiv {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leftSideContainer,
+  .mySpacelistDiv {
+    padding: 15px;
+  }
 }

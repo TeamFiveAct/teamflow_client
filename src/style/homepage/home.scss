@@ -26,16 +26,32 @@
   cursor: pointer;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  z-index: 1051; /* ✅ 버튼이 가장 위에 있도록 설정 */
+  z-index: 1051 !important; /* ✅ 다른 요소보다 최상위 배치 */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px; /* ✅ 아이콘과 텍스트 간격 */
+
+  /* ✅ 반응형 조정 */
+  @media (max-width: 768px) {
+    right: 50%;
+    bottom: 20px;
+    top: auto;
+    transform: translateX(50%);
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+
+  @media (max-width: 480px) {
+    width: 80%;
+    max-width: 280px;
+    font-size: 14px;
+    padding: 10px 15px;
+  }
 }
 
-/* ✅ 버튼 호버 시 크기 & 강조 */
-.floating-start-button:hover {
-  transform: translateY(-50%) scale(1.15);
-  background: linear-gradient(45deg, #0056b3, #003f80);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+/* ✅ 버튼이 클릭되지 않는 문제 해결 */
+.floating-start-button:focus,
+.floating-start-button:active {
+  outline: none;
 }

@@ -22,15 +22,75 @@
 // }
 
 /* ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트) */
+// .mySpacelistDiv {
+//   width: 50%; /* 🔹 가로 공간 확보 */
+//   max-width: 800px; /* 🔹 최대 크기 지정 */
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   // padding: 10px;
+//   background: white;
+// }
+/* ✅ 오른쪽 패널 스타일 (내 워크스페이스 리스트) */
 .mySpacelistDiv {
-  width: 50%; /* 🔹 가로 공간 확보 */
-  max-width: 800px; /* 🔹 최대 크기 지정 */
+  width: 50%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  // padding: 10px;
   background: white;
+}
+
+/* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
+.workspace-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* ✅ 워크스페이스 리스트 (가로 정렬) */
+.workspace-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  flex-wrap: nowrap;
+  gap: 15px;
+}
+
+/* ✅ 반응형 적용 */
+@media (max-width: 768px) {
+  .mySpacelistDiv {
+    width: 80%;
+  }
+
+  .workspace-wrapper {
+    flex-direction: column;
+  }
+
+  .workspace-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mySpacelistDiv {
+    width: 95%;
+  }
+
+  .workspace-list {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 /* ✅ "내가 참여한 워크스페이스" 제목 스타일 */
@@ -45,28 +105,28 @@
   display: block;
 }
 
-/* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
-/* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
-.workspace-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  max-width: 600px; /* 🔹 한 줄에 3개가 들어가도록 조정 */
-}
+// /* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
+// /* ✅ 워크스페이스 리스트 전체 감싸는 박스 */
+// .workspace-wrapper {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   position: relative;
+//   width: 100%;
+//   max-width: 600px; /* 🔹 한 줄에 3개가 들어가도록 조정 */
+// }
 
-/* ✅ 워크스페이스 리스트 (가로 정렬) */
-.workspace-list {
-  display: flex;
-  flex-direction: row; /* 🔹 가로 정렬 유지 */
-  justify-content: space-between; /* 🔹 동그라미 간격 균일 */
-  align-items: center;
-  width: 100%;
-  max-width: 360px; /* 🔹 3개가 들어갈 수 있도록 조정 */
-  flex-wrap: nowrap; /* 🔹 줄 바꿈 방지 */
-  gap: 15px; /* 🔹 여백 조정 */
-}
+// /* ✅ 워크스페이스 리스트 (가로 정렬) */
+// .workspace-list {
+//   display: flex;
+//   flex-direction: row; /* 🔹 가로 정렬 유지 */
+//   justify-content: space-between; /* 🔹 동그라미 간격 균일 */
+//   align-items: center;
+//   width: 100%;
+//   max-width: 360px; /* 🔹 3개가 들어갈 수 있도록 조정 */
+//   flex-wrap: nowrap; /* 🔹 줄 바꿈 방지 */
+//   gap: 15px; /* 🔹 여백 조정 */
+// }
 /* ✅ 좌우 화살표 버튼 스타일 */
 .scroll-btn {
   background: white;

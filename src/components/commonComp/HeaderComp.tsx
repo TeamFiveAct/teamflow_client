@@ -233,6 +233,15 @@ export default function Header() {
   // };
   const handleLogout = async () => {
     try {
+      // ✅ 현재 세션이 유효한 경우에만 로그아웃 요청 실행
+      const sessionCheck = await axios.get('/v1/user/session', {
+        withCredentials: true,
+      });
+
+      if (sessionCheck.data.status !== 'SUCCESS') {
+        console.warn('이미 로그아웃된 상태이므로 API 호출을 하지 않음.');
+        return;
+      }
       let logoutApi = '/v1/user/logout'; // 기본 이메일 로그아웃 API
       if (authProvider === 'kakao') {
         logoutApi = '/v1/user/kakao-logout'; // 카카오 로그아웃 API
@@ -261,7 +270,7 @@ export default function Header() {
         sessionStorage.removeItem('persist:root');
         sessionStorage.removeItem('persist:checkSession');
         sessionStorage.removeItem('selectedSpaceId');
-
+        sessionStorage.removeItem('sessionExpired');
         // ✅ 로그인 페이지로 이동 후 새로고침
         navigate('/v1/user/login');
         window.location.reload();
@@ -286,7 +295,12 @@ export default function Header() {
 
         if (response.data.status !== 'SUCCESS') {
           console.warn('세션 만료됨, 로그아웃 필요'); // ✅ 로그 추가
-          setSessionExpired(true); // 🚀 handleLogout을 실행하는 대신 `sessionExpired` 상태 변경
+          // ✅ sessionExpired 상태 변경 전에 먼저 중복 체크
+          if (!sessionStorage.getItem('sessionExpired')) {
+            sessionStorage.setItem('sessionExpired', 'true'); // ✅ 중복 방지!
+            setSessionExpired(true); // ✅ 상태 업데이트
+          }
+          // 🚀 handleLogout을 실행하는 대신 `sessionExpired` 상태 변경
         }
       } catch (error) {
         console.error('세션 확인 실패:', error);
@@ -294,19 +308,19 @@ export default function Header() {
       }
     };
 
-    if (isLoggedIn) {
+    if (isLoggedIn && !sessionStorage.getItem('sessionExpired')) {
       checkSession();
     }
   }, [isLoggedIn]); // ✅ `isLoggedIn`이 바뀔 때만 실행
 
   // ✅ 실제 로그아웃 요청은 사용자가 직접 버튼을 누를 때만 실행되도록 함
   useEffect(() => {
-    if (sessionExpired) {
+    if (sessionExpired && !sessionStorage.getItem('sessionExpired')) {
+      sessionStorage.setItem('sessionExpired', 'true'); // ✅ 중복 실행 방지
       alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-      handleLogout(); // 🚀 여기서만 로그아웃 실행
+      handleLogout();
     }
   }, [sessionExpired]); // ✅ sessionExpired 값이 true일 때만 실행됨
-  
   // ✅ 네비게이션 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

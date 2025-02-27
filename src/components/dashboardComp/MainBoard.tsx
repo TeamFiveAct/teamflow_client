@@ -474,56 +474,58 @@ export default function MainBoard() {
   }, [space_id, dispatch]);
   return (
     <>
-      <div className="todo-action-btn">
-        <button
-          className="btn btn-sm btn-primary"
-          onClick={() => setShowCreateModal(true)}
-        >
-          + 생성
-        </button>
-        <div className="filter-container">
+      <div className="todo-action-container">
+        <div className="todo-action-btn">
           <button
-            className="btn btn-sm btn-secondary filter-btn"
-            onClick={() => setShowFilterOptions(!showFilterOptions)}
+            className="btn btn-sm btn-secondary"
+            onClick={() => setShowCreateModal(true)}
           >
-            🔍 조회
+            + 생성
           </button>
-          {showFilterOptions && (
-            <div className="filter-options">
-              <button onClick={() => handleSortTasks('priority')}>
-                우선순위
-              </button>
-              <button onClick={() => handleSortTasks('due_date')}>
-                마감일
-              </button>
-              <button onClick={() => handleSortTasks('start_date')}>
-                시작일
-              </button>
-            </div>
-          )}
+          <div className="filter-container">
+            <button
+              className="btn btn-sm btn-secondary filter-btn"
+              onClick={() => setShowFilterOptions(!showFilterOptions)}
+            >
+              🔍 조회
+            </button>
+            {showFilterOptions && (
+              <div className="filter-options">
+                <button onClick={() => handleSortTasks('priority')}>
+                  우선순위
+                </button>
+                <button onClick={() => handleSortTasks('due_date')}>
+                  마감일
+                </button>
+                <button onClick={() => handleSortTasks('start_date')}>
+                  시작일
+                </button>
+              </div>
+            )}
+          </div>
+          <TaskModal
+            show={showCreateModal}
+            onHide={() => setShowCreateModal(false)}
+            // taskState="plan"
+            onCreate={handleCreateTask}
+          />
         </div>
-        <TaskModal
-          show={showCreateModal}
-          onHide={() => setShowCreateModal(false)}
-          // taskState="plan"
-          onCreate={handleCreateTask}
+        <ToDoBoard
+          tasksPlan={todoList.plan} // todoList를 사용하도록 수정
+          tasksProgress={todoList.progress}
+          tasksDone={todoList.done}
+          onDelete={handleDeleteTask}
+          onEdit={handleEditTask}
+          loadMoreTasks={loadMoreTasks} // ✅ 추가
+          hasMore={hasMore} // ✅ 추
         />
-      </div>
-      <ToDoBoard
-        tasksPlan={todoList.plan} // todoList를 사용하도록 수정
-        tasksProgress={todoList.progress}
-        tasksDone={todoList.done}
-        onDelete={handleDeleteTask}
-        onEdit={handleEditTask}
-        loadMoreTasks={loadMoreTasks} // ✅ 추가
-        hasMore={hasMore} // ✅ 추
-      />
-      {/* <ToDoBoard
+        {/* <ToDoBoard
         tasksPlan={tasks.filter(task => task.status === 'plan')}
         tasksProgress={tasks.filter(task => task.status === 'progress')}
         tasksDone={tasks.filter(task => task.status === 'done')}
         // onDragEnd={handleDragEnd} // 드래그 앤 드랍 처리
-      /> */}
+        /> */}
+      </div>
     </>
   );
 }

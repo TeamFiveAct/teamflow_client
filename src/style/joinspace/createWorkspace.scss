@@ -1,64 +1,97 @@
+// /* ✅ 워크스페이스 생성 모달 스타일 */
+// .custom-modal-create {
+//   position: fixed !important;
+//   top: 50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+//   width: auto; /* ✅ 부모 크기 기준 적당한 크기로 조정 */
+//   max-width: 650px; /* ✅ 기존보다 넓게 (600~650px 사이 적절 조정) */
+//   max-height: auto;
+//   height: auto; /* ✅ 내용에 맞게 조정 */
+//   background: white;
+//   border-radius: 12px;
+//   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+//   padding: 10px; /* ✅ 내부 여백 증가하여 가독성 개선 */
+//   text-align: center;
+//   overflow-y: auto;
+// }
+
+// /* ✅ 모달 헤더 */
+// .custom-modal-create .modal-header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding-bottom: 5px;
+//   border-bottom: 1px solid #ddd;
+// }
+
+// /* ✅ 모달 바디 */
+// .custom-modal-create .modal-body {
+//   padding: 5px;
+//   text-align: left; /* ✅ 입력창 정렬 자연스럽게 조정 */
+// }
+
+// /* ✅ 입력창 스타일 */
+// .custom-modal-create .form-control {
+//   width: 100%; /* ✅ 입력창을 모달 너비에 맞춤 */
+//   padding: 5px;
+//   font-size: 1rem;
+//   border: 1px solid #ccc;
+//   border-radius: 8px;
+//   outline: none;
+//   transition: 0.3s;
+// }
+
+// .custom-modal-create .form-control:focus {
+//   border-color: #007bff;
+//   box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+// }
+
+// /* ✅ 모달 푸터 */
+// .custom-modal-create .modal-footer {
+//   display: flex;
+//   justify-content: space-between;
+//   gap: 10px; /* ✅ 버튼 사이 여백 조정 */
+//   padding-top: 10px;
+// }
+
+// /* ✅ 버튼 스타일 */
+// .custom-modal-create .btn {
+//   flex: 1;
+//   height: 40px;
+//   font-size: 1rem;
+//   border-radius: 8px;
+// }
+
 /* ✅ 워크스페이스 생성 모달 스타일 */
 .custom-modal-create {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: auto; /* ✅ 부모 크기 기준 적당한 크기로 조정 */
-  max-width: 650px; /* ✅ 기존보다 넓게 (600~650px 사이 적절 조정) */
+  width: 90%; /* ✅ 모바일에서도 자연스럽게 보이도록 조정 */
+  max-width: 600px;
   max-height: auto;
-  height: auto; /* ✅ 내용에 맞게 조정 */
+  height: auto;
   background: white;
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  padding: 10px; /* ✅ 내부 여백 증가하여 가독성 개선 */
+  padding: 15px; /* ✅ 내부 여백 증가 */
   text-align: center;
   overflow-y: auto;
 }
 
-/* ✅ 모달 헤더 */
-.custom-modal-create .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #ddd;
+/* ✅ 반응형 적용 */
+@media (max-width: 768px) {
+  .custom-modal-create {
+    width: 95%;
+    padding: 10px;
+  }
 }
 
-/* ✅ 모달 바디 */
-.custom-modal-create .modal-body {
-  padding: 5px;
-  text-align: left; /* ✅ 입력창 정렬 자연스럽게 조정 */
-}
-
-/* ✅ 입력창 스타일 */
-.custom-modal-create .form-control {
-  width: 100%; /* ✅ 입력창을 모달 너비에 맞춤 */
-  padding: 5px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  transition: 0.3s;
-}
-
-.custom-modal-create .form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
-}
-
-/* ✅ 모달 푸터 */
-.custom-modal-create .modal-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px; /* ✅ 버튼 사이 여백 조정 */
-  padding-top: 10px;
-}
-
-/* ✅ 버튼 스타일 */
-.custom-modal-create .btn {
-  flex: 1;
-  height: 40px;
-  font-size: 1rem;
-  border-radius: 8px;
+@media (max-width: 480px) {
+  .custom-modal-create {
+    width: 98%;
+    padding: 8px;
+  }
 }
