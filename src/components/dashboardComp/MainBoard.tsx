@@ -95,22 +95,57 @@ export default function MainBoard() {
   }>({ plan: [], progress: [], done: [] });
   console.log('MainBoard todoList:', todoList);
 
-  const handleFilter = async (
-    filterType: 'priority' | 'due_date' | 'start_date',
+  // const handleFilter = async (
+  //   filterType: 'priority' | 'due_date' | 'start_date',
+  // ) => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
+  //       { state: filterType, limit: 100, offset: 0 },
+  //       { withCredentials: true },
+  //     );
+  //     if (response.data.status === 'SUCCESS') {
+  //       // dispatch(loadTasksAsync(response.data.data));
+  //       console.log(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error('서버 요청 중 오류 발생:', error);
+  //   }
+  // };
+  const [sortCriteria, setSortCriteria] = useState<
+    'priority' | 'due_date' | 'start_date' | ''
+  >(''); // 정렬 기준 상태
+
+  const handleSortTasks = (
+    criteria: 'priority' | 'due_date' | 'start_date',
   ) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
-        { state: filterType, limit: 100, offset: 0 },
-        { withCredentials: true },
-      );
-      if (response.data.status === 'SUCCESS') {
-        // dispatch(loadTasksAsync(response.data.data));
-        console.log(response.data);
+    setSortCriteria(criteria); // 정렬 기준 설정
+
+    setTodoList(prev => ({
+      plan: sortTasks(prev.plan || [], criteria),
+      progress: sortTasks(prev.progress || [], criteria),
+      done: sortTasks(prev.done || [], criteria),
+    }));
+  };
+
+  // 정렬 함수
+  const sortTasks = (
+    tasks: Task[],
+    criteria: 'priority' | 'due_date' | 'start_date',
+  ) => {
+    return [...tasks].sort((a, b) => {
+      if (criteria === 'priority') {
+        // 우선순위 정렬: high > medium > low
+        const priorityOrder = { high: 1, medium: 2, low: 3 };
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      } else if (criteria === 'due_date' || criteria === 'start_date') {
+        // 날짜 정렬: 가장 빠른 날짜가 먼저 오도록
+        return (
+          new Date(a[criteria]).getTime() - new Date(b[criteria]).getTime()
+        );
       }
-    } catch (error) {
-      console.error('서버 요청 중 오류 발생:', error);
-    }
+      return 0;
+    });
   };
 
   const handleCreateTask = async (newTaskData: {
@@ -455,9 +490,15 @@ export default function MainBoard() {
           </button>
           {showFilterOptions && (
             <div className="filter-options">
-              <button onClick={() => handleFilter('priority')}>우선순위</button>
-              <button onClick={() => handleFilter('due_date')}>마감일</button>
-              <button onClick={() => handleFilter('start_date')}>시작일</button>
+              <button onClick={() => handleSortTasks('priority')}>
+                우선순위
+              </button>
+              <button onClick={() => handleSortTasks('due_date')}>
+                마감일
+              </button>
+              <button onClick={() => handleSortTasks('start_date')}>
+                시작일
+              </button>
             </div>
           )}
         </div>
