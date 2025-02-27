@@ -19,7 +19,7 @@ interface TaskColumnProps {
   tasks: Task[];
   // onDragEnd: (todo_id: number, newState: 'plan' | 'progress' | 'done') => void;
   // onCreate: (state: 'plan' | 'progress' | 'done') => void;
-  // onEdit: (task: Task) => void;
+  onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   // onFilter: (filterType: 'priority' | 'due_date' | 'start_date') => void;
 }
@@ -29,9 +29,9 @@ export default function TaskColumn({
   status,
   tasks,
   onDelete,
+  onEdit,
 }: // onDragEnd,
 // onCreate,
-// onEdit,
 // onFilter,
 TaskColumnProps) {
   // const handleDragEnd: DragEventHandler = e => {
@@ -42,7 +42,7 @@ TaskColumnProps) {
   //     | 'done';
   //   onDragEnd(todo_id, newState);
   // };
-  console.log('taskcolumn의 onDelete존재유무::', onDelete);
+  // console.log('taskcolumn의 onDelete존재유무::', onDelete);
   const { space_id } = useParams<{ space_id: string }>();
   const updatetasks = useSelector((state: RootState) => state.tasks);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -59,8 +59,8 @@ TaskColumnProps) {
   useEffect(() => {
     setVisibleTasks(tasks.slice(0, TASKS_PER_LOAD));
     setPage(1);
-    console.log('업데이트된 Redux tasks 상태:', updatetasks);
-  }, [tasks, updatetasks]);
+    // console.log('업데이트된 Redux tasks 상태:', updatetasks);
+  }, [tasks]); //updatetasks
 
   const loadMoreTasks = () => {
     const nextTasks = tasks.slice(0, (page + 1) * TASKS_PER_LOAD);
@@ -91,10 +91,11 @@ TaskColumnProps) {
     setSelectedTask(task);
     setShowDetailModal(true);
   };
-  const handleSave = (task: Task) => {
+  const handleSave = (updatedTask: Task) => {
     if (space_id) {
-      dispatch(updateTaskAsync({ spaceId: space_id, updatedTask: task }));
+      dispatch(updateTaskAsync({ spaceId: space_id, updatedTask }));
     }
+    setShowDetailModal(false); // 모달 닫기
   };
   // const handleDeleteTask = (task: Task) => {
   //   console.log('삭제할 todo_id:', task.todo_id); // 선택된 task의 todo_id를 확인
@@ -112,7 +113,7 @@ TaskColumnProps) {
       </div>
 
       <div className="task-list" ref={containerRef} onScroll={handleScroll}>
-        {tasks.map(task => (
+        {visibleTasks.map(task => (
           <div key={task.todo_id} className="task-card" draggable>
             <div className="task-header">
               <h5>{task.title}</h5>
@@ -153,7 +154,7 @@ TaskColumnProps) {
           show={showDetailModal}
           onClose={() => setShowDetailModal(false)}
           task={selectedTask}
-          onSave={handleSave}
+          onEdit={handleSave}
         />
       )}
 

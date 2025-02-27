@@ -3,13 +3,21 @@ import { Task } from '../../types/types';
 import axios from 'axios';
 
 interface TaskState {
-  tasks: Task[];
+  tasks: {
+    plan: Task[];
+    progress: Task[];
+    done: Task[];
+  };
   nextID: number;
   loadedTasks: number;
 }
 
 const initialState: TaskState = {
-  tasks: [],
+  tasks: {
+    plan: [],
+    progress: [],
+    done: [],
+  },
   nextID: 1,
   loadedTasks: 5,
 };
@@ -31,12 +39,13 @@ export const createTaskAsync = createAsyncThunk(
   async ({ spaceId, newTask }: { spaceId: string; newTask: Task }) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${spaceId}/todos`,
+        `${process.env.REACT_APP_API_SERVER}/workspace/${spaceId}/todos/add`,
         newTask,
         { withCredentials: true },
       );
+      console.log('create todo slice확인::', response.data);
       if (response.data.status === 'SUCCESS') {
-        return response.data.data;
+        return response.data.data.todo;
       } else {
         throw new Error(response.data.message);
       }
@@ -67,6 +76,7 @@ export const updateTaskAsync = createAsyncThunk(
       updatedTask,
       { withCredentials: true },
     );
+    console.log('update의 response.data', response.data);
     return response.data; // 서버에서 업데이트된 Task 반환
   },
 );
@@ -92,7 +102,7 @@ export const deleteTaskAsync = createAsyncThunk<
     if (!spaceId) {
       return rejectWithValue('space_id가 존재하지 않습니다.');
     }
-
+    console.log('taskId', taskId);
     const response = await axios.delete(
       `${process.env.REACT_APP_API_SERVER}/workspace/${spaceId}/todos/${taskId}`,
       { withCredentials: true },
@@ -115,7 +125,12 @@ export const taskSlice = createSlice({
   initialState,
   reducers: {
     initializeTasks: (state, action: PayloadAction<Task[]>) => {
-      state.tasks = action.payload;
+      // plan, progress, done으로 분류해서 저장
+      state.tasks = {
+        plan: action.payload.filter(task => task.status === 'plan'),
+        progress: action.payload.filter(task => task.status === 'progress'),
+        done: action.payload.filter(task => task.status === 'done'),
+      };
       state.nextID =
         action.payload.length > 0
           ? action.payload[action.payload.length - 1].todo_id + 1
@@ -125,22 +140,68 @@ export const taskSlice = createSlice({
   extraReducers: builder => {
     // ✅ 생성 요청 후 상태 업데이트
     builder.addCase(createTaskAsync.fulfilled, (state, action) => {
-      state.tasks.push(action.payload);
+      const { status } = action.payload;
+      const taskKey = status as keyof TaskState['tasks']; // 명확한 타입 지정
+      state.tasks[taskKey].push(action.payload);
     });
 
     // ✅ 수정 요청 후 상태 업데이트
+    // 리덕스에서 상태 업데이트
     builder.addCase(updateTaskAsync.fulfilled, (state, action) => {
-      const index = state.tasks.findIndex(
-        task => task.todo_id === action.payload.todo_id,
-      );
-      if (index !== -1) {
-        state.tasks[index] = action.payload; // 서버에서 받은 최신 데이터로 업데이트
-      }
+      const updatedTask = action.payload.data; // 바로 data에 접근
+      const { todo_id, status } = updatedTask;
+
+      // 해당 상태(TaskColumn) 내에서 수정된 task를 반영
+      Object.keys(state.tasks).forEach(key => {
+        const taskKey = key as keyof TaskState['tasks'];
+
+        // 현재 상태(TaskColumn)에서 todo_id가 일치하는 task를 찾아 업데이트
+        state.tasks[taskKey] = state.tasks[taskKey].map(task =>
+          task.todo_id === todo_id ? updatedTask : task,
+        );
+      });
+
+      // 상태 변경 후 해당 상태(TaskColumn으로 이동)
+      Object.keys(state.tasks).forEach(key => {
+        const taskKey = key as keyof TaskState['tasks'];
+
+        if (taskKey !== updatedTask.status) {
+          // 상태가 변경된 경우 (예: plan -> progress)
+          state.tasks[updatedTask.status as keyof TaskState['tasks']] = [
+            ...state.tasks[updatedTask.status as keyof TaskState['tasks']],
+            updatedTask,
+          ];
+
+          // 상태 변경 후 원래 상태(TaskColumn)에서 task 삭제
+          state.tasks[taskKey] = state.tasks[taskKey].filter(
+            task => task.todo_id !== updatedTask.todo_id,
+          );
+        }
+      });
     });
+
+    // Object.keys(state.tasks).forEach(key => {
+    //   state.tasks[key] = state.tasks[key].map(task =>
+    //     task.todo_id === todo_id ? updatedTask : task,
+    //   );
+    // });
+    // // const index = state.tasks.findIndex(
+    // //   task => task.todo_id === action.payload.todo_id,
+    // // );
+    // // if (index !== -1) {
+    // //   state.tasks[index] = action.payload; // 서버에서 받은 최신 데이터로 업데이트
+    // // }
+    // });
 
     // ✅ 삭제 요청 후 상태 업데이트
     builder.addCase(deleteTaskAsync.fulfilled, (state, action) => {
-      state.tasks = state.tasks.filter(task => task.todo_id !== action.payload);
+      Object.keys(state.tasks).forEach(key => {
+        const taskKey = key as keyof TaskState['tasks'];
+        state.tasks[taskKey] = state.tasks[taskKey].filter(
+          task => task.todo_id !== action.payload,
+        );
+      });
+      // state.tasks = state.tasks.filter(task => task.todo_id !== action.payload);
     });
   },
 });

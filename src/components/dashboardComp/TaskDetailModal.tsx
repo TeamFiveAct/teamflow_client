@@ -19,14 +19,14 @@ interface TaskDetailModalProps {
     start_date: string;
     due_date: string;
   } | null;
-  onSave: (task: any) => void; // onSave 함수 추가
+  onEdit: (task: any) => void; // onSave 함수 추가
 }
 
 export default function TaskDetailModal({
   show,
   onClose,
   task,
-  onSave,
+  onEdit,
 }: TaskDetailModalProps) {
   const [editMode, setEditMode] = useState(false);
   const [updatedTask, setUpdatedTask] = useState<typeof task | null>(null); // 타입 수정
@@ -51,26 +51,15 @@ export default function TaskDetailModal({
 
   const handleSave = async () => {
     if (!updatedTask) return;
+
     try {
       setIsLoading(true);
-      // 서버에 PATCH 요청 보내기
-      const response = await axios.patch(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/${task?.todo_id}`,
-        updatedTask,
-        { withCredentials: true },
-      );
-      console.log('업무수정의 콘솔확인::', response.data);
-      if (response.data.status === 'SUCCESS') {
-        if (space_id) {
-          dispatch(updateTaskAsync({ spaceId: space_id, updatedTask: task }));
-        }
 
+      // updateTaskAsync 호출로 서버에 변경 사항을 전달하고 상태 업데이트
+      if (space_id) {
+        await onEdit(updatedTask); // 부모 컴포넌트에 전달
         setIsLoading(false);
-        onSave(updatedTask); // 부모 컴포넌트에게 수정된 task 전달
-        onClose();
-      } else {
-        setIsLoading(false);
-        alert('업무 수정에 실패했습니다.');
+        onClose(); // 작업 완료 후 모달 닫기
       }
     } catch (error) {
       setIsLoading(false);
@@ -78,6 +67,35 @@ export default function TaskDetailModal({
       alert('업무 수정에 실패했습니다.');
     }
   };
+  // const handleSave = async () => {
+  //   if (!updatedTask) return;
+  //   try {
+  //     setIsLoading(true);
+  //     // 서버에 PATCH 요청 보내기
+  //     const response = await axios.patch(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/${task?.todo_id}`,
+  //       updatedTask,
+  //       { withCredentials: true },
+  //     );
+  //     console.log('업무수정의 콘솔확인::', response.data);
+  //     if (response.data.status === 'SUCCESS') {
+  //       if (space_id) {
+  //         dispatch(updateTaskAsync({ spaceId: space_id, updatedTask: task }));
+  //       }
+
+  //       setIsLoading(false);
+  //       // onSave(updatedTask); // 부모 컴포넌트에게 수정된 task 전달
+  //       onClose();
+  //     } else {
+  //       setIsLoading(false);
+  //       alert('업무 수정에 실패했습니다.');
+  //     }
+  //   } catch (error) {
+  //     setIsLoading(false);
+  //     console.error('Error updating task:', error);
+  //     alert('업무 수정에 실패했습니다.');
+  //   }
+  // };
 
   return (
     <div className="task-detail-modal">
