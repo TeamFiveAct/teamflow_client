@@ -278,6 +278,12 @@ export default function Header() {
             className="navbar-brand fw-bold btn"
             onClick={() => navigate('/')}
           >
+            <img
+              src="/favicon.ico"
+              alt="logo"
+              width={20}
+              style={{ borderRadius: '3px' }}
+            />{' '}
             TeamFlow
           </button>
 

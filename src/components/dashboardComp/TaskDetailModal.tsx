@@ -3,7 +3,9 @@ import '../../style/dashboard/taskDetailModal.scss';
 import axios from 'axios'; // Axios 임포트
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { updateTask } from '../../store/modules/taskSlice';
+import { AppDispatch } from '../../store/store';
+import { updateTaskAsync } from '../../store/modules/taskSlice';
+// import { updateTask } from '../../store/modules/taskSlice';
 
 interface TaskDetailModalProps {
   show: boolean;
@@ -28,7 +30,7 @@ export default function TaskDetailModal({
 }: TaskDetailModalProps) {
   const [editMode, setEditMode] = useState(false);
   const [updatedTask, setUpdatedTask] = useState<typeof task | null>(null); // 타입 수정
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
   const { space_id } = useParams<{ space_id: string }>();
 
@@ -59,7 +61,10 @@ export default function TaskDetailModal({
       );
       console.log('업무수정의 콘솔확인::', response.data);
       if (response.data.status === 'SUCCESS') {
-        dispatch(updateTask(response.data.data));
+        if (space_id) {
+          dispatch(updateTaskAsync({ spaceId: space_id, updatedTask: task }));
+        }
+
         setIsLoading(false);
         onSave(updatedTask); // 부모 컴포넌트에게 수정된 task 전달
         onClose();
