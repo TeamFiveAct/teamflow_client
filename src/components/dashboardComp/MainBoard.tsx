@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import TaskModal from './TaskModal';
 import ToDoBoard from './ToDoBoard';
 import { AppDispatch, RootState } from '../../store/store';
+import '../../style/dashboard/taskColumn.scss';
 // import { updateTask, loadMoreTasks } from '../../store/modules/taskSlice';
 import { Task } from '../../types/types';
 import {
@@ -94,22 +95,57 @@ export default function MainBoard() {
   }>({ plan: [], progress: [], done: [] });
   console.log('MainBoard todoList:', todoList);
 
-  const handleFilter = async (
-    filterType: 'priority' | 'due_date' | 'start_date',
+  // const handleFilter = async (
+  //   filterType: 'priority' | 'due_date' | 'start_date',
+  // ) => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
+  //       { state: filterType, limit: 100, offset: 0 },
+  //       { withCredentials: true },
+  //     );
+  //     if (response.data.status === 'SUCCESS') {
+  //       // dispatch(loadTasksAsync(response.data.data));
+  //       console.log(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error('서버 요청 중 오류 발생:', error);
+  //   }
+  // };
+  const [sortCriteria, setSortCriteria] = useState<
+    'priority' | 'due_date' | 'start_date' | ''
+  >(''); // 정렬 기준 상태
+
+  const handleSortTasks = (
+    criteria: 'priority' | 'due_date' | 'start_date',
   ) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
-        { state: filterType, limit: 100, offset: 0 },
-        { withCredentials: true },
-      );
-      if (response.data.status === 'SUCCESS') {
-        // dispatch(loadTasksAsync(response.data.data));
-        console.log(response.data);
+    setSortCriteria(criteria); // 정렬 기준 설정
+
+    setTodoList(prev => ({
+      plan: sortTasks(prev.plan || [], criteria),
+      progress: sortTasks(prev.progress || [], criteria),
+      done: sortTasks(prev.done || [], criteria),
+    }));
+  };
+
+  // 정렬 함수
+  const sortTasks = (
+    tasks: Task[],
+    criteria: 'priority' | 'due_date' | 'start_date',
+  ) => {
+    return [...tasks].sort((a, b) => {
+      if (criteria === 'priority') {
+        // 우선순위 정렬: high > medium > low
+        const priorityOrder = { high: 1, medium: 2, low: 3 };
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      } else if (criteria === 'due_date' || criteria === 'start_date') {
+        // 날짜 정렬: 가장 빠른 날짜가 먼저 오도록
+        return (
+          new Date(a[criteria]).getTime() - new Date(b[criteria]).getTime()
+        );
       }
-    } catch (error) {
-      console.error('서버 요청 중 오류 발생:', error);
-    }
+      return 0;
+    });
   };
 
   const handleCreateTask = async (newTaskData: {
@@ -383,26 +419,41 @@ export default function MainBoard() {
   }, [space_id]);
 
   const loadMoreTasks = async (status: 'plan' | 'progress' | 'done') => {
-    if (!hasMore[status]) return; // 가져올 데이터가 없으면 종료
+    if (!hasMore[status]) return; // 추가 데이터가 없으면 종료
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
-        { state: status, limit: 5, offset: page[status] * 5 },
+        { state: status, limit: 5, offset: page[status] * 5 }, // ✅ 기존 offset 유지
         { withCredentials: true },
       );
+
       console.log(`[${status}] 추가 데이터 응답:`, response.data);
+
       if (response.data.status === 'SUCCESS' && response.data.data.length > 0) {
         setTodoList(prev => ({
           ...prev,
-          [status]: [...prev[status], ...response.data.data],
+          [status]: [
+            ...prev[status],
+            ...response.data.data.filter(
+              (
+                newTask: Task, // ✅ 타입 명확히 지정
+              ) =>
+                !prev[status].some(
+                  (existingTask: Task) =>
+                    existingTask.todo_id === newTask.todo_id,
+                ),
+            ),
+          ],
         }));
-        setPage(prev => ({ ...prev, [status]: prev[status] + 1 })); // 페이지 증가
+
+        setPage(prev => ({ ...prev, [status]: prev[status] + 1 })); // ✅ 페이지 증가
       } else {
         console.log(`[${status}] 추가 데이터 없음. 더 이상 불러오지 않음.`);
-        setHasMore(prev => ({ ...prev, [status]: false })); // 더 이상 데이터 없음
+        setHasMore(prev => ({ ...prev, [status]: false })); // ✅ 데이터 없음 설정
       }
     } catch (error) {
-      console.error('추가 업무 로드 실패:', error);
+      console.error(`[${status}] 추가 업무 로드 실패:`, error);
     }
   };
 
@@ -423,7 +474,7 @@ export default function MainBoard() {
   }, [space_id, dispatch]);
   return (
     <>
-      <div className="task-actions">
+      <div className="todo-action-btn">
         <button
           className="btn btn-sm btn-primary"
           onClick={() => setShowCreateModal(true)}
@@ -439,9 +490,15 @@ export default function MainBoard() {
           </button>
           {showFilterOptions && (
             <div className="filter-options">
-              <button onClick={() => handleFilter('priority')}>우선순위</button>
-              <button onClick={() => handleFilter('due_date')}>마감일</button>
-              <button onClick={() => handleFilter('start_date')}>시작일</button>
+              <button onClick={() => handleSortTasks('priority')}>
+                우선순위
+              </button>
+              <button onClick={() => handleSortTasks('due_date')}>
+                마감일
+              </button>
+              <button onClick={() => handleSortTasks('start_date')}>
+                시작일
+              </button>
             </div>
           )}
         </div>

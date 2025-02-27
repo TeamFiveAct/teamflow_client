@@ -193,10 +193,50 @@ export default function Header() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // ✅ 로그아웃 API 요청
+  // const handleLogout = async () => {
+  //   try {
+  //     const logoutApi =
+  //       authProvider === 'kakao' ? '/v1/user/kakao-logout' : '/v1/user/logout';
+
+  //     const response = await axios.post(
+  //       logoutApi,
+  //       {},
+  //       { withCredentials: true },
+  //     );
+
+  //     if (response.data.status === 'SUCCESS') {
+  //       alert('로그아웃 성공');
+
+  //       // ✅ 1. 브라우저 쿠키 삭제 (자동 로그인 방지)
+  //       document.cookie = 'connect.sid=; Max-Age=0; path=/';
+  //       document.cookie = '_kadu=; Max-Age=0; path=/';
+  //       document.cookie = '_kakao_sso=; Max-Age=0; path=/';
+  //       sessionStorage.removeItem('selectedSpaceId');
+
+  //       // ✅ 2. Redux persist 초기화
+
+  //       persistor.purge();
+  //       // ✅ 3. sessionStorage 삭제
+  //       sessionStorage.removeItem('persist:root');
+  //       sessionStorage.removeItem('persist:checkSession');
+
+  //       // ✅ 4. 로그인 페이지로 이동 (새로고침)
+  //       navigate('/v1/user/login');
+  //       window.location.reload();
+  //     } else {
+  //       alert('로그아웃 실패: ' + response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('로그아웃 에러:', error);
+  //     alert('로그아웃 중 오류가 발생했습니다.');
+  //   }
+  // };
   const handleLogout = async () => {
     try {
-      const logoutApi =
-        authProvider === 'kakao' ? '/v1/user/kakao-logout' : '/v1/user/logout';
+      let logoutApi = '/v1/user/logout'; // 기본 이메일 로그아웃 API
+      if (authProvider === 'kakao') {
+        logoutApi = '/v1/user/kakao-logout'; // 카카오 로그아웃 API
+      }
 
       const response = await axios.post(
         logoutApi,
@@ -205,33 +245,35 @@ export default function Header() {
       );
 
       if (response.data.status === 'SUCCESS') {
-        alert('로그아웃 성공');
+        alert(
+          authProvider === 'kakao' ? '카카오 로그아웃 성공' : '로그아웃 성공',
+        );
 
-        // ✅ 1. 브라우저 쿠키 삭제 (자동 로그인 방지)
+        // ✅ 브라우저 쿠키 삭제 (자동 로그인 방지)
         document.cookie = 'connect.sid=; Max-Age=0; path=/';
         document.cookie = '_kadu=; Max-Age=0; path=/';
         document.cookie = '_kakao_sso=; Max-Age=0; path=/';
-        sessionStorage.removeItem('selectedSpaceId');
 
-        // ✅ 2. Redux persist 초기화
-
+        // ✅ Redux persist 초기화
         persistor.purge();
-        // ✅ 3. sessionStorage 삭제
+
+        // ✅ sessionStorage 삭제
         sessionStorage.removeItem('persist:root');
         sessionStorage.removeItem('persist:checkSession');
+        sessionStorage.removeItem('selectedSpaceId');
 
-        // ✅ 4. 로그인 페이지로 이동 (새로고침)
+        // ✅ 로그인 페이지로 이동 후 새로고침
         navigate('/v1/user/login');
         window.location.reload();
       } else {
-        alert('로그아웃 실패: ' + response.data.message);
+        alert(`로그아웃 실패: ${response.data.message}`);
       }
     } catch (error) {
       console.error('로그아웃 에러:', error);
       alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
-
+  const [sessionExpired, setSessionExpired] = useState(false);
   // ✅ 세션이 만료되었을 경우 자동 로그아웃 처리
   useEffect(() => {
     const checkSession = async () => {
@@ -240,20 +282,31 @@ export default function Header() {
           withCredentials: true,
         });
 
+        console.log('세션 응답:', response.data); // ✅ 디버깅을 위한 로그
+
         if (response.data.status !== 'SUCCESS') {
-          handleLogout();
+          console.warn('세션 만료됨, 로그아웃 필요'); // ✅ 로그 추가
+          setSessionExpired(true); // 🚀 handleLogout을 실행하는 대신 `sessionExpired` 상태 변경
         }
       } catch (error) {
         console.error('세션 확인 실패:', error);
-        handleLogout();
+        alert('세션 확인 중 오류가 발생했습니다.');
       }
     };
 
     if (isLoggedIn) {
       checkSession();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn]); // ✅ `isLoggedIn`이 바뀔 때만 실행
 
+  // ✅ 실제 로그아웃 요청은 사용자가 직접 버튼을 누를 때만 실행되도록 함
+  useEffect(() => {
+    if (sessionExpired) {
+      alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+      handleLogout(); // 🚀 여기서만 로그아웃 실행
+    }
+  }, [sessionExpired]); // ✅ sessionExpired 값이 true일 때만 실행됨
+  
   // ✅ 네비게이션 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
