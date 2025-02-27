@@ -1,4 +1,5 @@
 export interface Task {
+  space_id?: string;
   todo_id: number;
   title: string;
   description: string;

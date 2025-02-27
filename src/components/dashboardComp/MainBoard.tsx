@@ -10,8 +10,14 @@ import { Task } from '../../types/types';
 import {
   createTaskAsync,
   deleteTaskAsync,
+  updateTaskAsync,
 } from '../../store/modules/taskSlice';
 // import { deleteTask, moveTaskAsync } from '../../store/modules/taskSlice';
+type TodoList = {
+  plan: Task[];
+  progress: Task[];
+  done: Task[];
+};
 
 const getWorkSpaceDataList = async (space_id: string | undefined) => {
   console.log('spaceid', space_id);
@@ -33,6 +39,7 @@ const getWorkSpaceDataList = async (space_id: string | undefined) => {
       response.data.status === 'SUCCESS' ||
       response.data.message.includes('가져왔습니다')
     ) {
+      console.log('가져온 데이터 확인::', response.data.data);
       return response.data.data;
     } else {
       console.error('업무 조회 실패:', response.data.message);
@@ -63,6 +70,7 @@ export default function MainBoard() {
   const [currentFilter, setCurrentFilter] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [todoList, setTodoList] = useState<{
     plan: Task[];
@@ -89,40 +97,176 @@ export default function MainBoard() {
     }
   };
 
-  const handleCreateTask = (newTaskData: {
+  const handleCreateTask = async (newTaskData: {
+    space_id?: string;
+    todo_id?: number;
     title: string;
     description: string;
     priority: 'low' | 'medium' | 'high';
+    status: 'plan' | 'progress' | 'done';
     startDate: string;
     dueDate: string | null;
-    taskState: 'plan' | 'progress' | 'done';
   }) => {
     // Task 타입에 맞게 변환
-    const newTask: Task = {
+    const newTask = {
+      // space_id: space_id,
       todo_id: 0, // 서버에서 생성된 ID로 대체됨
       title: newTaskData.title,
       description: newTaskData.description,
       priority: newTaskData.priority,
-      status: newTaskData.taskState, // taskState를 status로 변경
+      status: newTaskData.status, // taskState를 status로 변경
       start_date: newTaskData.startDate,
       due_date: newTaskData.dueDate || 'none',
     };
 
-    // space_id를 함께 전달하여 작업을 생성
+    // // space_id를 함께 전달하여 작업을 생성
     if (space_id) {
-      dispatch(createTaskAsync({ spaceId: space_id, newTask })); // Slice에서 space_id를 처리하도록 수정
-    }
+      try {
+        if (isSubmitting) return; // 이미 제출 중이면 함수 종료
+        setIsSubmitting(true); // 제출 시작
+        // 서버에 요청 보내고 응답을 기다림
+        const response = await dispatch(
+          createTaskAsync({ spaceId: space_id, newTask: newTask }),
+        ).unwrap();
+        console.log('createTaskAsync response:', response);
 
-    setTodoList(prev => ({
-      ...prev,
-      plan: [...prev.plan, newTask], // 새로 생성된 투두는 plan 상태에 추가
-      // progress: [...prev.progress, newTask], // 새로 생성된 투두는 progress 상태에 추가
-      // done: [...prev.done, newTask], // 새로 생성된 투두는 done 상태에 추가
-    }));
-    // dispatch(loadTasksAsync([...tasks, newTask])); // 새 작업을 상태에 추가
+        // 응답에서 받은 데이터로 생성된 투두 추가
+        const createdTask = response; // 이미 반환된 데이터는 createdTask
+        setTodoList(prev => ({
+          ...prev,
+          plan: prev.plan ? [...prev.plan, createdTask] : [createdTask], // 새로 생성된 투두를 plan 상태에 추가
+        }));
+      } catch (error) {
+        console.error('Error creating task:', error);
+      } finally {
+        setIsSubmitting(false); // 제출 끝났으면 상태 변경
+      }
+    }
+    // space_id를 함께 전달하여 작업을 생성
+    // if (space_id) {
+    //   dispatch(createTaskAsync({ spaceId: space_id, newTask: newTask })); // Slice에서 space_id를 처리하도록 수정
+    // }
+
+    // setTodoList(prev => ({
+    //   ...prev,
+    //   plan: [...prev.plan, newTask], // 새로 생성된 투두는 plan 상태에 추가
+    //   // progress: [...prev.progress, newTask], // 새로 생성된 투두는 progress 상태에 추가
+    //   // done: [...prev.done, newTask], // 새로 생성된 투두는 done 상태에 추가
+    // }));
+    // // dispatch(loadTasksAsync([...tasks, newTask])); // 새 작업을 상태에 추가
   };
 
-  const handleEditTask = () => {};
+  // Task 수정 함수 (추가)
+  const handleSave = async (task: Task) => {
+    try {
+      const spaceId = space_id;
+      const updatedTask = task;
+      console.log('updatedTask::', task);
+      console.log('updatedTask::', updatedTask);
+      console.log('updatedTask::', spaceId);
+
+      if (!spaceId) {
+        alert('Space ID가 유효하지 않습니다.');
+        return;
+      }
+
+      const actionResult = await dispatch(
+        updateTaskAsync({ spaceId: spaceId, updatedTask: updatedTask }),
+      ).unwrap();
+
+      console.log('업데이트된 데이터:', actionResult);
+
+      // 상태에 맞게 todoList 업데이트
+      setTodoList((prevTodoList: TodoList) => {
+        const updatedList: TodoList = { ...prevTodoList };
+
+        // 해당 상태(TaskColumn) 내에서 수정된 task를 반영
+        updatedList[actionResult.status as keyof TodoList] = updatedList[
+          actionResult.status as keyof TodoList
+        ].map((task: Task) =>
+          task.todo_id === actionResult.todo_id ? actionResult : task,
+        );
+
+        // 상태 변경 후 해당 상태(TaskColumn으로 이동)
+        if (actionResult.status !== task.status) {
+          updatedList[task.status as keyof TodoList] = updatedList[
+            task.status as keyof TodoList
+          ].filter((task: Task) => task.todo_id !== actionResult.todo_id);
+
+          updatedList[actionResult.status as keyof TodoList] = [
+            ...updatedList[actionResult.status as keyof TodoList],
+            actionResult,
+          ];
+        }
+
+        return updatedList;
+      });
+      // 데이터를 최신 상태로 갱신하기 위해 getWorkSpaceDataList 호출
+      const ListData = await getWorkSpaceDataList(space_id);
+      if (ListData) {
+        setTodoList(ListData); // 최신 데이터를 업데이트
+      }
+    } catch (error) {
+      console.error('업무 수정에 실패했습니다:', error);
+      alert('업무 수정에 실패했습니다.');
+    }
+  };
+  // const handleSave = async (task: Task) => {
+  //   try {
+  //     const spaceId = task.space_id; // task에서 space_id 추출
+  //     const updatedTask = task; // task 자체를 updatedTask로 사용
+
+  //     if (!spaceId) {
+  //       alert('Space ID가 유효하지 않습니다.');
+  //       return; // spaceId가 없으면 작업을 진행하지 않음
+  //     }
+  //     const actionResult = await dispatch(
+  //       updateTaskAsync({ spaceId, updatedTask }),
+  //     );
+  //     console.log('actionResult라는 수정콘솔::', actionResult);
+  //     if (updateTaskAsync.fulfilled.match(actionResult)) {
+  //       // 서버에서 수정된 데이터가 성공적으로 반환된 경우
+  //       const updatedTaskData = actionResult.payload;
+
+  //       // 상태에 맞게 todoList 업데이트
+  //       setTodoList((prevTodoList: TodoList) => {
+  //         const updatedList: TodoList = { ...prevTodoList };
+
+  //         // 해당 상태(TaskColumn) 내에서 수정된 task를 반영
+  //         updatedList[updatedTaskData.status as keyof TodoList] = updatedList[
+  //           updatedTaskData.status as keyof TodoList
+  //         ].map((task: Task) =>
+  //           task.todo_id === updatedTaskData.todo_id ? updatedTaskData : task,
+  //         );
+
+  //         // 상태가 변경된 경우, 상태 변경 후 해당 상태(TaskColumn으로 이동)
+  //         if (updatedTaskData.status !== task.status) {
+  //           // 상태 변경 후 이동 (예: plan -> progress)
+  //           updatedList[task.status as keyof TodoList] = updatedList[
+  //             task.status as keyof TodoList
+  //           ].filter((task: Task) => task.todo_id !== updatedTaskData.todo_id);
+
+  //           updatedList[updatedTaskData.status as keyof TodoList] = [
+  //             ...updatedList[updatedTaskData.status as keyof TodoList],
+  //             updatedTaskData,
+  //           ];
+  //         }
+
+  //         return updatedList;
+  //       });
+  //     } else {
+  //       alert('업무 수정에 실패했습니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating task:', error);
+  //     alert('업무 수정에 실패했습니다.');
+  //   }
+  // };
+
+  // const handleTaskEdit = (task: Task) => {
+  //   // 예시: 투두 수정을 위한 Modal을 띄운 후 수정된 내용을 받아오고 handleEditTask 호출
+  //   handleEditTask(task.todo_id, { ...task, title: '수정된 제목' }); // 예시 수정
+  // };
 
   // const handleDeleteTask = async (task: Task) => {
   //   try {
@@ -220,7 +364,7 @@ export default function MainBoard() {
         <TaskModal
           show={showCreateModal}
           onHide={() => setShowCreateModal(false)}
-          taskState="plan"
+          // taskState="plan"
           onCreate={handleCreateTask}
         />
       </div>
@@ -229,6 +373,7 @@ export default function MainBoard() {
         tasksProgress={todoList.progress}
         tasksDone={todoList.done}
         onDelete={handleDeleteTask}
+        onEdit={handleSave}
       />
       {/* <ToDoBoard
         tasksPlan={tasks.filter(task => task.status === 'plan')}

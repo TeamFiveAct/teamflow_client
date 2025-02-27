@@ -87,6 +87,7 @@ interface ToDoBoardProps {
   // onDragEnd: (todo_id: number, newState: 'plan' | 'progress' | 'done') => void;
   // onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
+  onEdit: (task: Task) => void;
 }
 
 export default function ToDoBoard({
@@ -94,12 +95,13 @@ export default function ToDoBoard({
   tasksProgress,
   tasksDone,
   onDelete,
-}: // onEdit,
-ToDoBoardProps) {
+  onEdit,
+}: ToDoBoardProps) {
   // 페이지당 표시할 할 일 개수
   console.log('todoboard의 tasksPlan:::', tasksPlan, tasksDone);
 
   const tasksPerPage = 10;
+  const updatetasks = useSelector((state: RootState) => state.tasks);
   const [visibleTasks, setVisibleTasks] = useState({
     plan: tasksPlan.slice(0, tasksPerPage),
     progress: tasksProgress.slice(0, tasksPerPage),
@@ -134,7 +136,7 @@ ToDoBoardProps) {
         ),
       ],
     }));
-  }, [tasksPlan, tasksProgress, tasksDone]);
+  }, [updatetasks, tasksPlan, tasksProgress, tasksDone]);
 
   useEffect(() => {
     // const handleScroll = () => {
@@ -163,15 +165,15 @@ ToDoBoardProps) {
     });
   }, [tasksPlan, tasksProgress, tasksDone]);
 
-  const emptyTask: Task = {
-    todo_id: 0, // 기본값으로 설정
-    title: '환영합니다!',
-    description: '',
-    priority: 'low',
-    start_date: '',
-    due_date: '',
-    status: 'plan',
-  };
+  // const emptyTask: Task = {
+  //   todo_id: 0, // 기본값으로 설정
+  //   title: '환영합니다!',
+  //   description: '',
+  //   priority: 'low',
+  //   start_date: '',
+  //   due_date: '',
+  //   status: 'plan',
+  // };
 
   return (
     <div className="todo-board container py-4" ref={containerRef}>
@@ -185,7 +187,7 @@ ToDoBoardProps) {
             // tasks={
             //   visibleTasks.plan.length > 0 ? visibleTasks.plan : [emptyTask]
             // }
-            // onEdit={onEdit}
+            onEdit={onEdit}
             onDelete={onDelete}
           />
         </div>
@@ -201,7 +203,7 @@ ToDoBoardProps) {
             //     ? visibleTasks.progress
             //     : [emptyTask]
             // }
-            // onEdit={onEdit}
+            onEdit={onEdit}
             onDelete={onDelete}
           />
         </div>
@@ -215,7 +217,7 @@ ToDoBoardProps) {
             // tasks={
             //   visibleTasks.done.length > 0 ? visibleTasks.done : [emptyTask]
             // }
-            // onEdit={onEdit}
+            onEdit={onEdit}
             onDelete={onDelete}
           />
         </div>
