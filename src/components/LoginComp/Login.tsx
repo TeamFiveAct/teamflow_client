@@ -136,12 +136,13 @@ export default function Login() {
       if (emailStatus === 'success') {
         // ✅ 변경된 필드 사용
         setResetMessage({
-          text: message, // 서버에서 온 메시지 그대로 사용
+          text: '재설정 링크가 이메일로 발송되었습니다.',
           type: 'success',
         });
       } else {
+        // setResetError(message || '비밀번호 재설정 요청에 실패했습니다.');
         setResetMessage({
-          text: message || '비밀번호 재설정 요청에 실패했습니다.',
+          text: '비밀번호 재설정 요청에 실패했습니다.',
           type: 'error',
         });
       }
@@ -150,77 +151,85 @@ export default function Login() {
         text: '비밀번호 재설정 요청 중 오류가 발생했습니다.',
         type: 'error',
       });
+      // setResetError('비밀번호 재설정 요청 중 오류가 발생했습니다.');
       console.error('비밀번호 재설정 오류:', error);
     }
   };
 
   return (
-    <section
-      className="auth-container d-flex justify-content-center align-items-center px-0 mt-4"
-      style={{ height: '100vh' }}
+    // <section
+    //   className="auth-container d-flex justify-content-center align-items-center px-0 mt-4"
+    //   style={{ height: '100vh' }}
+    // >
+    <Container
+      fluid
+      className="auth-content px-0 d-flex justify-content-center align-items-center min-vh-100 py-4"
+      style={{ paddingTop: '80px' }}
     >
-      <Container className="auth-content px-0">
-        <Row className="d-flex flex-row w-100">
-          {/* 왼쪽 영역: 로그인 폼 또는 비밀번호 재설정 폼 */}
-          <Col
-            md={6}
-            className="d-flex justify-content-center align-items-center"
-            style={{ height: '500px' }}
+      <Row
+        className="d-flex flex-row justify-content-center w-100 g-3"
+        style={{ paddingTop: '70px' }}
+      >
+        {/* 왼쪽 영역: 로그인 폼 또는 비밀번호 재설정 폼 */}
+        <Col
+          md={6}
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: '500px' }}
+        >
+          <div
+            className="auth-card card p-4 d-flex flex-column justify-content-center"
+            style={{ maxWidth: '500px', width: '100%', height: '100%' }}
           >
-            <div
-              className="auth-card card p-4 d-flex flex-column justify-content-center"
-              style={{ maxWidth: '500px', width: '100%', height: '100%' }}
-            >
-              {isResetMode ? (
-                // 비밀번호 재설정 요청 컴포넌트
-                <>
-                  <h3 className="text-center fw-bold">비밀번호 재설정</h3>
-                  <hr style={{ width: '100%', border: '1px solid black' }} />
-                  <div
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ height: '100%' }}
+            {isResetMode ? (
+              // 비밀번호 재설정 요청 컴포넌트
+              <>
+                <h3 className="text-center fw-bold">비밀번호 재설정</h3>
+                <hr style={{ width: '100%', border: '1px solid black' }} />
+                <div
+                  className="d-flex flex-column justify-content-center align-items-center"
+                  style={{ height: '100%' }}
+                >
+                  <Form
+                    onSubmit={handlePasswordReset}
+                    style={{ width: '100%' }}
                   >
-                    <Form
-                      onSubmit={handlePasswordReset}
-                      style={{ width: '100%' }}
+                    <Form.Group controlId="resetEmail" className="mb-5">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="example@example.com"
+                        value={resetEmail}
+                        ref={resetEmailRef}
+                        onChange={e => setResetEmail(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    {resetMessage && <ServerMessage message={resetMessage} />}
+                    {/* {resetError && <ServerMessage errorMessage={resetError} />} */}
+
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="w-100 mb-2"
                     >
-                      <Form.Group controlId="resetEmail" className="mb-5">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control
-                          type="email"
-                          placeholder="example@example.com"
-                          value={resetEmail}
-                          ref={resetEmailRef}
-                          onChange={e => setResetEmail(e.target.value)}
-                        />
-                      </Form.Group>
-
-                      {resetMessage && <ServerMessage message={resetMessage} />}
-                      {/* {resetError && <ServerMessage errorMessage={resetError} />} */}
-
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        className="w-100 mb-2"
-                      >
-                        재설정 링크 발송
-                      </Button>
-                    </Form>
-                    <div className="text-center">
-                      <Button
-                        variant="link"
-                        style={{ fontSize: '0.8rem', padding: 0 }}
-                        onClick={() => setIsResetMode(false)}
-                      >
-                        로그인 화면으로 돌아가기
-                      </Button>
-                    </div>
+                      재설정 링크 발송
+                    </Button>
+                  </Form>
+                  <div className="text-center">
+                    <Button
+                      variant="link"
+                      style={{ fontSize: '0.8rem', padding: 0 }}
+                      onClick={() => setIsResetMode(false)}
+                    >
+                      로그인 화면으로 돌아가기
+                    </Button>
                   </div>
-                </>
-              ) : (
-                // 기존 로그인 폼
-                <>
-                  {/* <h3 className="text-center fw-bold">LOGIN</h3>
+                </div>
+              </>
+            ) : (
+              // 기존 로그인 폼
+              <>
+                {/* <h3 className="text-center fw-bold">LOGIN</h3>
                   <hr style={{ width: '100%', border: '1px solid black' }} />
                   <div
                     className="d-flex flex-column justify-content-center align-items-center"
@@ -258,78 +267,74 @@ export default function Login() {
                           <ServerMessage errorMessage={passwordMessage} />
                         )}
                       </Form.Group> */}
-                  <h3 className="text-center fw-bold">LOGIN</h3>
-                  <hr style={{ width: '100%', border: '1px solid black' }} />
-                  <div
-                    className=" d-flex flex-column justify-content-center align-items-center"
-                    style={{ height: '100%' }}
-                  >
-                    <Form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                      <Form.Group controlId="email" className="mb-5">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control
-                          type="email"
-                          placeholder="example@example.com"
-                          value={email}
-                          ref={emailRef}
-                          onChange={e => {
-                            setEmail(e.target.value);
-                            setEmailMessage({ text: '', type: null });
-                          }}
-                        />
-                        {/* 이메일 에러 메시지 */}
-                        {emailMessage && (
-                          <ServerMessage message={emailMessage} />
-                        )}
-                      </Form.Group>
+                <h3 className="text-center fw-bold">LOGIN</h3>
+                <hr style={{ width: '100%', border: '1px solid black' }} />
+                <div
+                  className=" d-flex flex-column justify-content-center align-items-center"
+                  style={{ height: '100%' }}
+                >
+                  <Form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                    <Form.Group controlId="email" className="mb-5">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="example@example.com"
+                        value={email}
+                        ref={emailRef}
+                        onChange={e => {
+                          setEmail(e.target.value);
+                          setEmailMessage({ text: '', type: null });
+                        }}
+                      />
+                      {/* 이메일 에러 메시지 */}
+                      {emailMessage && <ServerMessage message={emailMessage} />}
+                    </Form.Group>
 
-                      <Form.Group controlId="password" className="mb-5">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                          type="password"
-                          placeholder="비밀번호를 입력하세요."
-                          value={password}
-                          ref={passwordRef}
-                          onChange={e => {
-                            setPassword(e.target.value);
-                            setPasswordMessage({ text: '', type: null });
-                          }}
-                        />
-                        {/* 비밀번호 에러 메시지 */}
+                    <Form.Group controlId="password" className="mb-5">
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        placeholder="비밀번호를 입력하세요."
+                        value={password}
+                        ref={passwordRef}
+                        onChange={e => {
+                          setPassword(e.target.value);
+                          setPasswordMessage({ text: '', type: null });
+                        }}
+                      />
+                      {/* 비밀번호 에러 메시지 */}
 
-                        {passwordMessage && (
-                          <ServerMessage message={passwordMessage} />
-                        )}
-                      </Form.Group>
-
-                      {/* 전체 에러 메시지 */}
-                      {allMessage.text && (
-                        <ServerMessage message={allMessage} />
+                      {passwordMessage && (
+                        <ServerMessage message={passwordMessage} />
                       )}
+                    </Form.Group>
 
-                      {/* {allMessage && <ServerMessage errorMessage={allMessage} />} */}
+                    {/* 전체 에러 메시지 */}
+                    {allMessage.text && <ServerMessage message={allMessage} />}
 
+                    {/* {allMessage && <ServerMessage errorMessage={allMessage} />} */}
+
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="w-100 mb-2"
+                    >
+                      로그인
+                    </Button>
+
+                    {/* 비밀번호 찾기 버튼: 페이지 이동없이 컴포넌트 전환 */}
+                    <div className="text-center">
                       <Button
-                        variant="primary"
-                        type="submit"
-                        className="w-100 mb-2"
+                        variant="link"
+                        style={{ fontSize: '0.8rem', padding: 0 }}
+                        onClick={() => setIsResetMode(true)}
                       >
-                        로그인
+                        비밀번호 찾기
                       </Button>
+                    </div>
+                  </Form>
 
-                      {/* 비밀번호 찾기 버튼: 페이지 이동없이 컴포넌트 전환 */}
-                      <div className="text-center">
-                        <Button
-                          variant="link"
-                          style={{ fontSize: '0.8rem', padding: 0 }}
-                          onClick={() => setIsResetMode(true)}
-                        >
-                          비밀번호 찾기
-                        </Button>
-                      </div>
-                    </Form>
-
-                    {/* <Button
+                  {/* <Button
                       variant="link"
                       href={`${process.env.REACT_APP_API_SERVER}/user/kakao-login`}
                       target="_blank"
@@ -341,13 +346,13 @@ export default function Login() {
                         style={{ width: '30px', height: '30px' }}
                       />
                     </Button> */}
-                  </div>
-                </>
-              )}
-              <KakaoLoginButton />
-              {/* <Link to={'/v1/user/request-reset'}>비밀번호 찾기</Link> */}
-              {/* <GetTempPassword /> */}
-              {/* <Button
+                </div>
+              </>
+            )}
+            <KakaoLoginButton />
+            {/* <Link to={'/v1/user/request-reset'}>비밀번호 찾기</Link> */}
+            {/* <GetTempPassword /> */}
+            {/* <Button
                   variant="link"
                   // href={`${process.env.REACT_APP_API_SERVER}/user/kakao-login`}
                   target="_blank"
@@ -360,27 +365,24 @@ export default function Login() {
                     style={{ width: '30px', height: '30px' }}
                   />
                 </Button> */}
-            </div>
-            {/* </div> */}
-          </Col>
+          </div>
+          {/* </div> */}
+        </Col>
 
-          {/* 오른쪽 영역: TransitionComp (기존 로직 그대로) */}
-          <Col
-            md={6}
-            className="d-flex justify-content-center align-items-center"
+        {/* 오른쪽 영역: TransitionComp (기존 로직 그대로) */}
+        <Col
+          md={6}
+          className="d-flex justify-content-center align-items-center"
+        >
+          <div
+            className="auth-card card p-4"
+            style={{ maxWidth: '600px', width: '100%' }}
           >
-            <div
-              className="auth-card card p-4"
-              style={{ maxWidth: '600px', width: '100%' }}
-            >
-              <TransitionComp
-                loginType={loginType}
-                setLoginType={setLoginType}
-              />
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </section>
+            <TransitionComp loginType={loginType} setLoginType={setLoginType} />
+          </div>
+        </Col>
+      </Row>
+    </Container>
+    // </section>
   );
 }
