@@ -7,6 +7,7 @@ import TransitionComp from './TransitionComp';
 import { useDispatch } from 'react-redux';
 import { login, setSessionStatus } from '../../store/modules/checkSessionSlice';
 import KakaoLoginButton from './KakaoLoginButton';
+import '../../style/common/login.scss';
 // import GetTempPassword from './GetTempPassword';
 
 export default function Login() {
@@ -122,17 +123,18 @@ export default function Login() {
   const handlePasswordReset = async (event: React.FormEvent) => {
     event.preventDefault();
     setResetMessage({ text: '', type: null });
-  
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/user/request-reset`,
-        { email: resetEmail }
+        { email: resetEmail },
       );
-  
+
       // 서버 응답 구조 변경 반영
       const { emailStatus, message } = response.data;
-  
-      if (emailStatus === 'success') {  // ✅ 변경된 필드 사용
+
+      if (emailStatus === 'success') {
+        // ✅ 변경된 필드 사용
         setResetMessage({
           text: message, // 서버에서 온 메시지 그대로 사용
           type: 'success',
@@ -151,13 +153,13 @@ export default function Login() {
       console.error('비밀번호 재설정 오류:', error);
     }
   };
-  
+
   return (
     <section
-      className="d-flex justify-content-center align-items-center px-0 mt-4"
+      className="auth-container d-flex justify-content-center align-items-center px-0 mt-4"
       style={{ height: '100vh' }}
     >
-      <Container className="px-0">
+      <Container className="auth-content px-0">
         <Row className="d-flex flex-row w-100">
           {/* 왼쪽 영역: 로그인 폼 또는 비밀번호 재설정 폼 */}
           <Col
@@ -166,7 +168,7 @@ export default function Login() {
             style={{ height: '500px' }}
           >
             <div
-              className="card p-4 d-flex flex-column justify-content-center"
+              className="auth-card card p-4 d-flex flex-column justify-content-center"
               style={{ maxWidth: '500px', width: '100%', height: '100%' }}
             >
               {isResetMode ? (
@@ -368,7 +370,7 @@ export default function Login() {
             className="d-flex justify-content-center align-items-center"
           >
             <div
-              className="card p-4"
+              className="auth-card card p-4"
               style={{ maxWidth: '600px', width: '100%' }}
             >
               <TransitionComp

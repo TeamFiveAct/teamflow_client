@@ -15,6 +15,7 @@ export default function Footer() {
         >
           Contact Us
         </span>
+
         <p className="license-text">Licensed by FiveAct © 2025</p>
       </footer>
 

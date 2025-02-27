@@ -1,0 +1,22 @@
+// /* 전체 페이지를 flex 레이아웃으로 설정 */
+// html,
+// body,
+// #root,
+// .app-container {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+// }
+
+// /* 컨텐츠 영역이 충분히 확장되도록 설정 */
+// .main-content {
+//   flex: 1;
+// }
+
+// /* 푸터는 항상 아래쪽에 위치 */
+// .footer {
+//   width: 100%;
+//   background: #f8f9fa; /* 예시 배경색 */
+//   text-align: center;
+//   padding: 10px 0;
+// }

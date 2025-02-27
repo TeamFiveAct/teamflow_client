@@ -18,7 +18,7 @@ import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import ServerMessage from './ServerMessage';
 import TransitionComp from './TransitionComp';
 import ProfileImg from './ProfileImg';
-
+import '../../style/common/login.scss';
 export default function SignUp() {
   const [selectedAvatar, setSelectedAvatar] = useState('Mary Roebling');
   const [nickname, setNickname] = useState('');

@@ -7,68 +7,110 @@ html {
   flex-direction: column;
 }
 
-/* 🔹 전체 페이지 컨테이너 */
+/* ✅ 전체 페이지 컨테이너 */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* 전체 화면 높이를 기준으로 설정 */
 }
 
-/* 🔹 헤더(Header) 스타일 */
-.navbar {
-  position: relative; /* 🔥 기존 fixed 제거 */
-  width: 100%;
-  background: white;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  height: 60px; /* 기존보다 살짝 줄인 높이 */
-  padding: 10px 15px; /* 내부 여백 조정 */
-  font-size: 1rem; /* 글자 크기 조정 */
+/* ✅ 모바일 햄버거 메뉴 스타일 */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background: white !important; /* 🔹 모바일에서 배경색 추가 */
+    border-radius: 8px; /* 🔹 모서리 둥글게 */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    position: absolute;
+    top: 60px; /* 🔹 헤더 아래에 위치 */
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* ✅ 햄버거 메뉴가 닫힐 때 화면에서 숨김 */
+  .navbar-collapse.hidden {
+    transform: translateY(-100%);
+  }
+
+  /* ✅ 네비게이션 메뉴 항목 스타일 */
+  .navbar-nav .nav-item {
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .navbar-nav .nav-link {
+    color: #333 !important; /* 🔹 글씨 색깔 변경 */
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .navbar-nav .nav-link:hover {
+    background-color: #f0f0f0; /* 🔹 선택 시 배경색 변경 */
+    border-radius: 5px;
+  }
 }
 
-/* ✅ 로그인/로그아웃 버튼 크기 줄이기 */
-.navbar .btn-primary,
-.navbar .btn-outline-primary {
-  font-size: 0.9rem; /* 글자 크기 줄이기 */
-  padding: 6px 12px; /* 버튼 크기 조정 */
-  height: 36px; /* 높이 조정 */
-}
-
-/* ✅ 모바일 메뉴 버튼 크기 조정 */
-.navbar-toggler {
-  padding: 5px; /* 토글 버튼 여백 조정 */
-  font-size: 1rem; /* 아이콘 크기 조정 */
-}
-
-/* 🔹 메인 컨텐츠 영역 (헤더 아래, 푸터 위에 위치) */
+/* 🔹 메인 컨텐츠 영역 (헤더 아래, 푸터 위) */
 .content {
-  flex-grow: 1; /* 🏆 남은 공간을 자동으로 차지 */
+  flex-grow: 1;
   padding: 20px;
-  margin-top: 70px; /* ✅ 헤더 높이만큼 여백 추가 */
-  margin-bottom: 50px; /* ✅ 푸터 높이만큼 여백 추가 */
+  margin-top: 70px; /* 기본 헤더 높이에 맞춰 여백 추가 */
+  margin-bottom: 50px; /* 기본 푸터 높이에 맞춰 여백 추가 */
+
+  /* ✅ 반응형 조정 */
+  @media (max-width: 1024px) {
+    margin-top: 65px;
+    margin-bottom: 55px;
+  }
+  @media (max-width: 768px) {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    padding: 15px;
+  }
+  @media (max-width: 480px) {
+    margin-top: 55px;
+    margin-bottom: 65px;
+    padding: 10px;
+  }
 }
 
 /* 🔹 푸터(Footer) 스타일 */
-.footer {
-  position: relative; /* 🔥 기존 fixed 제거 */
-  width: 100%;
-  height: 50px;
-  background: #f8f9fa;
-  text-align: center;
-  font-size: 12px;
-  color: #6c757d;
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-}
+// .footer {
+//   position: relative; /* 🔥 기존 fixed 제거 */
+//   width: 100%;
+//   height: 50px;
+//   background: #f8f9fa;
+//   text-align: center;
+//   font-size: 12px;
+//   color: #6c757d;
+//   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 10px 0;
 
-/* 🔹 반응형 스타일 (모바일) */
-@media (max-width: 768px) {
-  .content {
-    margin-top: 80px; /* 모바일에서 헤더가 커질 경우 여백 증가 */
-    margin-bottom: 60px; /* 모바일에서 푸터가 커질 경우 여백 증가 */
-  }
-}
+//   /* ✅ 태블릿 & 모바일에서 크기 줄이기 */
+//   @media (max-width: 1024px) {
+//     height: 45px;
+//     font-size: 11px;
+//   }
+//   @media (max-width: 768px) {
+//     height: 40px;
+//     font-size: 10px;
+//   }
+//   @media (max-width: 480px) {
+//     height: 35px;
+//     font-size: 9px;
+//   }
+// }
+
+// /* ✅ 반응형 조정 */
+// @media (max-width: 768px) {
+//   .content {
+//     margin-top: 80px; /* 모바일에서 헤더가 커질 경우 여백 증가 */
+//     margin-bottom: 60px; /* 모바일에서 푸터가 커질 경우 여백 증가 */
+//   }
+// }
