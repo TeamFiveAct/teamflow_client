@@ -273,7 +273,7 @@ export default function Header() {
       alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
-
+  const [sessionExpired, setSessionExpired] = useState(false);
   // ✅ 세션이 만료되었을 경우 자동 로그아웃 처리
   useEffect(() => {
     const checkSession = async () => {
@@ -281,11 +281,12 @@ export default function Header() {
         const response = await axios.get('/v1/user/session', {
           withCredentials: true,
         });
+
         console.log('세션 응답:', response.data); // ✅ 디버깅을 위한 로그
 
         if (response.data.status !== 'SUCCESS') {
-          console.warn('세션 만료됨, 로그아웃 실행'); // 추가 로그
-          handleLogout();
+          console.warn('세션 만료됨, 로그아웃 필요'); // ✅ 로그 추가
+          setSessionExpired(true); // 🚀 handleLogout을 실행하는 대신 `sessionExpired` 상태 변경
         }
       } catch (error) {
         console.error('세션 확인 실패:', error);
@@ -296,8 +297,16 @@ export default function Header() {
     if (isLoggedIn) {
       checkSession();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn]); // ✅ `isLoggedIn`이 바뀔 때만 실행
 
+  // ✅ 실제 로그아웃 요청은 사용자가 직접 버튼을 누를 때만 실행되도록 함
+  useEffect(() => {
+    if (sessionExpired) {
+      alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+      handleLogout(); // 🚀 여기서만 로그아웃 실행
+    }
+  }, [sessionExpired]); // ✅ sessionExpired 값이 true일 때만 실행됨
+  
   // ✅ 네비게이션 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
