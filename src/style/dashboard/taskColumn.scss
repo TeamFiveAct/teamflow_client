@@ -56,10 +56,8 @@
     .task-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
+      gap: 8px;
       margin-top: 10px;
-      padding-right: 20px; /* ✅ 오른쪽 여백 추가 */
-      margin-bottom: 10px; /* 아래쪽 여백 추가 */
 
       .task-action-btn {
         background: transparent;
@@ -188,4 +186,14 @@
 
 .filter-btn {
   font-size: 0.9rem; /* 조회 버튼과 크기 통일 */
+}
+
+.todo-action-btn {
+  display: flex;
+  justify-content: flex-end; /* ✅ 오른쪽 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  width: 100%; /* 부모 컨테이너 전체 너비 사용 */
+  padding-right: 20px; /* ✅ 오른쪽 여백 추가 */
+  margin-bottom: 10px; /* ✅ 아래쪽 여백 추가 */
+  gap: 10px; /* 버튼 사이 간격 */
 }

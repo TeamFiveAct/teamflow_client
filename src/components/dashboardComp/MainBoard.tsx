@@ -474,7 +474,7 @@ export default function MainBoard() {
   }, [space_id, dispatch]);
   return (
     <>
-      <div className="task-actions">
+      <div className="todo-action-btn">
         <button
           className="btn btn-sm btn-primary"
           onClick={() => setShowCreateModal(true)}
