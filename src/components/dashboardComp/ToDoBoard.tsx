@@ -97,6 +97,8 @@ interface ToDoBoardProps {
     start_date: string;
     due_date: string | null;
   }) => void;
+  loadMoreTasks: (status: 'plan' | 'progress' | 'done') => void; // ✅ 추가
+  hasMore: { plan: boolean; progress: boolean; done: boolean }; // ✅ 추가
 }
 
 export default function ToDoBoard({
@@ -105,6 +107,8 @@ export default function ToDoBoard({
   tasksDone,
   onDelete,
   onEdit,
+  loadMoreTasks, // ✅ 추가
+  hasMore, // ✅ 추가
 }: ToDoBoardProps) {
   // 페이지당 표시할 할 일 개수
   console.log('todoboard의 tasksPlan:::', tasksPlan, tasksDone);
@@ -121,31 +125,31 @@ export default function ToDoBoard({
   // const tasks = useSelector((state: RootState) => state.tasks);
   // const dispatch = useDispatch();
 
-  const loadMoreTasks = useCallback(() => {
-    setVisibleTasks(prevTasks => ({
-      plan: [
-        ...prevTasks.plan,
-        ...tasksPlan.slice(
-          prevTasks.plan.length,
-          prevTasks.plan.length + tasksPerPage,
-        ),
-      ],
-      progress: [
-        ...prevTasks.progress,
-        ...tasksProgress.slice(
-          prevTasks.progress.length,
-          prevTasks.progress.length + tasksPerPage,
-        ),
-      ],
-      done: [
-        ...prevTasks.done,
-        ...tasksDone.slice(
-          prevTasks.done.length,
-          prevTasks.done.length + tasksPerPage,
-        ),
-      ],
-    }));
-  }, [updatetasks, tasksPlan, tasksProgress, tasksDone]);
+  // const loadMoreTasks = useCallback(() => {
+  //   setVisibleTasks(prevTasks => ({
+  //     plan: [
+  //       ...prevTasks.plan,
+  //       ...tasksPlan.slice(
+  //         prevTasks.plan.length,
+  //         prevTasks.plan.length + tasksPerPage,
+  //       ),
+  //     ],
+  //     progress: [
+  //       ...prevTasks.progress,
+  //       ...tasksProgress.slice(
+  //         prevTasks.progress.length,
+  //         prevTasks.progress.length + tasksPerPage,
+  //       ),
+  //     ],
+  //     done: [
+  //       ...prevTasks.done,
+  //       ...tasksDone.slice(
+  //         prevTasks.done.length,
+  //         prevTasks.done.length + tasksPerPage,
+  //       ),
+  //     ],
+  //   }));
+  // }, [updatetasks, tasksPlan, tasksProgress, tasksDone]);
 
   useEffect(() => {
     // const handleScroll = () => {
@@ -198,6 +202,8 @@ export default function ToDoBoard({
             // }
             onEdit={onEdit}
             onDelete={onDelete}
+            loadMoreTasks={loadMoreTasks} // ✅ 추가
+            hasMore={hasMore} // ✅ 추가
           />
         </div>
 
@@ -214,6 +220,8 @@ export default function ToDoBoard({
             // }
             onEdit={onEdit}
             onDelete={onDelete}
+            loadMoreTasks={loadMoreTasks} // ✅ 추가
+            hasMore={hasMore} // ✅ 추가
           />
         </div>
 
@@ -228,6 +236,8 @@ export default function ToDoBoard({
             // }
             onEdit={onEdit}
             onDelete={onDelete}
+            loadMoreTasks={loadMoreTasks} // ✅ 추가
+            hasMore={hasMore} // ✅ 추가
           />
         </div>
       </div>
