@@ -72,6 +72,21 @@ export default function MainBoard() {
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //-------scrolling----------
+
+  const [page, setPage] = useState<{
+    plan: number;
+    progress: number;
+    done: number;
+  }>({ plan: 0, progress: 0, done: 0 });
+
+  const [hasMore, setHasMore] = useState<{
+    plan: boolean;
+    progress: boolean;
+    done: boolean;
+  }>({ plan: true, progress: true, done: true });
+
+  //-------scrolling----------
   const [todoList, setTodoList] = useState<{
     plan: Task[];
     progress: Task[];
@@ -355,6 +370,43 @@ export default function MainBoard() {
     }
   };
 
+  //------------scrolling--------------
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      const ListData = await getWorkSpaceDataList(space_id);
+      if (ListData) {
+        setTodoList(ListData);
+      }
+    };
+    loadInitialData();
+  }, [space_id]);
+
+  const loadMoreTasks = async (status: 'plan' | 'progress' | 'done') => {
+    if (!hasMore[status]) return; // 가져올 데이터가 없으면 종료
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
+        { state: status, limit: 5, offset: page[status] * 5 },
+        { withCredentials: true },
+      );
+      console.log(`[${status}] 추가 데이터 응답:`, response.data);
+      if (response.data.status === 'SUCCESS' && response.data.data.length > 0) {
+        setTodoList(prev => ({
+          ...prev,
+          [status]: [...prev[status], ...response.data.data],
+        }));
+        setPage(prev => ({ ...prev, [status]: prev[status] + 1 })); // 페이지 증가
+      } else {
+        console.log(`[${status}] 추가 데이터 없음. 더 이상 불러오지 않음.`);
+        setHasMore(prev => ({ ...prev, [status]: false })); // 더 이상 데이터 없음
+      }
+    } catch (error) {
+      console.error('추가 업무 로드 실패:', error);
+    }
+  };
+
+  //------scrolling----------
   useEffect(() => {
     console.log('🚀 useEffect 실행됨, space_id:', space_id);
 
@@ -406,6 +458,8 @@ export default function MainBoard() {
         tasksDone={todoList.done}
         onDelete={handleDeleteTask}
         onEdit={handleEditTask}
+        loadMoreTasks={loadMoreTasks} // ✅ 추가
+        hasMore={hasMore} // ✅ 추
       />
       {/* <ToDoBoard
         tasksPlan={tasks.filter(task => task.status === 'plan')}
