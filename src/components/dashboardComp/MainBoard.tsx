@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import TaskModal from './TaskModal';
 import ToDoBoard from './ToDoBoard';
 import { AppDispatch, RootState } from '../../store/store';
+import '../../style/dashboard/taskColumn.scss';
 // import { updateTask, loadMoreTasks } from '../../store/modules/taskSlice';
 import { Task } from '../../types/types';
 import {
@@ -383,26 +384,41 @@ export default function MainBoard() {
   }, [space_id]);
 
   const loadMoreTasks = async (status: 'plan' | 'progress' | 'done') => {
-    if (!hasMore[status]) return; // 가져올 데이터가 없으면 종료
+    if (!hasMore[status]) return; // 추가 데이터가 없으면 종료
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/todos/statelodeed`,
-        { state: status, limit: 5, offset: page[status] * 5 },
+        { state: status, limit: 5, offset: page[status] * 5 }, // ✅ 기존 offset 유지
         { withCredentials: true },
       );
+
       console.log(`[${status}] 추가 데이터 응답:`, response.data);
+
       if (response.data.status === 'SUCCESS' && response.data.data.length > 0) {
         setTodoList(prev => ({
           ...prev,
-          [status]: [...prev[status], ...response.data.data],
+          [status]: [
+            ...prev[status],
+            ...response.data.data.filter(
+              (
+                newTask: Task, // ✅ 타입 명확히 지정
+              ) =>
+                !prev[status].some(
+                  (existingTask: Task) =>
+                    existingTask.todo_id === newTask.todo_id,
+                ),
+            ),
+          ],
         }));
-        setPage(prev => ({ ...prev, [status]: prev[status] + 1 })); // 페이지 증가
+
+        setPage(prev => ({ ...prev, [status]: prev[status] + 1 })); // ✅ 페이지 증가
       } else {
         console.log(`[${status}] 추가 데이터 없음. 더 이상 불러오지 않음.`);
-        setHasMore(prev => ({ ...prev, [status]: false })); // 더 이상 데이터 없음
+        setHasMore(prev => ({ ...prev, [status]: false })); // ✅ 데이터 없음 설정
       }
     } catch (error) {
-      console.error('추가 업무 로드 실패:', error);
+      console.error(`[${status}] 추가 업무 로드 실패:`, error);
     }
   };
 

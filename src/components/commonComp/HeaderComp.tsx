@@ -193,10 +193,50 @@ export default function Header() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // ✅ 로그아웃 API 요청
+  // const handleLogout = async () => {
+  //   try {
+  //     const logoutApi =
+  //       authProvider === 'kakao' ? '/v1/user/kakao-logout' : '/v1/user/logout';
+
+  //     const response = await axios.post(
+  //       logoutApi,
+  //       {},
+  //       { withCredentials: true },
+  //     );
+
+  //     if (response.data.status === 'SUCCESS') {
+  //       alert('로그아웃 성공');
+
+  //       // ✅ 1. 브라우저 쿠키 삭제 (자동 로그인 방지)
+  //       document.cookie = 'connect.sid=; Max-Age=0; path=/';
+  //       document.cookie = '_kadu=; Max-Age=0; path=/';
+  //       document.cookie = '_kakao_sso=; Max-Age=0; path=/';
+  //       sessionStorage.removeItem('selectedSpaceId');
+
+  //       // ✅ 2. Redux persist 초기화
+
+  //       persistor.purge();
+  //       // ✅ 3. sessionStorage 삭제
+  //       sessionStorage.removeItem('persist:root');
+  //       sessionStorage.removeItem('persist:checkSession');
+
+  //       // ✅ 4. 로그인 페이지로 이동 (새로고침)
+  //       navigate('/v1/user/login');
+  //       window.location.reload();
+  //     } else {
+  //       alert('로그아웃 실패: ' + response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('로그아웃 에러:', error);
+  //     alert('로그아웃 중 오류가 발생했습니다.');
+  //   }
+  // };
   const handleLogout = async () => {
     try {
-      const logoutApi =
-        authProvider === 'kakao' ? '/v1/user/kakao-logout' : '/v1/user/logout';
+      let logoutApi = '/v1/user/logout'; // 기본 이메일 로그아웃 API
+      if (authProvider === 'kakao') {
+        logoutApi = '/v1/user/kakao-logout'; // 카카오 로그아웃 API
+      }
 
       const response = await axios.post(
         logoutApi,
@@ -205,26 +245,28 @@ export default function Header() {
       );
 
       if (response.data.status === 'SUCCESS') {
-        alert('로그아웃 성공');
+        alert(
+          authProvider === 'kakao' ? '카카오 로그아웃 성공' : '로그아웃 성공',
+        );
 
-        // ✅ 1. 브라우저 쿠키 삭제 (자동 로그인 방지)
+        // ✅ 브라우저 쿠키 삭제 (자동 로그인 방지)
         document.cookie = 'connect.sid=; Max-Age=0; path=/';
         document.cookie = '_kadu=; Max-Age=0; path=/';
         document.cookie = '_kakao_sso=; Max-Age=0; path=/';
-        sessionStorage.removeItem('selectedSpaceId');
 
-        // ✅ 2. Redux persist 초기화
-
+        // ✅ Redux persist 초기화
         persistor.purge();
-        // ✅ 3. sessionStorage 삭제
+
+        // ✅ sessionStorage 삭제
         sessionStorage.removeItem('persist:root');
         sessionStorage.removeItem('persist:checkSession');
+        sessionStorage.removeItem('selectedSpaceId');
 
-        // ✅ 4. 로그인 페이지로 이동 (새로고침)
+        // ✅ 로그인 페이지로 이동 후 새로고침
         navigate('/v1/user/login');
         window.location.reload();
       } else {
-        alert('로그아웃 실패: ' + response.data.message);
+        alert(`로그아웃 실패: ${response.data.message}`);
       }
     } catch (error) {
       console.error('로그아웃 에러:', error);
