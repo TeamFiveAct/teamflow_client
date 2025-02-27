@@ -117,7 +117,6 @@ import MyProfile from './pages/MyProfile';
 import JoinSpace from './pages/JoinSpace';
 import DashBoard from './pages/DashBoard';
 import Chat from './components/chatcomp/Chat';
-import ChatButton from './components/chattingComp/ChatButton';
 import NotFound from './pages/NotFound';
 import Footer from './components/commonComp/Footer';
 import ProtectedRoute from './components/commonComp/ProtectedRoute'; // ✅ 보호된 라우트
@@ -191,8 +190,6 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* ChatButton 컴포넌트는 고정 위치에 표시되며, 클릭 시 /chat으로 이동 */}
-        <ChatButton />
         <Footer />
       </Router>
     </>
