@@ -268,11 +268,14 @@ export default function ProjectInfo({
   workspace,
   isCollapsed,
   toggleCollapse,
+  postSpaceLeave, // ✅ Dashboard에서 받은 함수 사용
+  postSpaceDestroy,
+  isOwner, // ✅ Dashboard에서 받은 함수 사용
 }: ProjectInfoProps) {
+  console.log(`🎯 ProjectInfo.tsx - isOwner 값:`, isOwner); // ✅ 값 확인
   const navigate = useNavigate();
   const [users, setUsers] = useState<any[]>([]); // 참여자 목록
   const [currentUserId, setCurrentUserId] = useState<number | null>(null); // 현재 로그인한 유저 ID
-  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { space_id } = useParams<{ space_id: string }>();
 
@@ -289,7 +292,7 @@ export default function ProjectInfo({
 
         if (response.data.status === 'SUCCESS') {
           const userId = response.data.data.user_id;
-          setCurrentUserId(userId);
+          console.log(`✅ 현재 로그인한 사용자 ID: ${userId}`);
         } else {
           console.error('현재 사용자 정보를 불러오지 못했습니다.');
         }
@@ -302,11 +305,6 @@ export default function ProjectInfo({
   }, []);
 
   // ✅ 워크스페이스 소유자 확인
-  useEffect(() => {
-    if (workspace && currentUserId !== null) {
-      setIsOwner(Number(workspace.user_id) === Number(currentUserId));
-    }
-  }, [workspace, currentUserId]);
 
   // ✅ 워크스페이스 멤버 가져오기
   useEffect(() => {
@@ -359,72 +357,72 @@ export default function ProjectInfo({
     }
   }, [space_id]);
 
-  // ✅ 🚀 워크스페이스 나가기 함수
-  const postSpaceLeave = async () => {
-    if (!space_id) return;
+  // // ✅ 🚀 워크스페이스 나가기 함수
+  // const postSpaceLeave = async () => {
+  //   if (!space_id) return;
 
-    try {
-      console.log(`🚀 워크스페이스 나가기 요청: ${space_id}`);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/leave`,
-        {},
-        { withCredentials: true },
-      );
+  //   try {
+  //     console.log(`🚀 워크스페이스 나가기 요청: ${space_id}`);
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/leave`,
+  //       {},
+  //       { withCredentials: true },
+  //     );
 
-      console.log('📝 워크스페이스 나가기 응답:', response.data);
+  //     console.log('📝 워크스페이스 나가기 응답:', response.data);
 
-      if (response.data.status === 'SUCCESS') {
-        alert('워크스페이스에서 나갔습니다.');
+  //     if (response.data.status === 'SUCCESS') {
+  //       alert('워크스페이스에서 나갔습니다.');
 
-        // ✅ UI에서 즉시 제거
-        setUsers(prevUsers =>
-          prevUsers.filter(user => user.user_id !== currentUserId),
-        );
+  //       // ✅ UI에서 즉시 제거
+  //       setUsers(prevUsers =>
+  //         prevUsers.filter(user => user.user_id !== currentUserId),
+  //       );
 
-        navigate('/workspace'); // ✅ 워크스페이스 목록 페이지로 이동
-      } else {
-        alert(response.data.message || '워크스페이스 나가기에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('❌ 워크스페이스 나가기 실패:', error);
-      alert('워크스페이스 나가기 중 오류가 발생했습니다.');
-    }
-  };
+  //       navigate('/v1/mySpace'); // ✅ 워크스페이스 목록 페이지로 이동
+  //     } else {
+  //       alert(response.data.message || '워크스페이스 나가기에 실패했습니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ 워크스페이스 나가기 실패:', error);
+  //     alert('워크스페이스 나가기 중 오류가 발생했습니다.');
+  //   }
+  // };
 
   // ✅ 🔥 워크스페이스 삭제 함수
-  const postSpaceDestroy = async () => {
-    if (!space_id) return;
+  // const postSpaceDestroy = async () => {
+  //   if (!space_id) return;
 
-    const confirmDelete = window.confirm(
-      '정말로 워크스페이스를 삭제하시겠습니까?',
-    );
-    if (!confirmDelete) return;
+  //   const confirmDelete = window.confirm(
+  //     '정말로 워크스페이스를 삭제하시겠습니까?',
+  //   );
+  //   if (!confirmDelete) return;
 
-    try {
-      console.log(`🚀 워크스페이스 삭제 요청: ${space_id}`);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/destroy`,
-        {},
-        { withCredentials: true },
-      );
+  //   try {
+  //     console.log(`🚀 워크스페이스 삭제 요청: ${space_id}`);
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_API_SERVER}/workspace/${space_id}/destroy`,
+  //       {},
+  //       { withCredentials: true },
+  //     );
 
-      console.log('📝 워크스페이스 삭제 응답:', response.data);
+  //     console.log('📝 워크스페이스 삭제 응답:', response.data);
 
-      if (response.data.status === 'SUCCESS') {
-        alert('워크스페이스가 삭제되었습니다.');
+  //     if (response.data.status === 'SUCCESS') {
+  //       alert('워크스페이스가 삭제되었습니다.');
 
-        // ✅ UI에서 즉시 제거
-        setUsers([]);
+  //       // ✅ UI에서 즉시 제거
+  //       setUsers([]);
 
-        navigate('/v1/myspace'); // ✅ 워크스페이스 목록 페이지로 이동
-      } else {
-        alert(response.data.message || '워크스페이스 삭제에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('❌ 워크스페이스 삭제 실패:', error);
-      alert('워크스페이스 삭제 중 오류가 발생했습니다.');
-    }
-  };
+  //       navigate('/v1/myspace'); // ✅ 워크스페이스 목록 페이지로 이동
+  //     } else {
+  //       alert(response.data.message || '워크스페이스 삭제에 실패했습니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ 워크스페이스 삭제 실패:', error);
+  //     alert('워크스페이스 삭제 중 오류가 발생했습니다.');
+  //   }
+  // };
   return (
     <div className="project-info-container">
       <div className="project-info-wrapper">
@@ -533,15 +531,12 @@ export default function ProjectInfo({
           {isOwner ? (
             <button
               className="action-btn delete-btn"
-              onClick={() => postSpaceDestroy()}
+              onClick={postSpaceDestroy}
             >
               <FaTrash />
             </button>
           ) : (
-            <button
-              className="action-btn leave-btn"
-              onClick={() => postSpaceLeave()}
-            >
+            <button className="action-btn leave-btn" onClick={postSpaceLeave}>
               <FaSignOutAlt />
             </button>
           )}

@@ -235,7 +235,7 @@ export default function Header() {
     try {
       // ✅ 현재 세션이 유효한 경우에만 로그아웃 요청 실행
       const sessionCheck = await axios.get(
-        `${process.env.REACT_APP_API_SERVER}/user.session`,
+        `${process.env.REACT_APP_API_SERVER}/user/session`,
         {
           withCredentials: true,
         },
