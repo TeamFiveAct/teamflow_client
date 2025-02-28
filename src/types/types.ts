@@ -43,7 +43,8 @@ export interface ProjectInfoProps {
   workspace: WorkspaceInfo;
   isCollapsed: boolean;
   toggleCollapse: () => void;
-  isOwner: boolean; // ✅ isOwner 추가
-  postSpaceDestroy: () => void;
-  postSpaceLeave: () => void;
+  isOwner: boolean;
+  postSpaceLeave: () => Promise<void>; // ✅ 추가
+  postSpaceDestroy: () => Promise<void>; // ✅ 추가
+  
 }
