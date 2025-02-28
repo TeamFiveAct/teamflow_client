@@ -21,10 +21,13 @@ export default function useUserActions(userData: any, setEditMode: any) {
     if (isKakaoUser) return; // ✅ 카카오 로그인 사용자는 비밀번호 검증 X
 
     try {
-      const response = await axios.post('/v1/user/login', {
-        email: userData.email,
-        password_hash: formData.currentPassword,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_SERVER}/user/login`,
+        {
+          email: userData.email,
+          password_hash: formData.currentPassword,
+        },
+      );
 
       if (response.data.status === 'SUCCESS') {
         setIsPasswordVerified(true);
@@ -90,9 +93,13 @@ export default function useUserActions(userData: any, setEditMode: any) {
         }
       }
 
-      const response = await axios.put('/v1/user/info', updatedData, {
-        withCredentials: true,
-      });
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_SERVER}/user/info`,
+        updatedData,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (response.data.status === 'SUCCESS') {
         alert('✅ 사용자 정보가 성공적으로 업데이트되었습니다.');

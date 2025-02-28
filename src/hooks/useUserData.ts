@@ -38,10 +38,13 @@ export default function useUserData() {
 
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('/v1/user/info', {
-          withCredentials: true,
-        });
-
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVER}/user/info`,
+          {
+            withCredentials: true,
+          },
+        );
+        console.log('사용자 정보 응답:', response.data); // ✅ 디버깅용 로그 추가
         if (response.data.status === 'SUCCESS') {
           setUserData(prev => ({
             ...prev,

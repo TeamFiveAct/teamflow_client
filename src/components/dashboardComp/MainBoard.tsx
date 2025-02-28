@@ -477,7 +477,8 @@ export default function MainBoard() {
       <div className="todo-action-container">
         <div className="todo-action-btn">
           <button
-            className="btn btn-sm btn-secondary"
+            className="btn btn-sm btn-primary "
+            style={{ padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
             onClick={() => setShowCreateModal(true)}
           >
             + 생성

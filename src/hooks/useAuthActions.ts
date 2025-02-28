@@ -19,7 +19,9 @@ export default function useAuthActions() {
   const handleLogout = async () => {
     try {
       const logoutUrl =
-        authProvider === 'kakao' ? '/v1/user/kakao-logout' : '/v1/user/logout';
+        authProvider === 'kakao'
+          ? `${process.env.REACT_APP_API_SERVER}/user/kakao-logout`
+          : `${process.env.REACT_APP_API_SERVER}/user/logout`;
 
       await axios.post(logoutUrl, {}, { withCredentials: true });
 
@@ -37,7 +39,9 @@ export default function useAuthActions() {
     if (!window.confirm('정말로 계정을 삭제하시겠습니까?')) return;
 
     try {
-      await axios.delete('/v1/user', { withCredentials: true });
+      await axios.delete(`${process.env.REACT_APP_API_SERVER}/user`, {
+        withCredentials: true,
+      });
 
       dispatch(deleteAccount());
       // sessionStorage.removeItem('session_valid');

@@ -83,8 +83,8 @@ export default function DashBoard() {
           isCollapsed={isCollapsed}
           toggleCollapse={() => setIsCollapsed(prev => !prev)}
           isOwner={isOwner}
-          onLeaveWorkspace={() => alert('워크스페이스를 나갔습니다.')}
-          onDeleteWorkspace={() => alert('워크스페이스를 삭제했습니다.')}
+          postSpaceLeave={() => alert('워크스페이스를 나갔습니다.')}
+          postSpaceDestroy={() => alert('워크스페이스를 삭제했습니다.')}
         />
       ) : (
         <p>워크스페이스 정보를 불러올 수 없습니다.</p>
