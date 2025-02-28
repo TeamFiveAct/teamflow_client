@@ -121,12 +121,18 @@ export default function TaskModal({
   if (!show) return null;
   return (
     <div className="modal-overlay">
-      <div className="custom-modal">
+      <div
+        className="custom-modal"
+        style={{ maxHeight: '90vh', overflowY: 'auto' }}
+      >
         <div className="modal-header">
           <h5 className="modal-title">할 일 생성 </h5>
           <button type="button" className="btn-close" onClick={onHide}></button>
         </div>
-        <div className="modal-body">
+        <div
+          className="modal-body"
+          style={{ maxHeight: '60vh', overflowY: 'auto' }}
+        >
           <form>
             <div className="mb-3">
               <label className="form-label">제목</label>

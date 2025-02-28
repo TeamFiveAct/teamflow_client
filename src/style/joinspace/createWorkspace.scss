@@ -95,3 +95,17 @@
     padding: 8px;
   }
 }
+
+.custom-modal-create .modal-dialog {
+  max-width: 500px; // 모달 너비 조정
+}
+
+.custom-modal-create .modal-content {
+  max-height: 80vh; // 화면 높이의 80%로 제한
+  overflow-y: auto; // 내용이 많으면 스크롤 가능하게
+}
+
+.custom-modal-create .modal-body {
+  max-height: 60vh; // 바디 부분만 따로 높이 제한
+  overflow-y: auto;
+}

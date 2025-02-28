@@ -234,17 +234,20 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       // ✅ 현재 세션이 유효한 경우에만 로그아웃 요청 실행
-      const sessionCheck = await axios.get('/v1/user/session', {
-        withCredentials: true,
-      });
+      const sessionCheck = await axios.get(
+        `${process.env.REACT_APP_API_SERVER}/user.session`,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (sessionCheck.data.status !== 'SUCCESS') {
         console.warn('이미 로그아웃된 상태이므로 API 호출을 하지 않음.');
         return;
       }
-      let logoutApi = '/v1/user/logout'; // 기본 이메일 로그아웃 API
+      let logoutApi = `${process.env.REACT_APP_API_SERVER}/user/logout`; // 기본 이메일 로그아웃 API
       if (authProvider === 'kakao') {
-        logoutApi = '/v1/user/kakao-logout'; // 카카오 로그아웃 API
+        logoutApi = `${process.env.REACT_APP_API_SERVER}/user/kakao-logout`; // 카카오 로그아웃 API
       }
 
       const response = await axios.post(
@@ -273,7 +276,7 @@ export default function Header() {
         sessionStorage.removeItem('sessionExpired');
         // ✅ 로그인 페이지로 이동 후 새로고침
         navigate('/v1/user/login');
-        window.location.reload();
+        // window.location.reload();
       } else {
         alert(`로그아웃 실패: ${response.data.message}`);
       }
@@ -287,9 +290,12 @@ export default function Header() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get('/v1/user/session', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVER}/user/session`,
+          {
+            withCredentials: true,
+          },
+        );
 
         console.log('세션 응답:', response.data); // ✅ 디버깅을 위한 로그
 
